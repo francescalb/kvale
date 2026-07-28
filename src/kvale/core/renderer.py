@@ -7,11 +7,49 @@ from kvale.core.model import PatternDocument
 from kvale.core.symmetry import expand_marks
 
 
+def _included_column_indices(document: PatternDocument, unit_x: int) -> list[int]:
+    last = document.repeats_x - 1
+    keep_left = document.repeat_left_column or unit_x == 0
+    keep_right = document.repeat_right_column or unit_x == last
+    return [
+        x
+        for x in range(document.unit_width)
+        if (x != 0 or keep_left) and (x != document.unit_width - 1 or keep_right)
+    ]
+
+
+def _included_row_indices(document: PatternDocument, unit_y: int) -> list[int]:
+    last = document.repeats_y - 1
+    keep_top = document.repeat_top_row or unit_y == 0
+    keep_bottom = document.repeat_bottom_row or unit_y == last
+    return [
+        y
+        for y in range(document.unit_height)
+        if (y != 0 or keep_top) and (y != document.unit_height - 1 or keep_bottom)
+    ]
+
+
 def build_colour_grid(document: PatternDocument) -> list[list[str]]:
     document.validate()
-    width = document.unit_width * document.repeats_x
-    height = document.unit_height * document.repeats_y
+    unit_columns = [_included_column_indices(document, unit_x) for unit_x in range(document.repeats_x)]
+    unit_rows = [_included_row_indices(document, unit_y) for unit_y in range(document.repeats_y)]
+
+    width = sum(len(columns) for columns in unit_columns)
+    height = sum(len(rows) for rows in unit_rows)
     grid = [[document.background for _ in range(width)] for _ in range(height)]
+
+    x_offsets: list[int] = []
+    running_x = 0
+    for columns in unit_columns:
+        x_offsets.append(running_x)
+        running_x += len(columns)
+
+    y_offsets: list[int] = []
+    running_y = 0
+    for rows in unit_rows:
+        y_offsets.append(running_y)
+        running_y += len(rows)
+
     expanded = expand_marks(
         document.motif,
         document.unit_width,
@@ -20,10 +58,19 @@ def build_colour_grid(document: PatternDocument) -> list[list[str]]:
     )
 
     for unit_y in range(document.repeats_y):
+        row_map = {local_y: y_offsets[unit_y] + index for index, local_y in enumerate(unit_rows[unit_y])}
         for unit_x in range(document.repeats_x):
+            column_map = {
+                local_x: x_offsets[unit_x] + index for index, local_x in enumerate(unit_columns[unit_x])
+            }
             for mark in expanded:
-                cell_x = unit_x * document.unit_width + mark.x
-                cell_y = unit_y * document.unit_height + mark.y
+                if mark.x not in column_map:
+                    continue
+                if mark.y not in row_map:
+                    continue
+
+                cell_x = column_map[mark.x]
+                cell_y = row_map[mark.y]
                 index = resolve_colour_index(
                     mark.colour_slot,
                     unit_x,

@@ -96,19 +96,57 @@ class KvaleApp:
         )
 
     def _build_document_controls(self, parent: ttk.Frame) -> None:
-        frame = ttk.LabelFrame(parent, text="Rutenett og repetisjoner", padding=8)
+        frame = ttk.LabelFrame(parent, text="Rutenett", padding=8)
         frame.pack(fill=tk.X, pady=(0, 8))
         self.unit_width = tk.IntVar(value=12)
         self.unit_height = tk.IntVar(value=12)
         self.repeats_x = tk.IntVar(value=6)
         self.repeats_y = tk.IntVar(value=2)
-        self._spin_row(frame, "Bredde repeterende enhet", self.unit_width, 0)
-        self._spin_row(frame, "Høyde repeterende enhet", self.unit_height, 1)
+        self.repeat_left_column = tk.BooleanVar(value=True)
+        self.repeat_right_column = tk.BooleanVar(value=True)
+        self.repeat_top_row = tk.BooleanVar(value=True)
+        self.repeat_bottom_row = tk.BooleanVar(value=True)
+        self._spin_row(frame, "Bredde enhetscelle", self.unit_width, 0)
+        self._spin_row(frame, "Høyde enhetscelle", self.unit_height, 1)
         self._spin_row(frame, "Repetisjoner horisontalt", self.repeats_x, 2)
         self._spin_row(frame, "Repetisjoner vertikalt", self.repeats_y, 3)
 
+        ttk.Label(frame, text="Ytre kolonne/rad del av enhetscellen?").grid(row=4, column=0, columnspan=2, sticky=tk.W, pady=(6, 2))
+        ttk.Checkbutton(
+            frame,
+            text="Venstre kolonne",
+            variable=self.repeat_left_column,
+            command=self._apply_controls,
+        ).grid(
+            row=5, column=0, columnspan=2, sticky=tk.W
+        )
+        ttk.Checkbutton(
+            frame,
+            text="Høyre kolonne",
+            variable=self.repeat_right_column,
+            command=self._apply_controls,
+        ).grid(
+            row=6, column=0, columnspan=2, sticky=tk.W
+        )
+        ttk.Checkbutton(
+            frame,
+            text="Øverste rad",
+            variable=self.repeat_top_row,
+            command=self._apply_controls,
+        ).grid(
+            row=7, column=0, columnspan=2, sticky=tk.W
+        )
+        ttk.Checkbutton(
+            frame,
+            text="Nederste rad",
+            variable=self.repeat_bottom_row,
+            command=self._apply_controls,
+        ).grid(
+            row=8, column=0, columnspan=2, sticky=tk.W
+        )
+
         ttk.Button(frame, text="Bruk", command=self._apply_controls).grid(
-            row=4, column=0, columnspan=2, sticky=tk.EW, pady=(8, 0)
+            row=9, column=0, columnspan=2, sticky=tk.EW, pady=(8, 0)
         )
 
     def _build_palette_controls(self, parent: ttk.Frame) -> None:
@@ -225,6 +263,10 @@ class KvaleApp:
             self.document.unit_height = new_height
             self.document.repeats_x = max(1, self.repeats_x.get())
             self.document.repeats_y = max(1, self.repeats_y.get())
+            self.document.repeat_left_column = self.repeat_left_column.get()
+            self.document.repeat_right_column = self.repeat_right_column.get()
+            self.document.repeat_top_row = self.repeat_top_row.get()
+            self.document.repeat_bottom_row = self.repeat_bottom_row.get()
             self.document.motif = [
                 mark for mark in self.document.motif if mark.x < new_width and mark.y < new_height
             ]
@@ -343,6 +385,10 @@ class KvaleApp:
         self.unit_height.set(self.document.unit_height)
         self.repeats_x.set(self.document.repeats_x)
         self.repeats_y.set(self.document.repeats_y)
+        self.repeat_left_column.set(self.document.repeat_left_column)
+        self.repeat_right_column.set(self.document.repeat_right_column)
+        self.repeat_top_row.set(self.document.repeat_top_row)
+        self.repeat_bottom_row.set(self.document.repeat_bottom_row)
         for name, variable in self.symmetry_vars.items():
             variable.set(name in self.document.symmetry)
         self.colour_mode.set(self.document.colour_rule.mode)
