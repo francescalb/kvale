@@ -1,0 +1,106 @@
+# Kvale
+
+Pattern Studio is a modular Python desktop application for designing repeating,
+grid-based textile and embroidery patterns. Geometry, symmetry and colouring are
+kept separate so that the colour repeat does not have to match the geometric repeat.
+
+The first version uses Tkinter for the GUI, Pillow for PNG export, JSON for editable
+project files, and a small dependency-free core that can later be reused by a web UI,
+CLI, SVG exporter or embroidery-format plugin.
+
+## Features
+
+- Click-to-paint editor for a recurring grid unit
+- Live expansion by mirror planes and rotations
+- Repeated-band preview
+- Independent colour sequences and colour cycles
+- JSON save/load
+- PNG export
+- Unit tests and GitHub Actions
+- `src/` package layout suitable for publishing
+
+## Project architecture
+
+```text
+src/kvale/
+├── core/
+│   ├── model.py          # document data model
+│   ├── symmetry.py       # symmetry operations
+│   ├── colouring.py      # independent colour-repeat rules
+│   ├── renderer.py       # grid construction and raster export
+│   └── serialization.py  # JSON persistence
+└── gui/
+    ├── app.py            # menus, controls and document lifecycle
+    └── canvas.py         # interactive editor and preview canvas
+```
+
+The GUI depends on interfaces from `core`, but `core` does not depend on the GUI.
+That boundary is the main extension point.
+
+## Run locally
+
+Python 3.11 or newer is recommended.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install -e .[dev]
+kvale
+```
+
+On Linux, Tkinter may need to be installed through the operating system package
+manager, for example `sudo apt install python3-tk` on Ubuntu or Debian. 
+You might need to specify python version when installing Tkinter: `sudo apt install python3.14-tk`
+
+## Using the editor
+
+1. Set the recurring unit width and height.
+2. Select a palette colour.
+3. Left-click cells to paint seed marks; right-click to erase.
+4. Enable mirrors or rotations. Seed cells have a dark inset border; generated cells do not.
+5. Switch to **Preview repeats** to see the complete band.
+6. Set an independent colour rule. A sequence such as `0,1,2,1,3` repeats every five
+   units even when the geometric unit repeats every unit.
+7. Save the editable pattern as JSON or export a PNG.
+
+Double-click a palette button to change its colour.
+
+## Colour rules
+
+- `fixed`: each motif colour slot always maps to the same palette colour.
+- `unit_cycle`: palette position advances with recurring-unit coordinates.
+- `cell_cycle`: palette position advances with full-grid cell coordinates.
+- `sequence`: an explicit sequence such as `[0, 0, 1, 2, 1]` advances by unit or cell.
+
+## Tests
+
+```bash
+pytest
+ruff check .
+```
+
+
+## Suggested roadmap
+
+1. Undo/redo command system
+2. Multiple motif layers and named palettes
+3. Half-drop, brick and glide-reflection repeats
+4. Visual draggable mirror planes
+5. SVG and printable chart export
+6. Plugin interface for exporters and symmetry groups
+7. Optional PySide6 or browser front end
+8. Raster-image tracing and palette reduction
+
+## Extension strategy
+
+New functionality should normally be added behind a small interface:
+
+- New symmetry: add a transform in `core/symmetry.py`.
+- New colour behaviour: add a rule implementation in `core/colouring.py`.
+- New export format: consume `PatternDocument` or `build_colour_grid()` in a new exporter module.
+- New GUI: reuse the entire `core` package without importing Tkinter.
+
+## Licence
+
+BSD-3.0
