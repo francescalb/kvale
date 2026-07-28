@@ -19,7 +19,7 @@ class KvaleApp:
         self.current_path: Path | None = None
         self.active_colour = tk.IntVar(value=0)
         self.mode = tk.StringVar(value="edit")
-        self.status = tk.StringVar(value="Ready")
+        self.status = tk.StringVar(value="Klar")
         self.symmetry_vars: dict[str, tk.BooleanVar] = {}
         self.palette_buttons: list[ttk.Button] = []
         self._build_ui()
@@ -47,12 +47,12 @@ class KvaleApp:
         toolbar = ttk.Frame(workspace)
         toolbar.pack(fill=tk.X, pady=(0, 6))
         ttk.Radiobutton(
-            toolbar, text="Edit recurring unit", variable=self.mode, value="edit", command=self._change_mode
+            toolbar, text="Rediger repeterende enhet", variable=self.mode, value="edit", command=self._change_mode
         ).pack(side=tk.LEFT)
         ttk.Radiobutton(
-            toolbar, text="Preview repeats", variable=self.mode, value="preview", command=self._change_mode
+            toolbar, text="Se repetisjoner", variable=self.mode, value="preview", command=self._change_mode
         ).pack(side=tk.LEFT, padx=12)
-        ttk.Label(toolbar, text="Left-click paints; right-click erases").pack(side=tk.RIGHT)
+        ttk.Label(toolbar, text="Venstreklikk: sett farge; høyreklikk: slett").pack(side=tk.RIGHT)
 
         self.canvas = PatternCanvas(
             workspace,
@@ -67,15 +67,15 @@ class KvaleApp:
     def _build_menu(self) -> None:
         menu = tk.Menu(self.root)
         file_menu = tk.Menu(menu, tearoff=False)
-        file_menu.add_command(label="New", command=self.new_document, accelerator="Ctrl+N")
-        file_menu.add_command(label="Open...", command=self.open_document, accelerator="Ctrl+O")
-        file_menu.add_command(label="Save", command=self.save_document, accelerator="Ctrl+S")
-        file_menu.add_command(label="Save As...", command=self.save_document_as)
+        file_menu.add_command(label="Ny", command=self.new_document, accelerator="Ctrl+N")
+        file_menu.add_command(label="Åpne...", command=self.open_document, accelerator="Ctrl+O")
+        file_menu.add_command(label="Lagre", command=self.save_document, accelerator="Ctrl+S")
+        file_menu.add_command(label="Lagre som...", command=self.save_document_as)
         file_menu.add_separator()
-        file_menu.add_command(label="Export PNG...", command=self.export_png)
+        file_menu.add_command(label="Eksporter PNG...", command=self.export_png)
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.root.destroy)
-        menu.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Avslutt", command=self.root.destroy)
+        menu.add_cascade(label="Fil", menu=file_menu)
         self.root.config(menu=menu)
         self.root.bind("<Control-n>", lambda _event: self.new_document())
         self.root.bind("<Control-o>", lambda _event: self.open_document())
@@ -88,22 +88,22 @@ class KvaleApp:
         )
 
     def _build_document_controls(self, parent: ttk.Frame) -> None:
-        frame = ttk.LabelFrame(parent, text="Grid and repeats", padding=8)
+        frame = ttk.LabelFrame(parent, text="Rutenett og repetisjoner", padding=8)
         frame.pack(fill=tk.X, pady=(0, 8))
         self.unit_width = tk.IntVar(value=12)
         self.unit_height = tk.IntVar(value=12)
         self.repeats_x = tk.IntVar(value=6)
         self.repeats_y = tk.IntVar(value=2)
-        self._spin_row(frame, "Unit width", self.unit_width, 0)
-        self._spin_row(frame, "Unit height", self.unit_height, 1)
-        self._spin_row(frame, "Repeats X", self.repeats_x, 2)
-        self._spin_row(frame, "Repeats Y", self.repeats_y, 3)
-        ttk.Button(frame, text="Apply", command=self._apply_controls).grid(
+        self._spin_row(frame, "Bredde repeterende enhet", self.unit_width, 0)
+        self._spin_row(frame, "Høyde repeterende enhet", self.unit_height, 1)
+        self._spin_row(frame, "Repetisjoner horisontalt", self.repeats_x, 2)
+        self._spin_row(frame, "Repetisjoner vertikalt", self.repeats_y, 3)
+        ttk.Button(frame, text="Bruk", command=self._apply_controls).grid(
             row=4, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0)
         )
 
     def _build_palette_controls(self, parent: ttk.Frame) -> None:
-        self.palette_frame = ttk.LabelFrame(parent, text="Palette", padding=8)
+        self.palette_frame = ttk.LabelFrame(parent, text="Farger", padding=8)
         self.palette_frame.pack(fill=tk.X, pady=(0, 8))
         self._rebuild_palette_buttons()
 
@@ -113,7 +113,7 @@ class KvaleApp:
         for index, colour in enumerate(self.document.palette):
             button = tk.Radiobutton(
                 self.palette_frame,
-                text=f"Colour {index + 1}",
+                text=f"Farge {index + 1}",
                 variable=self.active_colour,
                 value=index,
                 indicatoron=False,
@@ -124,22 +124,22 @@ class KvaleApp:
             )
             button.grid(row=index // 2, column=index % 2, sticky=tk.EW, padx=2, pady=2)
             button.bind("<Double-Button-1>", lambda _event, i=index: self._choose_palette_colour(i))
-        ttk.Button(self.palette_frame, text="Add colour", command=self._add_palette_colour).grid(
+        ttk.Button(self.palette_frame, text="Legg til farge", command=self._add_palette_colour).grid(
             row=(len(self.document.palette) + 1) // 2, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0)
         )
 
     def _build_symmetry_controls(self, parent: ttk.Frame) -> None:
-        frame = ttk.LabelFrame(parent, text="Symmetry in recurring unit", padding=8)
+        frame = ttk.LabelFrame(parent, text="Symmetri i repeterende enhet", padding=8)
         frame.pack(fill=tk.X, pady=(0, 8))
         operations = [
             ("identity", "Original"),
-            ("mirror_x", "Mirror left/right"),
-            ("mirror_y", "Mirror top/bottom"),
-            ("rotate_180", "Rotate 180°"),
-            ("rotate_90", "Rotate 90°"),
-            ("rotate_270", "Rotate 270°"),
-            ("diag_main", "Main diagonal"),
-            ("diag_anti", "Other diagonal"),
+            ("mirror_x", "Speil vertikalt"),
+            ("mirror_y", "Speil horisontalt"),
+            ("rotate_180", "Roter 180°"),
+            ("rotate_90", "Roter 90°"),
+            ("rotate_270", "Roter 270°"),
+            ("diag_main", "Hoveddiagonal"),
+            ("diag_anti", "Motdiagonal"),
         ]
         for row, (operation, label) in enumerate(operations):
             variable = tk.BooleanVar(value=operation == "identity")
@@ -149,12 +149,12 @@ class KvaleApp:
             )
 
     def _build_colour_rule_controls(self, parent: ttk.Frame) -> None:
-        frame = ttk.LabelFrame(parent, text="Independent colour repeat", padding=8)
+        frame = ttk.LabelFrame(parent, text="Uavhengig fargerepetisjon", padding=8)
         frame.pack(fill=tk.X, pady=(0, 8))
         self.colour_mode = tk.StringVar(value="fixed")
         self.colour_sequence = tk.StringVar(value="0,1,2,1,3")
         self.colour_advance = tk.StringVar(value="unit_x")
-        ttk.Label(frame, text="Mode").grid(row=0, column=0, sticky=tk.W)
+        ttk.Label(frame, text="Modus").grid(row=0, column=0, sticky=tk.W)
         ttk.Combobox(
             frame,
             textvariable=self.colour_mode,
@@ -162,7 +162,7 @@ class KvaleApp:
             state="readonly",
             width=12,
         ).grid(row=0, column=1, sticky=tk.EW)
-        ttk.Label(frame, text="Sequence").grid(row=1, column=0, sticky=tk.W)
+        ttk.Label(frame, text="Sekvens").grid(row=1, column=0, sticky=tk.W)
         ttk.Entry(frame, textvariable=self.colour_sequence, width=14).grid(row=1, column=1, sticky=tk.EW)
         ttk.Label(frame, text="Advance by").grid(row=2, column=0, sticky=tk.W)
         ttk.Combobox(
@@ -172,7 +172,7 @@ class KvaleApp:
             state="readonly",
             width=12,
         ).grid(row=2, column=1, sticky=tk.EW)
-        ttk.Button(frame, text="Apply colour rule", command=self._apply_colour_rule).grid(
+        ttk.Button(frame, text="Bruk fargeregel", command=self._apply_colour_rule).grid(
             row=3, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0)
         )
 
@@ -190,7 +190,7 @@ class KvaleApp:
             self._apply_symmetry(show_errors=False)
             self._document_changed()
         except (tk.TclError, ValueError) as error:
-            messagebox.showerror("Invalid settings", str(error))
+            messagebox.showerror("Ugyldige innstillinger", str(error))
 
     def _apply_symmetry(self, show_errors: bool = True) -> None:
         operations = [name for name, variable in self.symmetry_vars.items() if variable.get()]
@@ -205,7 +205,7 @@ class KvaleApp:
                     self.symmetry_vars[operation].set(False)
                     operations.remove(operation)
                 if show_errors:
-                    messagebox.showinfo("Square unit required", "Quarter-turn and diagonal symmetries require a square unit.")
+                    messagebox.showinfo("Kvadratisk enhet kreves", "Kvartrotasjon og diagonal symmetri krever kvadratisk enhet.")
         self.document.symmetry = operations
         if hasattr(self, "canvas"):
             self._document_changed()
@@ -222,17 +222,17 @@ class KvaleApp:
             )
             self._document_changed()
         except ValueError as error:
-            messagebox.showerror("Invalid colour rule", str(error))
+            messagebox.showerror("Ugyldig fargeregel", str(error))
 
     def _choose_palette_colour(self, index: int) -> None:
-        selected = colorchooser.askcolor(color=self.document.palette[index], title="Choose palette colour")[1]
+        selected = colorchooser.askcolor(color=self.document.palette[index], title="Velg palettfarge")[1]
         if selected:
             self.document.palette[index] = selected
             self._rebuild_palette_buttons()
             self._document_changed()
 
     def _add_palette_colour(self) -> None:
-        selected = colorchooser.askcolor(color="#808080", title="Add palette colour")[1]
+        selected = colorchooser.askcolor(color="#808080", title="Legg til palettfarge")[1]
         if selected:
             self.document.palette.append(selected)
             self._rebuild_palette_buttons()
@@ -243,7 +243,7 @@ class KvaleApp:
 
     def _document_changed(self) -> None:
         self.canvas.redraw()
-        self.status.set("Modified")
+        self.status.set("Endret")
 
     def _sync_controls_from_document(self) -> None:
         self.unit_width.set(self.document.unit_width)
@@ -263,10 +263,10 @@ class KvaleApp:
         self.current_path = None
         self._sync_controls_from_document()
         self.canvas.redraw()
-        self.status.set("New document")
+        self.status.set("Nytt dokument")
 
     def open_document(self) -> None:
-        filename = filedialog.askopenfilename(filetypes=[("Pattern files", "*.json"), ("All files", "*")])
+        filename = filedialog.askopenfilename(filetypes=[("Mønsterfiler", "*.json"), ("Alle filer", "*")])
         if not filename:
             return
         try:
@@ -274,9 +274,9 @@ class KvaleApp:
             self.current_path = Path(filename)
             self._sync_controls_from_document()
             self.canvas.redraw()
-            self.status.set(f"Opened {self.current_path.name}")
+            self.status.set(f"Åpnet {self.current_path.name}")
         except (OSError, ValueError) as error:
-            messagebox.showerror("Could not open pattern", str(error))
+            messagebox.showerror("Kunne ikke åpne mønster", str(error))
 
     def save_document(self) -> None:
         if self.current_path is None:
@@ -284,13 +284,13 @@ class KvaleApp:
             return
         try:
             save_document(self.document, self.current_path)
-            self.status.set(f"Saved {self.current_path.name}")
+            self.status.set(f"Lagret {self.current_path.name}")
         except OSError as error:
-            messagebox.showerror("Could not save pattern", str(error))
+            messagebox.showerror("Kunne ikke lagre mønster", str(error))
 
     def save_document_as(self) -> None:
         filename = filedialog.asksaveasfilename(
-            defaultextension=".json", filetypes=[("Pattern files", "*.json")]
+            defaultextension=".json", filetypes=[("Monsterfiler", "*.json")]
         )
         if not filename:
             return
@@ -299,13 +299,13 @@ class KvaleApp:
 
     def export_png(self) -> None:
         filename = filedialog.asksaveasfilename(
-            defaultextension=".png", filetypes=[("PNG image", "*.png")]
+            defaultextension=".png", filetypes=[("PNG-bilde", "*.png")]
         )
         if not filename:
             return
         try:
             image = render_image(self.document, cell_size=18, draw_grid=True)
             image.save(filename)
-            self.status.set(f"Exported {Path(filename).name}")
+            self.status.set(f"Eksporterte {Path(filename).name}")
         except (OSError, ValueError) as error:
-            messagebox.showerror("Could not export image", str(error))
+            messagebox.showerror("Kunne ikke eksportere bilde", str(error))
