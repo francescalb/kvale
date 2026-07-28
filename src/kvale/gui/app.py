@@ -4,10 +4,11 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, ttk
 
-from kvale.core.model import ColourRule, PatternDocument
+from kvale.core.model import ColourRule, Mark, PatternDocument
 from kvale.core.renderer import render_image
 from kvale.core.serialization import load_document, save_document
 from kvale.gui.canvas import PatternCanvas
+from kvale.gui.palette_button import PaletteButton
 
 
 class KvaleApp:
@@ -52,13 +53,20 @@ class KvaleApp:
         ttk.Radiobutton(
             toolbar, text="Se repetisjoner", variable=self.mode, value="preview", command=self._change_mode
         ).pack(side=tk.LEFT, padx=12)
-        ttk.Label(toolbar, text="Venstreklikk: sett farge; høyreklikk: slett").pack(side=tk.RIGHT)
+        ttk.Label(
+            toolbar,
+            text="Venstre: farg/legg til, hoyre: slett.",
+        ).pack(side=tk.RIGHT)
 
         self.canvas = PatternCanvas(
             workspace,
             document_getter=lambda: self.document,
             active_colour_getter=self.active_colour.get,
             on_change=self._document_changed,
+            on_insert_column=self._insert_column_at,
+            on_remove_column=self._remove_column_at,
+            on_insert_row=self._insert_row_at,
+            on_remove_row=self._remove_row_at,
         )
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
@@ -98,8 +106,9 @@ class KvaleApp:
         self._spin_row(frame, "Høyde repeterende enhet", self.unit_height, 1)
         self._spin_row(frame, "Repetisjoner horisontalt", self.repeats_x, 2)
         self._spin_row(frame, "Repetisjoner vertikalt", self.repeats_y, 3)
+
         ttk.Button(frame, text="Bruk", command=self._apply_controls).grid(
-            row=4, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0)
+            row=4, column=0, columnspan=2, sticky=tk.EW, pady=(8, 0)
         )
 
     def _build_palette_controls(self, parent: ttk.Frame) -> None:
@@ -107,28 +116,59 @@ class KvaleApp:
         self.palette_frame.pack(fill=tk.X, pady=(0, 8))
         self._rebuild_palette_buttons()
 
+
     def _rebuild_palette_buttons(self) -> None:
         for child in self.palette_frame.winfo_children():
             child.destroy()
+
+        selected_index = self.active_colour.get()
+
         for index, colour in enumerate(self.document.palette):
-            button = tk.Radiobutton(
+            button = PaletteButton(
                 self.palette_frame,
+                colour=colour,
                 text=f"Farge {index + 1}",
-                variable=self.active_colour,
-                value=index,
-                indicatoron=False,
-                background=colour,
-                activebackground=colour,
-                width=10,
-                command=self.canvas.redraw if hasattr(self, "canvas") else None,
+                selected=index == selected_index,
+                command=lambda i=index: self._select_palette_colour(i),
+                edit_command=lambda i=index: self._choose_palette_colour(i),
             )
-            button.grid(row=index // 2, column=index % 2, sticky=tk.EW, padx=2, pady=2)
-            button.bind("<Double-Button-1>", lambda _event, i=index: self._choose_palette_colour(i))
-        ttk.Button(self.palette_frame, text="Legg til farge", command=self._add_palette_colour).grid(
-            row=(len(self.document.palette) + 1) // 2, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0)
+
+            button.grid(
+                row=index // 2,
+                column=index % 2,
+                sticky=tk.EW,
+                padx=2,
+                pady=2,
+            )
+
+        ttk.Button(
+            self.palette_frame,
+            text="Legg til farge",
+            command=self._add_palette_colour,
+        ).grid(
+            row=(len(self.document.palette) + 1) // 2,
+            column=0,
+            columnspan=2,
+            sticky=tk.EW,
+            pady=(6, 0),
         )
 
+    def _select_palette_colour(self, index: int) -> None:
+        self.active_colour.set(index)
+        self._rebuild_palette_buttons()
+
+        if hasattr(self, "canvas"):
+            self.canvas.redraw()
+
+    def _on_palette_selected(self) -> None:
+        self._rebuild_palette_buttons()
+        if hasattr(self, "canvas"):
+            self.canvas.redraw(
+            )
+
     def _build_symmetry_controls(self, parent: ttk.Frame) -> None:
+        """Build the symmetry controls in the sidebar, 
+        allowing the user to select symmetry operations for the pattern."""
         frame = ttk.LabelFrame(parent, text="Symmetri i repeterende enhet", padding=8)
         frame.pack(fill=tk.X, pady=(0, 8))
         operations = [
@@ -180,6 +220,7 @@ class KvaleApp:
         try:
             new_width = max(1, self.unit_width.get())
             new_height = max(1, self.unit_height.get())
+
             self.document.unit_width = new_width
             self.document.unit_height = new_height
             self.document.repeats_x = max(1, self.repeats_x.get())
@@ -191,6 +232,58 @@ class KvaleApp:
             self._document_changed()
         except (tk.TclError, ValueError) as error:
             messagebox.showerror("Ugyldige innstillinger", str(error))
+
+    def _insert_column_at(self, index: int) -> None:
+        old_width = self.document.unit_width
+        index = max(0, min(index, old_width))
+        self.document.unit_width = old_width + 1
+        self.document.motif = [
+            Mark(mark.x + 1, mark.y, mark.colour_slot) if mark.x >= index else mark
+            for mark in self.document.motif
+        ]
+        self.unit_width.set(self.document.unit_width)
+        self._apply_symmetry(show_errors=False)
+        self._document_changed()
+
+    def _remove_column_at(self, index: int) -> None:
+        if self.document.unit_width <= 1:
+            return
+        index = max(0, min(index, self.document.unit_width - 1))
+        self.document.unit_width -= 1
+        self.document.motif = [
+            Mark(mark.x - 1, mark.y, mark.colour_slot) if mark.x > index else mark
+            for mark in self.document.motif
+            if mark.x != index
+        ]
+        self.unit_width.set(self.document.unit_width)
+        self._apply_symmetry(show_errors=False)
+        self._document_changed()
+
+    def _insert_row_at(self, index: int) -> None:
+        old_height = self.document.unit_height
+        index = max(0, min(index, old_height))
+        self.document.unit_height = old_height + 1
+        self.document.motif = [
+            Mark(mark.x, mark.y + 1, mark.colour_slot) if mark.y >= index else mark
+            for mark in self.document.motif
+        ]
+        self.unit_height.set(self.document.unit_height)
+        self._apply_symmetry(show_errors=False)
+        self._document_changed()
+
+    def _remove_row_at(self, index: int) -> None:
+        if self.document.unit_height <= 1:
+            return
+        index = max(0, min(index, self.document.unit_height - 1))
+        self.document.unit_height -= 1
+        self.document.motif = [
+            Mark(mark.x, mark.y - 1, mark.colour_slot) if mark.y > index else mark
+            for mark in self.document.motif
+            if mark.y != index
+        ]
+        self.unit_height.set(self.document.unit_height)
+        self._apply_symmetry(show_errors=False)
+        self._document_changed()
 
     def _apply_symmetry(self, show_errors: bool = True) -> None:
         operations = [name for name, variable in self.symmetry_vars.items() if variable.get()]
