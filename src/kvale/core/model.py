@@ -12,16 +12,6 @@ class Mark:
 
 
 @dataclass
-class ColourRule:
-    mode: str = "fixed"
-    sequence: list[int] = field(default_factory=lambda: [0])
-    advance: str = "unit_x"
-    ax: int = 1
-    ay: int = 0
-    offset: int = 0
-
-
-@dataclass
 class PatternDocument:
     unit_width: int = 12
     unit_height: int = 12
@@ -39,7 +29,6 @@ class PatternDocument:
     palette_sequences: list[list[str]] = field(default_factory=list)
     symmetry: list[str] = field(default_factory=lambda: ["identity"])
     motif: list[Mark] = field(default_factory=list)
-    colour_rule: ColourRule = field(default_factory=ColourRule)
 
     def validate(self) -> None:
         if self.unit_width < 1 or self.unit_height < 1:
@@ -111,7 +100,6 @@ class PatternDocument:
                 Mark(int(item["x"]), int(item["y"]), int(item.get("colour_slot", 0)))
                 for item in data.get("motif", [])
             ],
-            colour_rule=ColourRule(**data.get("colour_rule", {})),
         )
         document.validate()
         return document
