@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import tkinter as tk
+from collections.abc import Callable
 from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, ttk
 
@@ -89,7 +90,7 @@ class KvaleApp:
         self.root.bind("<Control-o>", lambda _event: self.open_document())
         self.root.bind("<Control-s>", lambda _event: self.save_document())
 
-    def _spin_row(self, parent: ttk.Frame, label: str, variable: tk.IntVar, row: int) -> None:
+    def _spin_row(self, parent: tk.Misc, label: str, variable: tk.IntVar, row: int) -> None:
         ttk.Label(parent, text=label).grid(row=row, column=0, sticky=tk.W, pady=2)
         ttk.Spinbox(parent, from_=1, to=100, textvariable=variable, width=7, command=self._apply_controls).grid(
             row=row, column=1, sticky=tk.E, pady=2
@@ -154,7 +155,6 @@ class KvaleApp:
         self.palette_frame.pack(fill=tk.X, pady=(0, 8))
         self._rebuild_palette_buttons()
 
-
     def _rebuild_palette_buttons(self) -> None:
         for child in self.palette_frame.winfo_children():
             child.destroy()
@@ -167,8 +167,8 @@ class KvaleApp:
                 colour=colour,
                 text=f"Farge {index + 1}",
                 selected=index == selected_index,
-                command=lambda i=index: self._select_palette_colour(i),
-                edit_command=lambda i=index: self._choose_palette_colour(i),
+                command=self._make_palette_select_command(index),
+                edit_command=self._make_palette_edit_command(index),
             )
 
             button.grid(
@@ -198,6 +198,18 @@ class KvaleApp:
         if hasattr(self, "canvas"):
             self.canvas.redraw()
 
+    def _make_palette_select_command(self, index: int) -> Callable[[], None]:
+        def command() -> None:
+            self._select_palette_colour(index)
+
+        return command
+
+    def _make_palette_edit_command(self, index: int) -> Callable[[], None]:
+        def command() -> None:
+            self._choose_palette_colour(index)
+
+        return command
+
     def _on_palette_selected(self) -> None:
         self._rebuild_palette_buttons()
         if hasattr(self, "canvas"):
@@ -205,7 +217,7 @@ class KvaleApp:
             )
 
     def _build_symmetry_controls(self, parent: ttk.Frame) -> None:
-        """Build the symmetry controls in the sidebar, 
+        """Build the symmetry controls in the sidebar,
         allowing the user to select symmetry operations for the pattern."""
         frame = ttk.LabelFrame(parent, text="Symmetri i repeterende enhet", padding=8)
         frame.pack(fill=tk.X, pady=(0, 8))

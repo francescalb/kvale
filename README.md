@@ -1,5 +1,8 @@
 # Kvale
 
+[![CI](https://github.com/francescalb/kvale/actions/workflows/ci.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/ci.yml)
+[![PR Validate](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml)
+
 Pattern Studio is a modular Python desktop application for designing repeating,
 grid-based textile and embroidery patterns. Geometry, symmetry and colouring are
 kept separate so that the colour repeat does not have to match the geometric repeat.
@@ -50,7 +53,7 @@ kvale
 ```
 
 On Linux, Tkinter may need to be installed through the operating system package
-manager, for example `sudo apt install python3-tk` on Ubuntu or Debian. 
+manager, for example `sudo apt install python3-tk` on Ubuntu or Debian.
 You might need to specify python version when installing Tkinter: `sudo apt install python3.14-tk`
 
 ## Using the editor
@@ -78,6 +81,13 @@ Double-click a palette button to change its colour.
 ```bash
 pytest
 ruff check .
+```
+
+## Pre-commit
+
+```bash
+pre-commit install
+pre-commit run --all-files
 ```
 
 
