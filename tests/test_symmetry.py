@@ -14,3 +14,23 @@ def test_four_way_expansion() -> None:
         operations=["identity", "mirror_x", "mirror_y", "rotate_180"],
     )
     assert {(mark.x, mark.y) for mark in marks} == {(1, 1), (4, 1), (1, 4), (4, 4)}
+
+def test_horizontal_and_vertical_mirrors_are_combined() -> None:
+    marks = expand_marks(
+        [Mark(1, 1, 0)],
+        width=6,
+        height=6,
+        operations=["identity", "mirror_x", "mirror_y"],
+    )
+
+    positions = {
+        (mark.x, mark.y)
+        for mark in marks
+    }
+
+    assert positions == {
+        (1, 1),
+        (4, 1),
+        (1, 4),
+        (4, 4),
+    }
