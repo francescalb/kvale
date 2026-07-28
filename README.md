@@ -3,7 +3,7 @@
 [![CI](https://github.com/francescalb/kvale/actions/workflows/ci.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/ci.yml)
 [![PR Validate](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml)
 
-Pattern Studio is a modular Python desktop application for designing repeating,
+`Kvale` is a modular Python desktop application for designing repeating,
 grid-based textile and embroidery patterns. Geometry, symmetry and colouring are
 kept separate so that colour sequencing can evolve independently of the geometric repeat.
 
