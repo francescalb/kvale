@@ -27,7 +27,7 @@ class PatternDocument:
     unit_height: int = 12
     repeats_x: int = 6
     repeats_y: int = 2
-    background: str = "#f5f1e8"
+    background: str = "#ffffff"
     palette: list[str] = field(
         default_factory=lambda: ["#b1172b", "#2d7d32", "#f2c84b", "#1b1b1b"]
     )
@@ -72,7 +72,7 @@ class PatternDocument:
             unit_height=int(data.get("unit_height", 12)),
             repeats_x=int(data.get("repeats_x", 6)),
             repeats_y=int(data.get("repeats_y", 2)),
-            background=str(data.get("background", "#f5f1e8")),
+            background=str(data.get("background", "#ffffff")),
             palette=[str(value) for value in data.get("palette", ["#000000"])],
             symmetry=[str(value) for value in data.get("symmetry", ["identity"])],
             motif=[
