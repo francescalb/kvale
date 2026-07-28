@@ -3,9 +3,9 @@
 [![CI](https://github.com/francescalb/kvale/actions/workflows/ci.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/ci.yml)
 [![PR Validate](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml)
 
-Pattern Studio is a modular Python desktop application for designing repeating,
+`Kvale` is a modular Python desktop application for designing repeating,
 grid-based textile and embroidery patterns. Geometry, symmetry and colouring are
-kept separate so that the colour repeat does not have to match the geometric repeat.
+kept separate so that colour sequencing can evolve independently of the geometric repeat.
 
 The first version uses Tkinter for the GUI, Pillow for PNG export, JSON for editable
 project files, and a small dependency-free core that can later be reused by a web UI,
@@ -16,7 +16,8 @@ CLI, SVG exporter or embroidery-format plugin.
 - Click-to-paint editor for a recurring grid unit
 - Live expansion by mirror planes and rotations
 - Repeated-band preview
-- Independent colour sequences and colour cycles
+- Per-slot palette sequences edited from the colour dialog
+- Toggle to apply sequence over repeats (`Bruk fargeskvens`)
 - JSON save/load
 - PNG export
 - Unit tests and GitHub Actions
@@ -29,8 +30,7 @@ src/kvale/
 ├── core/
 │   ├── model.py          # document data model
 │   ├── symmetry.py       # symmetry operations
-│   ├── colouring.py      # independent colour-repeat rules
-│   ├── renderer.py       # grid construction and raster export
+│   ├── renderer.py       # repeat-aware colour grid and raster export
 │   └── serialization.py  # JSON persistence
 └── gui/
     ├── app.py            # menus, controls and document lifecycle
@@ -63,18 +63,41 @@ You might need to specify python version when installing Tkinter: `sudo apt inst
 3. Left-click cells to paint seed marks; right-click to erase.
 4. Enable mirrors or rotations. Seed cells have a dark inset border; generated cells do not.
 5. Switch to **Preview repeats** to see the complete band.
-6. Set an independent colour rule. A sequence such as `0,1,2,1,3` repeats every five
-   units even when the geometric unit repeats every unit.
-7. Save the editable pattern as JSON or export a PNG.
+6. Double-click a colour swatch in **Farger** to open **Velg palettfarge**.
+7. In the dialog:
+    - Set `Antall farger` (default 1)
+    - Select which `Del i sekvens` to edit
+    - Use `Velg farge for del` to change that part
+8. In **Farger**, toggle `Bruk fargeskvens`:
+    - `Av`: only the first colour in each sequence is used for all repeats
+    - `På`: sequence advances along repeats and wraps when it reaches the end
+9. Save the editable pattern as JSON or export a PNG.
 
-Double-click a palette button to change its colour.
+The legend rectangle for each `#n` slot is subdivided to visualize its current sequence.
 
-## Colour rules
+## Palette sequence behavior
 
-- `fixed`: each motif colour slot always maps to the same palette colour.
-- `unit_cycle`: palette position advances with recurring-unit coordinates.
-- `cell_cycle`: palette position advances with full-grid cell coordinates.
-- `sequence`: an explicit sequence such as `[0, 0, 1, 2, 1]` advances by unit or cell.
+- Each colour slot (`#1`, `#2`, ...) has its own list of colours.
+- If a sequence has one entry, that colour stays constant even when sequencing is enabled.
+- If a sequence is shorter than the number of repeats, it restarts from the beginning.
+
+## JSON format
+
+Pattern files now use `palette_sequences` as canonical colour storage.
+
+```json
+{
+  "palette_sequences": [
+     ["#e83608"],
+     ["#2d7d32"],
+     ["#f2c84b", "#f28ec8"]
+  ],
+  "use_palette_sequence": true
+}
+```
+
+- The first colour in each inner list is used as the base colour for that slot.
+- `palette` is not written to JSON.
 
 ## Tests
 
@@ -107,7 +130,7 @@ pre-commit run --all-files
 New functionality should normally be added behind a small interface:
 
 - New symmetry: add a transform in `core/symmetry.py`.
-- New colour behaviour: add a rule implementation in `core/colouring.py`.
+- New colour behaviour: extend sequence handling in `core/renderer.py` and document model fields in `core/model.py`.
 - New export format: consume `PatternDocument` or `build_colour_grid()` in a new exporter module.
 - New GUI: reuse the entire `core` package without importing Tkinter.
 
