@@ -31,10 +31,12 @@ class PatternDocument:
     repeat_right_column: bool = True
     repeat_top_row: bool = True
     repeat_bottom_row: bool = True
+    use_palette_sequence: bool = False
     background: str = "#ffffff"
     palette: list[str] = field(
         default_factory=lambda: ["#b1172b", "#2d7d32", "#f2c84b", "#1b1b1b"]
     )
+    palette_sequences: list[list[str]] = field(default_factory=list)
     symmetry: list[str] = field(default_factory=lambda: ["identity"])
     motif: list[Mark] = field(default_factory=list)
     colour_rule: ColourRule = field(default_factory=ColourRule)
@@ -66,11 +68,31 @@ class PatternDocument:
 
     def to_dict(self) -> dict[str, Any]:
         result = asdict(self)
+        if not result.get("palette_sequences"):
+            result["palette_sequences"] = [[colour] for colour in self.palette]
+        # Keep JSON canonical: palette is derived from palette_sequences.
+        if "palette" in result:
+            del result["palette"]
         result["motif"] = [asdict(mark) for mark in self.motif]
         return result
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "PatternDocument":
+        raw_sequences = data.get("palette_sequences")
+        if not isinstance(raw_sequences, list) or not raw_sequences:
+            raise ValueError("Pattern file must contain non-empty palette_sequences")
+
+        palette_sequences: list[list[str]] = []
+        for entry in raw_sequences:
+            if not isinstance(entry, list) or not entry:
+                raise ValueError("Each palette sequence must be a non-empty list")
+            row = [str(value) for value in entry if str(value)]
+            if not row:
+                raise ValueError("Palette sequence entries must contain colours")
+            palette_sequences.append(row)
+
+        palette = [row[0] for row in palette_sequences]
+
         document = cls(
             unit_width=int(data.get("unit_width", 12)),
             unit_height=int(data.get("unit_height", 12)),
@@ -80,8 +102,10 @@ class PatternDocument:
             repeat_right_column=bool(data.get("repeat_right_column", True)),
             repeat_top_row=bool(data.get("repeat_top_row", True)),
             repeat_bottom_row=bool(data.get("repeat_bottom_row", True)),
+            use_palette_sequence=bool(data.get("use_palette_sequence", False)),
             background=str(data.get("background", "#ffffff")),
-            palette=[str(value) for value in data.get("palette", ["#000000"])],
+            palette=palette,
+            palette_sequences=palette_sequences,
             symmetry=[str(value) for value in data.get("symmetry", ["identity"])],
             motif=[
                 Mark(int(item["x"]), int(item["y"]), int(item.get("colour_slot", 0)))

@@ -40,3 +40,37 @@ def test_disable_vertical_edge_repetition() -> None:
     assert len(grid) == 5
     # No artificial white seam rows remain in the repeated band.
     assert all(row[1] == document.palette[1] for row in grid)
+
+
+def test_palette_sequence_off_uses_first_sequence_colour_for_all_repeats() -> None:
+    document = PatternDocument(
+        unit_width=1,
+        unit_height=1,
+        repeats_x=5,
+        repeats_y=1,
+        motif=[Mark(0, 0, 0)],
+        symmetry=["identity"],
+        palette=["#ff0000"],
+        palette_sequences=[["#ff0000", "#0000ff"]],
+        use_palette_sequence=False,
+    )
+
+    grid = build_colour_grid(document)
+    assert grid[0] == ["#ff0000", "#ff0000", "#ff0000", "#ff0000", "#ff0000"]
+
+
+def test_palette_sequence_on_cycles_along_repeats() -> None:
+    document = PatternDocument(
+        unit_width=1,
+        unit_height=1,
+        repeats_x=6,
+        repeats_y=1,
+        motif=[Mark(0, 0, 0)],
+        symmetry=["identity"],
+        palette=["#ff0000"],
+        palette_sequences=[["#ff0000", "#0000ff", "#00ff00"]],
+        use_palette_sequence=True,
+    )
+
+    grid = build_colour_grid(document)
+    assert grid[0] == ["#ff0000", "#0000ff", "#00ff00", "#ff0000", "#0000ff", "#00ff00"]

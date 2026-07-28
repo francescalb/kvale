@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from PIL import Image, ImageDraw
 
-from kvale.core.colouring import resolve_colour_index
 from kvale.core.model import PatternDocument
 from kvale.core.symmetry import expand_marks
 
@@ -57,12 +56,24 @@ def build_colour_grid(document: PatternDocument) -> list[list[str]]:
         document.symmetry,
     )
 
+    sequences: list[list[str]] = []
+    if document.palette_sequences:
+        sequences = [list(row) for row in document.palette_sequences]
+    while len(sequences) < len(document.palette):
+        sequences.append([document.palette[len(sequences)]])
+    if len(sequences) > len(document.palette):
+        sequences = sequences[: len(document.palette)]
+    for slot_index, sequence in enumerate(sequences):
+        if not sequence:
+            sequences[slot_index] = [document.palette[slot_index]]
+
     for unit_y in range(document.repeats_y):
         row_map = {local_y: y_offsets[unit_y] + index for index, local_y in enumerate(unit_rows[unit_y])}
         for unit_x in range(document.repeats_x):
             column_map = {
                 local_x: x_offsets[unit_x] + index for index, local_x in enumerate(unit_columns[unit_x])
             }
+            repeat_index = unit_y * document.repeats_x + unit_x
             for mark in expanded:
                 if mark.x not in column_map:
                     continue
@@ -71,16 +82,13 @@ def build_colour_grid(document: PatternDocument) -> list[list[str]]:
 
                 cell_x = column_map[mark.x]
                 cell_y = row_map[mark.y]
-                index = resolve_colour_index(
-                    mark.colour_slot,
-                    unit_x,
-                    unit_y,
-                    cell_x,
-                    cell_y,
-                    document.colour_rule,
-                    len(document.palette),
-                )
-                grid[cell_y][cell_x] = document.palette[index]
+                slot_index = mark.colour_slot % len(document.palette)
+                slot_sequence = sequences[slot_index]
+                if document.use_palette_sequence:
+                    colour = slot_sequence[repeat_index % len(slot_sequence)]
+                else:
+                    colour = slot_sequence[0]
+                grid[cell_y][cell_x] = colour
     return grid
 
 

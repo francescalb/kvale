@@ -3,8 +3,14 @@
   "unit_height": 12,
   "repeats_x": 7,
   "repeats_y": 2,
+  "use_palette_sequence": false,
   "background": "#f5f1e8",
-  "palette": ["#b1172b", "#2d7d32", "#f2c84b", "#1b1b1b"],
+  "palette_sequences": [
+    ["#b1172b"],
+    ["#2d7d32"],
+    ["#f2c84b"],
+    ["#1b1b1b"]
+  ],
   "symmetry": ["identity", "mirror_x", "mirror_y", "rotate_180"],
   "motif": [
     {"x": 5, "y": 1, "colour_slot": 0},

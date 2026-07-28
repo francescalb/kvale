@@ -5,11 +5,10 @@ from collections.abc import Callable
 from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, ttk
 
-from kvale.core.model import ColourRule, Mark, PatternDocument
+from kvale.core.model import Mark, PatternDocument
 from kvale.core.renderer import render_image
 from kvale.core.serialization import load_document, save_document
 from kvale.gui.canvas import PatternCanvas
-from kvale.gui.palette_button import PaletteButton
 
 
 class KvaleApp:
@@ -23,7 +22,9 @@ class KvaleApp:
         self.mode = tk.StringVar(value="edit")
         self.status = tk.StringVar(value="Klar")
         self.symmetry_vars: dict[str, tk.BooleanVar] = {}
-        self.palette_buttons: list[ttk.Button] = []
+        self.palette_buttons: list[tk.Canvas] = []
+        self.palette_sequences: list[list[str]] = []
+        self._palette_single_click_after_id: str | None = None
         self._build_ui()
         self._sync_controls_from_document()
         self.canvas.redraw()
@@ -44,7 +45,6 @@ class KvaleApp:
         self._build_document_controls(sidebar)
         self._build_palette_controls(sidebar)
         self._build_symmetry_controls(sidebar)
-        self._build_colour_rule_controls(sidebar)
 
         toolbar = ttk.Frame(workspace)
         toolbar.pack(fill=tk.X, pady=(0, 6))
@@ -153,6 +153,7 @@ class KvaleApp:
     def _build_palette_controls(self, parent: ttk.Frame) -> None:
         self.palette_frame = ttk.LabelFrame(parent, text="Farger", padding=8)
         self.palette_frame.pack(fill=tk.X, pady=(0, 8))
+        self.use_palette_sequence = tk.BooleanVar(value=False)
         self._rebuild_palette_buttons()
 
     def _rebuild_palette_buttons(self) -> None:
@@ -160,36 +161,109 @@ class KvaleApp:
             child.destroy()
 
         selected_index = self.active_colour.get()
+        self._ensure_palette_sequence_capacity()
+        self.palette_buttons = []
 
         for index, colour in enumerate(self.document.palette):
-            button = PaletteButton(
-                self.palette_frame,
-                colour=colour,
-                text=f"Farge {index + 1}",
-                selected=index == selected_index,
-                command=self._make_palette_select_command(index),
-                edit_command=self._make_palette_edit_command(index),
-            )
+            row = index
+            is_selected = index == selected_index
 
-            button.grid(
-                row=index // 2,
-                column=index % 2,
-                sticky=tk.EW,
-                padx=2,
-                pady=2,
+            label = ttk.Label(
+                self.palette_frame,
+                text=f"#{index + 1}",
+                font=("TkDefaultFont", 9, "bold") if is_selected else ("TkDefaultFont", 9),
             )
+            label.grid(row=row, column=0, sticky=tk.W, padx=(0, 6), pady=2)
+            label.bind("<Button-1>", self._make_palette_single_click_handler(index))
+
+            swatch = tk.Canvas(
+                self.palette_frame,
+                width=120,
+                height=18,
+                highlightthickness=0,
+                borderwidth=0,
+                cursor="hand2",
+            )
+            swatch.grid(row=row, column=1, sticky=tk.W, pady=2)
+
+            sequence = self.palette_sequences[index] if index < len(self.palette_sequences) else [colour]
+            if not sequence:
+                sequence = [colour]
+
+            segment_width = max(1, 120 // len(sequence))
+            for segment_index, segment_colour in enumerate(sequence):
+                left = segment_index * segment_width
+                right = 120 if segment_index == len(sequence) - 1 else (segment_index + 1) * segment_width
+                swatch.create_rectangle(left, 0, right, 18, fill=segment_colour, outline=segment_colour)
+
+            border = 2 if is_selected else 1
+            swatch.create_rectangle(
+                border // 2,
+                border // 2,
+                120 - border // 2,
+                18 - border // 2,
+                outline="#000000",
+                width=border,
+            )
+            swatch.bind("<Button-1>", self._make_palette_single_click_handler(index))
+            swatch.bind("<Double-Button-1>", self._make_palette_double_click_handler(index))
+            self.palette_buttons.append(swatch)
 
         ttk.Button(
             self.palette_frame,
             text="Legg til farge",
             command=self._add_palette_colour,
         ).grid(
-            row=(len(self.document.palette) + 1) // 2,
+            row=len(self.document.palette),
             column=0,
             columnspan=2,
             sticky=tk.EW,
             pady=(6, 0),
         )
+        ttk.Checkbutton(
+            self.palette_frame,
+            text="Bruk fargeskvens",
+            variable=self.use_palette_sequence,
+            command=self._on_use_palette_sequence_changed,
+        ).grid(
+            row=len(self.document.palette) + 1,
+            column=0,
+            columnspan=2,
+            sticky=tk.W,
+            pady=(6, 0),
+        )
+
+    def _on_palette_single_click(self, index: int) -> None:
+        if self._palette_single_click_after_id is not None:
+            self.root.after_cancel(self._palette_single_click_after_id)
+        # Defer selection so double-click can cancel this redraw.
+        self._palette_single_click_after_id = self.root.after(220, lambda: self._run_palette_single_click(index))
+
+    def _make_palette_single_click_handler(self, index: int) -> Callable[[tk.Event[tk.Misc]], None]:
+        def handler(_event: tk.Event[tk.Misc]) -> None:
+            self._on_palette_single_click(index)
+
+        return handler
+
+    def _make_palette_double_click_handler(self, index: int) -> Callable[[tk.Event[tk.Misc]], None]:
+        def handler(_event: tk.Event[tk.Misc]) -> None:
+            self._on_palette_swatch_double_click(index)
+
+        return handler
+
+    def _run_palette_single_click(self, index: int) -> None:
+        self._palette_single_click_after_id = None
+        self._select_palette_colour(index)
+
+    def _on_palette_swatch_double_click(self, index: int) -> None:
+        if self._palette_single_click_after_id is not None:
+            self.root.after_cancel(self._palette_single_click_after_id)
+            self._palette_single_click_after_id = None
+        self._choose_palette_colour(index)
+
+    def _on_use_palette_sequence_changed(self) -> None:
+        self.document.use_palette_sequence = self.use_palette_sequence.get()
+        self._document_changed()
 
     def _select_palette_colour(self, index: int) -> None:
         self.active_colour.set(index)
@@ -237,34 +311,6 @@ class KvaleApp:
             ttk.Checkbutton(frame, text=label, variable=variable, command=self._apply_symmetry).grid(
                 row=row, column=0, sticky=tk.W
             )
-
-    def _build_colour_rule_controls(self, parent: ttk.Frame) -> None:
-        frame = ttk.LabelFrame(parent, text="Uavhengig fargerepetisjon", padding=8)
-        frame.pack(fill=tk.X, pady=(0, 8))
-        self.colour_mode = tk.StringVar(value="fixed")
-        self.colour_sequence = tk.StringVar(value="0,1,2,1,3")
-        self.colour_advance = tk.StringVar(value="unit_x")
-        ttk.Label(frame, text="Modus").grid(row=0, column=0, sticky=tk.W)
-        ttk.Combobox(
-            frame,
-            textvariable=self.colour_mode,
-            values=("fixed", "unit_cycle", "cell_cycle", "sequence"),
-            state="readonly",
-            width=12,
-        ).grid(row=0, column=1, sticky=tk.EW)
-        ttk.Label(frame, text="Sekvens").grid(row=1, column=0, sticky=tk.W)
-        ttk.Entry(frame, textvariable=self.colour_sequence, width=14).grid(row=1, column=1, sticky=tk.EW)
-        ttk.Label(frame, text="Advance by").grid(row=2, column=0, sticky=tk.W)
-        ttk.Combobox(
-            frame,
-            textvariable=self.colour_advance,
-            values=("unit_x", "unit_y", "unit_xy", "cell_x", "cell_y"),
-            state="readonly",
-            width=12,
-        ).grid(row=2, column=1, sticky=tk.EW)
-        ttk.Button(frame, text="Bruk fargeregel", command=self._apply_colour_rule).grid(
-            row=3, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0)
-        )
 
     def _apply_controls(self) -> None:
         try:
@@ -357,31 +403,157 @@ class KvaleApp:
         if hasattr(self, "canvas"):
             self._document_changed()
 
-    def _apply_colour_rule(self) -> None:
-        try:
-            sequence = [int(part.strip()) for part in self.colour_sequence.get().split(",") if part.strip()]
-            if not sequence:
-                sequence = [0]
-            self.document.colour_rule = ColourRule(
-                mode=self.colour_mode.get(),
-                sequence=sequence,
-                advance=self.colour_advance.get(),
-            )
-            self._document_changed()
-        except ValueError as error:
-            messagebox.showerror("Ugyldig fargeregel", str(error))
-
     def _choose_palette_colour(self, index: int) -> None:
-        selected = colorchooser.askcolor(color=self.document.palette[index], title="Velg palettfarge")[1]
-        if selected:
-            self.document.palette[index] = selected
-            self._rebuild_palette_buttons()
-            self._document_changed()
+        self._ensure_palette_sequence_capacity()
+        current_sequence = list(self.palette_sequences[index])
+        selected_sequence = self._open_palette_sequence_dialog(index, current_sequence)
+        if selected_sequence is None:
+            return
+
+        self.palette_sequences[index] = selected_sequence
+        self.document.palette_sequences = [list(row) for row in self.palette_sequences]
+        self.document.palette[index] = selected_sequence[0]
+        self._rebuild_palette_buttons()
+        self._document_changed()
+
+    def _ensure_palette_sequence_capacity(self) -> None:
+        while len(self.palette_sequences) < len(self.document.palette):
+            palette_index = len(self.palette_sequences)
+            self.palette_sequences.append([self.document.palette[palette_index]])
+        if len(self.palette_sequences) > len(self.document.palette):
+            self.palette_sequences = self.palette_sequences[: len(self.document.palette)]
+        self.document.palette_sequences = [list(row) for row in self.palette_sequences]
+
+    def _open_palette_sequence_dialog(self, index: int, initial_sequence: list[str]) -> list[str] | None:
+        sequence = list(initial_sequence) if initial_sequence else [self.document.palette[index]]
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Velg palettfarge")
+        dialog.transient(self.root)
+        dialog.resizable(False, False)
+
+        body = ttk.Frame(dialog, padding=10)
+        body.grid(row=0, column=0, sticky=tk.NSEW)
+
+        preview_label = ttk.Label(body, text="Nåværende sekvens")
+        preview_label.grid(row=0, column=0, columnspan=3, sticky=tk.W)
+
+        preview = tk.Canvas(body, width=260, height=24, highlightthickness=1, highlightbackground="#666666")
+        preview.grid(row=1, column=0, columnspan=3, sticky=tk.EW, pady=(4, 10))
+
+        count_var = tk.IntVar(value=max(1, len(sequence)))
+        part_var = tk.StringVar(value="1")
+        current_part_colour = tk.StringVar(value=sequence[0])
+
+        ttk.Label(body, text="Antall farger").grid(row=2, column=0, sticky=tk.W)
+        count_spin = ttk.Spinbox(body, from_=1, to=24, textvariable=count_var, width=8)
+        count_spin.grid(row=2, column=1, sticky=tk.W, padx=(6, 0))
+
+        ttk.Label(body, text="Del i sekvens").grid(row=3, column=0, sticky=tk.W, pady=(8, 0))
+        part_combo = ttk.Combobox(body, textvariable=part_var, state="readonly", width=8)
+        part_combo.grid(row=3, column=1, sticky=tk.W, padx=(6, 0), pady=(8, 0))
+
+        ttk.Label(body, text="Valgt del").grid(row=4, column=0, sticky=tk.W, pady=(8, 0))
+        selected_part_swatch = tk.Canvas(body, width=44, height=20, highlightthickness=1, highlightbackground="#666666")
+        selected_part_swatch.grid(row=4, column=1, sticky=tk.W, padx=(6, 0), pady=(8, 0))
+
+        button_row = ttk.Frame(body)
+        button_row.grid(row=5, column=0, columnspan=3, sticky=tk.EW, pady=(10, 0))
+        ttk.Button(button_row, text="Velg farge for del", command=lambda: choose_part_colour()).pack(side=tk.LEFT)
+
+        action_row = ttk.Frame(body)
+        action_row.grid(row=6, column=0, columnspan=3, sticky=tk.E, pady=(12, 0))
+
+        result: list[str] | None = None
+
+        def draw_preview() -> None:
+            preview.delete("all")
+            width = 260
+            height = 24
+            segment_width = max(1, width // len(sequence))
+            for segment_index, colour in enumerate(sequence):
+                left = segment_index * segment_width
+                right = width if segment_index == len(sequence) - 1 else (segment_index + 1) * segment_width
+                preview.create_rectangle(left, 0, right, height, fill=colour, outline=colour)
+                preview.create_text(
+                    (left + right) / 2,
+                    height / 2,
+                    text=str(segment_index + 1),
+                    fill="white",
+                )
+
+        def redraw_selected_part() -> None:
+            selected_part_swatch.delete("all")
+            colour = sequence[int(part_var.get()) - 1]
+            current_part_colour.set(colour)
+            selected_part_swatch.create_rectangle(0, 0, 44, 20, fill=colour, outline=colour)
+
+        def refresh_part_options() -> None:
+            options = [str(value) for value in range(1, len(sequence) + 1)]
+            part_combo["values"] = options
+            if part_var.get() not in options:
+                part_var.set(options[0])
+            redraw_selected_part()
+
+        def apply_count_change(*_args: object) -> None:
+            try:
+                target = max(1, int(count_var.get()))
+            except (tk.TclError, ValueError):
+                return
+            if target > len(sequence):
+                sequence.extend([sequence[-1]] * (target - len(sequence)))
+            elif target < len(sequence):
+                del sequence[target:]
+            refresh_part_options()
+            draw_preview()
+
+        def choose_part_colour() -> None:
+            part_index = int(part_var.get()) - 1
+            selected = colorchooser.askcolor(
+                color=sequence[part_index],
+                title=f"Velg farge for del {part_index + 1}",
+                parent=dialog,
+            )[1]
+            if selected:
+                sequence[part_index] = selected
+                redraw_selected_part()
+                draw_preview()
+
+        def on_ok() -> None:
+            nonlocal result
+            result = list(sequence)
+            dialog.destroy()
+
+        def on_cancel() -> None:
+            dialog.destroy()
+
+        ttk.Button(action_row, text="OK", command=on_ok).pack(side=tk.LEFT, padx=(0, 6))
+        ttk.Button(action_row, text="Avbryt", command=on_cancel).pack(side=tk.LEFT)
+
+        count_var.trace_add("write", apply_count_change)
+        part_var.trace_add("write", lambda *_args: redraw_selected_part())
+
+        refresh_part_options()
+        draw_preview()
+        dialog.update_idletasks()
+        try:
+            dialog.wait_visibility()
+            dialog.grab_set()
+        except tk.TclError:
+            # Some window managers can reject grab during early mapping.
+            pass
+        dialog.protocol("WM_DELETE_WINDOW", on_cancel)
+        dialog.wait_window()
+
+        return result
 
     def _add_palette_colour(self) -> None:
         selected = colorchooser.askcolor(color="#808080", title="Legg til palettfarge")[1]
         if selected:
             self.document.palette.append(selected)
+            self.palette_sequences.append([selected])
+            self.document.palette_sequences = [list(row) for row in self.palette_sequences]
+            self._ensure_palette_sequence_capacity()
             self._rebuild_palette_buttons()
             self._document_changed()
 
@@ -401,11 +573,15 @@ class KvaleApp:
         self.repeat_right_column.set(self.document.repeat_right_column)
         self.repeat_top_row.set(self.document.repeat_top_row)
         self.repeat_bottom_row.set(self.document.repeat_bottom_row)
+        self.use_palette_sequence.set(self.document.use_palette_sequence)
         for name, variable in self.symmetry_vars.items():
             variable.set(name in self.document.symmetry)
-        self.colour_mode.set(self.document.colour_rule.mode)
-        self.colour_sequence.set(",".join(str(value) for value in self.document.colour_rule.sequence))
-        self.colour_advance.set(self.document.colour_rule.advance)
+        if self.document.palette_sequences:
+            self.palette_sequences = [list(row) for row in self.document.palette_sequences]
+        else:
+            self.palette_sequences = [[colour] for colour in self.document.palette]
+            self.document.palette_sequences = [list(row) for row in self.palette_sequences]
+        self._ensure_palette_sequence_capacity()
         self.active_colour.set(0)
         self._rebuild_palette_buttons()
 
