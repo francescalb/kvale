@@ -235,17 +235,23 @@ class PatternCanvas(tk.Canvas):
         if self.mode != "edit":
             return
 
+        document = self.document_getter()
+        new_target = self._resize_target(document, event.x, event.y)
+
+        # If pointer is on a margin, that position should always control target.
+        if new_target is not None:
+            if new_target != self.hover_target:
+                self.hover_target = new_target
+                self.redraw()
+            return
+
+        # Keep current target while user moves inside action boxes.
         if self._is_in_action_area(event.x, event.y):
             return
 
-        document = self.document_getter()
-        new_target = self._resize_target(document, event.x, event.y)
-        if new_target is None and self.hover_target is not None:
+        if self.hover_target is not None:
             self.hover_target = None
             self.redraw()
-            return
-        self.hover_target = new_target
-        self.redraw()
 
     def _on_leave(self, _event: tk.Event[tk.Misc]) -> None:
         if self.hover_target is None:
