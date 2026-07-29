@@ -90,6 +90,9 @@ class KvaleApp:
         file_menu.add_separator()
         file_menu.add_command(label="Avslutt", command=self.root.destroy)
         menu.add_cascade(label="Fil", menu=file_menu)
+        grid_menu = tk.Menu(menu, tearoff=False)
+        grid_menu.add_command(label="Legg til/fjern rad eller kolonne...", command=self._open_resize_grid_dialog)
+        menu.add_cascade(label="Rutenett", menu=grid_menu)
         self.root.config(menu=menu)
         self.root.bind("<Control-n>", lambda _event: self.new_document())
         self.root.bind("<Control-o>", lambda _event: self.open_document())
@@ -154,6 +157,11 @@ class KvaleApp:
         ttk.Button(frame, text="Bruk", command=self._apply_controls).grid(
             row=9, column=0, columnspan=2, sticky=tk.EW, pady=(8, 0)
         )
+        ttk.Button(
+            frame,
+            text="Legg til/fjern rad eller kolonne...",
+            command=self._open_resize_grid_dialog,
+        ).grid(row=10, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0))
 
     def _build_palette_controls(self, parent: ttk.Frame) -> None:
         self.palette_frame = ttk.LabelFrame(parent, text="Farger", padding=8)
@@ -338,57 +346,224 @@ class KvaleApp:
         except (tk.TclError, ValueError) as error:
             messagebox.showerror("Ugyldige innstillinger", str(error))
 
-    def _insert_column_at(self, index: int) -> None:
-        old_width = self.document.unit_width
-        index = max(0, min(index, old_width))
-        self.document.unit_width = old_width + 1
-        self.document.motif = [
-            Mark(mark.x + 1, mark.y, mark.colour_slot) if mark.x >= index else mark
-            for mark in self.document.motif
-        ]
+    @staticmethod
+    def _transform_grid_axis(
+        axis: str,
+        index: int,
+        operation: str,
+        width: int,
+        height: int,
+        *,
+        insertion: bool,
+    ) -> tuple[str, int]:
+        """Transform a row/column (or insertion gap) through one symmetry."""
+        x_limit = width if insertion else width - 1
+        y_limit = height if insertion else height - 1
+        transforms: dict[str, dict[str, tuple[str, int]]] = {
+            "identity": {
+                "column": ("column", index),
+                "row": ("row", index),
+            },
+            "mirror_x": {
+                "column": ("column", x_limit - index),
+                "row": ("row", index),
+            },
+            "mirror_y": {
+                "column": ("column", index),
+                "row": ("row", y_limit - index),
+            },
+            "rotate_180": {
+                "column": ("column", x_limit - index),
+                "row": ("row", y_limit - index),
+            },
+            "rotate_90": {
+                "column": ("row", index),
+                "row": ("column", y_limit - index),
+            },
+            "rotate_270": {
+                "column": ("row", x_limit - index),
+                "row": ("column", index),
+            },
+            "diag_main": {
+                "column": ("row", index),
+                "row": ("column", index),
+            },
+            "diag_anti": {
+                "column": ("row", x_limit - index),
+                "row": ("column", y_limit - index),
+            },
+        }
+        return transforms.get(operation, transforms["identity"])[axis]
+
+    def _grid_axis_orbit(self, axis: str, index: int, *, insertion: bool) -> set[tuple[str, int]]:
+        """Return every row/column required by the active symmetry group."""
+        width = self.document.unit_width
+        height = self.document.unit_height
+        result = {(axis, index)}
+        pending = [(axis, index)]
+        operations = self.document.symmetry or ["identity"]
+        while pending:
+            current_axis, current_index = pending.pop()
+            for operation in operations:
+                transformed = self._transform_grid_axis(
+                    current_axis,
+                    current_index,
+                    operation,
+                    width,
+                    height,
+                    insertion=insertion,
+                )
+                if transformed not in result:
+                    result.add(transformed)
+                    pending.append(transformed)
+        return result
+
+    def _resize_grid_axis(self, axis: str, index: int, *, insertion: bool) -> None:
+        width = self.document.unit_width
+        height = self.document.unit_height
+        upper_bound = (width if axis == "column" else height) - (0 if insertion else 1)
+        index = max(0, min(index, upper_bound))
+        orbit = self._grid_axis_orbit(axis, index, insertion=insertion)
+        columns = sorted(value for kind, value in orbit if kind == "column")
+        rows = sorted(value for kind, value in orbit if kind == "row")
+
+        if not insertion and (width - len(columns) < 1 or height - len(rows) < 1):
+            messagebox.showinfo("Kan ikke fjerne", "Rutenettet må ha minst én rad og én kolonne.")
+            return
+
+        if insertion:
+            self.document.motif = [
+                Mark(
+                    mark.x + sum(position <= mark.x for position in columns),
+                    mark.y + sum(position <= mark.y for position in rows),
+                    mark.colour_slot,
+                )
+                for mark in self.document.motif
+            ]
+            self.document.unit_width = width + len(columns)
+            self.document.unit_height = height + len(rows)
+        else:
+            removed_columns = set(columns)
+            removed_rows = set(rows)
+            self.document.motif = [
+                Mark(
+                    mark.x - sum(position < mark.x for position in columns),
+                    mark.y - sum(position < mark.y for position in rows),
+                    mark.colour_slot,
+                )
+                for mark in self.document.motif
+                if mark.x not in removed_columns and mark.y not in removed_rows
+            ]
+            self.document.unit_width = width - len(columns)
+            self.document.unit_height = height - len(rows)
+
         self.unit_width.set(self.document.unit_width)
+        self.unit_height.set(self.document.unit_height)
         self._apply_symmetry(show_errors=False)
         self._document_changed()
+
+    def _insert_column_at(self, index: int) -> None:
+        self._resize_grid_axis("column", index, insertion=True)
 
     def _remove_column_at(self, index: int) -> None:
-        if self.document.unit_width <= 1:
-            return
-        index = max(0, min(index, self.document.unit_width - 1))
-        self.document.unit_width -= 1
-        self.document.motif = [
-            Mark(mark.x - 1, mark.y, mark.colour_slot) if mark.x > index else mark
-            for mark in self.document.motif
-            if mark.x != index
-        ]
-        self.unit_width.set(self.document.unit_width)
-        self._apply_symmetry(show_errors=False)
-        self._document_changed()
+        self._resize_grid_axis("column", index, insertion=False)
 
     def _insert_row_at(self, index: int) -> None:
-        old_height = self.document.unit_height
-        index = max(0, min(index, old_height))
-        self.document.unit_height = old_height + 1
-        self.document.motif = [
-            Mark(mark.x, mark.y + 1, mark.colour_slot) if mark.y >= index else mark
-            for mark in self.document.motif
-        ]
-        self.unit_height.set(self.document.unit_height)
-        self._apply_symmetry(show_errors=False)
-        self._document_changed()
+        self._resize_grid_axis("row", index, insertion=True)
 
     def _remove_row_at(self, index: int) -> None:
-        if self.document.unit_height <= 1:
-            return
-        index = max(0, min(index, self.document.unit_height - 1))
-        self.document.unit_height -= 1
-        self.document.motif = [
-            Mark(mark.x, mark.y - 1, mark.colour_slot) if mark.y > index else mark
-            for mark in self.document.motif
-            if mark.y != index
-        ]
-        self.unit_height.set(self.document.unit_height)
-        self._apply_symmetry(show_errors=False)
-        self._document_changed()
+        self._resize_grid_axis("row", index, insertion=False)
+
+    def _open_resize_grid_dialog(self) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Legg til eller fjern rad/kolonne")
+        dialog.transient(self.root)
+        dialog.resizable(False, False)
+
+        body = ttk.Frame(dialog, padding=12)
+        body.grid(row=0, column=0, sticky=tk.NSEW)
+        action_var = tk.StringVar(value="Legg til")
+        target_var = tk.StringVar(value="Øverste rad")
+        number_var = tk.IntVar(value=1)
+        targets = (
+            "Øverste rad",
+            "Nederste rad",
+            "Første kolonne",
+            "Siste kolonne",
+            "Rad med nummer",
+            "Kolonne med nummer",
+        )
+
+        ttk.Label(body, text="Handling").grid(row=0, column=0, sticky=tk.W, pady=3)
+        action_combo = ttk.Combobox(
+            body, textvariable=action_var, values=("Legg til", "Fjern"), state="readonly", width=22
+        )
+        action_combo.grid(row=0, column=1, sticky=tk.EW, padx=(8, 0), pady=3)
+        ttk.Label(body, text="Plassering").grid(row=1, column=0, sticky=tk.W, pady=3)
+        target_combo = ttk.Combobox(body, textvariable=target_var, values=targets, state="readonly", width=22)
+        target_combo.grid(row=1, column=1, sticky=tk.EW, padx=(8, 0), pady=3)
+        number_label = ttk.Label(body, text="Nummer")
+        number_label.grid(row=2, column=0, sticky=tk.W, pady=3)
+        number_spin = ttk.Spinbox(body, from_=1, to=100, textvariable=number_var, width=8)
+        number_spin.grid(row=2, column=1, sticky=tk.W, padx=(8, 0), pady=3)
+        note = ttk.Label(
+            body,
+            text="Aktiv symmetri kan legge til eller fjerne flere rader/kolonner.",
+            wraplength=330,
+        )
+        note.grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=(8, 2))
+        buttons = ttk.Frame(body)
+        buttons.grid(row=4, column=0, columnspan=2, sticky=tk.E, pady=(10, 0))
+
+        def refresh_number_control(*_args: object) -> None:
+            numbered = target_var.get() in {"Rad med nummer", "Kolonne med nummer"}
+            state = "normal" if numbered else "disabled"
+            number_spin.configure(state=state)
+            number_label.configure(state=state)
+            is_row = target_var.get() == "Rad med nummer"
+            limit = self.document.unit_height if is_row else self.document.unit_width
+            if action_var.get() == "Legg til":
+                limit += 1
+            number_spin.configure(to=max(1, limit))
+            try:
+                if number_var.get() > limit:
+                    number_var.set(limit)
+            except tk.TclError:
+                number_var.set(1)
+
+        def apply_resize() -> None:
+            insertion = action_var.get() == "Legg til"
+            target = target_var.get()
+            width = self.document.unit_width
+            height = self.document.unit_height
+            if target == "Øverste rad":
+                axis, index = "row", 0
+            elif target == "Nederste rad":
+                axis, index = "row", height if insertion else height - 1
+            elif target == "Første kolonne":
+                axis, index = "column", 0
+            elif target == "Siste kolonne":
+                axis, index = "column", width if insertion else width - 1
+            else:
+                axis = "row" if target == "Rad med nummer" else "column"
+                try:
+                    index = int(number_var.get()) - 1
+                except (tk.TclError, ValueError):
+                    messagebox.showerror("Ugyldig nummer", "Skriv inn et gyldig rad- eller kolonnenummer.", parent=dialog)
+                    return
+            self._resize_grid_axis(axis, index, insertion=insertion)
+            dialog.destroy()
+
+        ttk.Button(buttons, text="Utfør", command=apply_resize).pack(side=tk.LEFT, padx=(0, 6))
+        ttk.Button(buttons, text="Avbryt", command=dialog.destroy).pack(side=tk.LEFT)
+        target_var.trace_add("write", refresh_number_control)
+        action_var.trace_add("write", refresh_number_control)
+        refresh_number_control()
+        dialog.protocol("WM_DELETE_WINDOW", dialog.destroy)
+        dialog.update_idletasks()
+        dialog.wait_visibility()
+        dialog.grab_set()
+        dialog.wait_window()
 
     def _apply_symmetry(self, show_errors: bool = True) -> None:
         operations = [name for name, variable in self.symmetry_vars.items() if variable.get()]

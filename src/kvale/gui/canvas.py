@@ -9,7 +9,7 @@ from kvale.core.symmetry import expand_marks
 
 
 class PatternCanvas(tk.Canvas):
-    EDIT_MARGIN = 28
+    EDIT_MARGIN = 42
 
     def __init__(
         self,
@@ -137,6 +137,41 @@ class PatternCanvas(tk.Canvas):
         )
         expanded_positions = {(mark.x, mark.y): mark.colour_slot for mark in expanded}
         seed_positions = {(mark.x, mark.y): mark.colour_slot for mark in document.motif}
+
+        label_font = ("TkDefaultFont", 8)
+        label_colour = "#555555"
+        for x in range(document.unit_width):
+            centre_x = self.grid_origin_x + (x + 0.5) * self.cell_size
+            self.create_text(
+                centre_x,
+                self.grid_origin_y - 10,
+                text=str(x + 1),
+                fill=label_colour,
+                font=label_font,
+            )
+            self.create_text(
+                centre_x,
+                self.grid_origin_y + grid_height + 10,
+                text=str(x + 1),
+                fill=label_colour,
+                font=label_font,
+            )
+        for y in range(document.unit_height):
+            centre_y = self.grid_origin_y + (y + 0.5) * self.cell_size
+            self.create_text(
+                self.grid_origin_x - 12,
+                centre_y,
+                text=str(y + 1),
+                fill=label_colour,
+                font=label_font,
+            )
+            self.create_text(
+                self.grid_origin_x + grid_width + 12,
+                centre_y,
+                text=str(y + 1),
+                fill=label_colour,
+                font=label_font,
+            )
 
         for y in range(document.unit_height):
             for x in range(document.unit_width):
