@@ -12,7 +12,7 @@ from kvale.gui.canvas import PatternCanvas
 
 
 class KvaleApp:
-    def __init__(self) -> None:
+    def __init__(self, initial_path: Path | None = None) -> None:
         self.root = tk.Tk()
         self.root.title("Kvale")
         self.root.geometry("1180x760")
@@ -28,6 +28,11 @@ class KvaleApp:
         self._build_ui()
         self._sync_controls_from_document()
         self.canvas.redraw()
+        if initial_path is not None:
+            try:
+                self._load_document_path(initial_path)
+            except (OSError, ValueError) as error:
+                messagebox.showerror("Kunne ikke åpne mønster", str(error))
 
     def run(self) -> None:
         self.root.mainloop()
@@ -596,14 +601,20 @@ class KvaleApp:
         filename = filedialog.askopenfilename(filetypes=[("Mønsterfiler", "*.json"), ("Alle filer", "*")])
         if not filename:
             return
+        self._open_document_from_path(Path(filename))
+
+    def _open_document_from_path(self, path: Path) -> None:
         try:
-            self.document = load_document(Path(filename))
-            self.current_path = Path(filename)
-            self._sync_controls_from_document()
-            self.canvas.redraw()
-            self.status.set(f"Åpnet {self.current_path.name}")
+            self._load_document_path(path)
         except (OSError, ValueError) as error:
             messagebox.showerror("Kunne ikke åpne mønster", str(error))
+
+    def _load_document_path(self, path: Path) -> None:
+        self.document = load_document(path)
+        self.current_path = path
+        self._sync_controls_from_document()
+        self.canvas.redraw()
+        self.status.set(f"Åpnet {self.current_path.name}")
 
     def save_document(self) -> None:
         if self.current_path is None:
