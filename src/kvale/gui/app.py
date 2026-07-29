@@ -6,7 +6,7 @@ from copy import deepcopy
 from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, ttk
 
-from kvale.core.model import Mark, PatternDocument
+from kvale.core.model import Backstitch, BackstitchKey, Cell, Mark, PatternDocument, RepeatOverride
 from kvale.core.renderer import render_image
 from kvale.core.serialization import load_document, save_document
 from kvale.gui.canvas import PatternCanvas
@@ -23,6 +23,7 @@ class KvaleApp:
         self.current_path: Path | None = None
         self.active_colour = tk.IntVar(value=0)
         self.mode = tk.StringVar(value="edit")
+        self.stitch_tool = tk.StringVar(value="cross")
         self.status = tk.StringVar(value="Klar")
         self.symmetry_vars: dict[str, tk.BooleanVar] = {}
         self.palette_buttons: list[tk.Canvas] = []
@@ -53,17 +54,33 @@ class KvaleApp:
         main.add(workspace, weight=1)
 
         self._build_document_controls(sidebar)
+        self._build_override_controls(sidebar)
         self._build_palette_controls(sidebar)
         self._build_symmetry_controls(sidebar)
 
         toolbar = ttk.Frame(workspace)
         toolbar.pack(fill=tk.X, pady=(0, 6))
         ttk.Radiobutton(
-            toolbar, text="Rediger repeterende enhet", variable=self.mode, value="edit", command=self._change_mode
+            toolbar, text="Rediger mønster", variable=self.mode, value="edit", command=self._change_mode
         ).pack(side=tk.LEFT)
         ttk.Radiobutton(
             toolbar, text="Se repetisjoner", variable=self.mode, value="preview", command=self._change_mode
         ).pack(side=tk.LEFT, padx=12)
+        ttk.Separator(toolbar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=(2, 10))
+        ttk.Radiobutton(
+            toolbar,
+            text="Korssting",
+            variable=self.stitch_tool,
+            value="cross",
+            command=self._change_stitch_tool,
+        ).pack(side=tk.LEFT)
+        ttk.Radiobutton(
+            toolbar,
+            text="Attersting",
+            variable=self.stitch_tool,
+            value="backstitch",
+            command=self._change_stitch_tool,
+        ).pack(side=tk.LEFT, padx=(8, 0))
         ttk.Label(
             toolbar,
             text="Venstre: farg/legg til, hoyre: slett.",
@@ -177,6 +194,165 @@ class KvaleApp:
             text="Legg til/fjern rad eller kolonne...",
             command=self._open_resize_grid_dialog,
         ).grid(row=10, column=0, columnspan=2, sticky=tk.EW, pady=(6, 0))
+
+    def _build_override_controls(self, parent: ttk.Frame) -> None:
+        frame = ttk.LabelFrame(parent, text="Endestykker", padding=8)
+        frame.pack(fill=tk.X, pady=(0, 8))
+        self.edit_target = tk.StringVar(value="unit")
+        self.override_extension = tk.IntVar(value=0)
+
+        ttk.Radiobutton(
+            frame,
+            text="Repeterende enhet",
+            variable=self.edit_target,
+            value="unit",
+            command=self._change_edit_target,
+        ).grid(row=0, column=0, columnspan=2, sticky=tk.W)
+        ttk.Radiobutton(
+            frame,
+            text="Øverste repetisjon",
+            variable=self.edit_target,
+            value="top",
+            command=self._change_edit_target,
+        ).grid(row=1, column=0, columnspan=2, sticky=tk.W)
+        ttk.Radiobutton(
+            frame,
+            text="Nederste repetisjon",
+            variable=self.edit_target,
+            value="bottom",
+            command=self._change_edit_target,
+        ).grid(row=2, column=0, columnspan=2, sticky=tk.W)
+        ttk.Radiobutton(
+            frame,
+            text="Venstre repetisjon",
+            variable=self.edit_target,
+            value="left",
+            command=self._change_edit_target,
+        ).grid(row=3, column=0, columnspan=2, sticky=tk.W)
+        ttk.Radiobutton(
+            frame,
+            text="Høyre repetisjon",
+            variable=self.edit_target,
+            value="right",
+            command=self._change_edit_target,
+        ).grid(row=4, column=0, columnspan=2, sticky=tk.W)
+
+        self.override_extension_label = ttk.Label(frame, text="Ekstra rader utover")
+        self.override_extension_label.grid(row=5, column=0, sticky=tk.W, pady=(6, 2))
+        self.override_extension_spin = ttk.Spinbox(
+            frame,
+            from_=0,
+            to=100,
+            width=7,
+            textvariable=self.override_extension,
+        )
+        self.override_extension_spin.grid(row=5, column=1, sticky=tk.E, pady=(6, 2))
+        self.override_extension_button = ttk.Button(
+            frame,
+            text="Bruk ekstra rader",
+            command=self._apply_override_extension,
+        )
+        self.override_extension_button.grid(row=6, column=0, columnspan=2, sticky=tk.EW, pady=(4, 0))
+        self.override_reset_button = ttk.Button(
+            frame,
+            text="Nullstill valgt endestykke",
+            command=self._reset_selected_override,
+        )
+        self.override_reset_button.grid(row=7, column=0, columnspan=2, sticky=tk.EW, pady=(4, 0))
+        self._sync_override_controls()
+
+    def _selected_override(self) -> RepeatOverride | None:
+        target = self.edit_target.get()
+        if target == "unit":
+            return None
+        return getattr(self.document, f"{target}_repeat_override")
+
+    def _sync_override_controls(self) -> None:
+        if not hasattr(self, "edit_target"):
+            return
+        target = self.edit_target.get()
+        override = self._selected_override()
+        self.override_extension.set(override.extension if override else 0)
+        horizontal = target in {"left", "right"}
+        self.override_extension_label.configure(
+            text="Ekstra kolonner utover" if horizontal else "Ekstra rader utover"
+        )
+        self.override_extension_button.configure(
+            text="Bruk ekstra kolonner" if horizontal else "Bruk ekstra rader"
+        )
+        state = tk.NORMAL if target != "unit" else tk.DISABLED
+        self.override_extension_label.configure(state=state)
+        self.override_extension_spin.configure(state=state)
+        self.override_extension_button.configure(state=state)
+        self.override_reset_button.configure(state=state)
+
+    def _change_edit_target(self) -> None:
+        self._sync_override_controls()
+        self.mode.set("edit")
+        if hasattr(self, "canvas"):
+            self.canvas.set_edit_target(self.edit_target.get())
+            self.canvas.set_mode("edit")
+
+    def _apply_override_extension(self) -> None:
+        target = self.edit_target.get()
+        if target == "unit":
+            return
+        try:
+            extension = max(0, int(self.override_extension.get()))
+        except (tk.TclError, ValueError) as error:
+            messagebox.showerror("Ugyldig antall rader", str(error))
+            return
+        override = self._selected_override()
+        if (override.extension if override else 0) == extension:
+            return
+
+        self._record_undo_state()
+        if override is None:
+            override = RepeatOverride()
+            setattr(self.document, f"{target}_repeat_override", override)
+        override.extension = extension
+        if target == "top":
+            override.added_marks = [mark for mark in override.added_marks if mark.y >= -extension]
+        elif target == "bottom":
+            override.added_marks = [
+                mark for mark in override.added_marks if mark.y < self.document.unit_height + extension
+            ]
+        elif target == "left":
+            override.added_marks = [mark for mark in override.added_marks if mark.x >= -extension]
+        else:
+            override.added_marks = [
+                mark for mark in override.added_marks if mark.x < self.document.unit_width + extension
+            ]
+        minimum_x = -extension if target == "left" else 0
+        maximum_x = self.document.unit_width + extension if target == "right" else self.document.unit_width
+        minimum_y = -extension if target == "top" else 0
+        maximum_y = self.document.unit_height + extension if target == "bottom" else self.document.unit_height
+        override.added_backstitches = [
+            backstitch
+            for backstitch in override.added_backstitches
+            if all(
+                minimum_x <= x <= maximum_x and minimum_y <= y <= maximum_y
+                for x, y in (
+                    (backstitch.start_x, backstitch.start_y),
+                    (backstitch.end_x, backstitch.end_y),
+                )
+            )
+        ]
+        self._document_changed()
+
+    def _reset_selected_override(self) -> None:
+        target = self.edit_target.get()
+        if target == "unit" or self._selected_override() is None:
+            return
+        if not messagebox.askyesno(
+            "Nullstill endestykke",
+            "Fjerne alle tillegg, skjulte celler og ekstra rader i dette endestykket?",
+        ):
+            return
+        self._record_undo_state()
+        setattr(self.document, f"{target}_repeat_override", None)
+        self._sync_override_controls()
+        self._document_changed()
 
     def _build_palette_controls(self, parent: ttk.Frame) -> None:
         self.palette_frame = ttk.LabelFrame(parent, text="Farger", padding=8)
@@ -362,6 +538,12 @@ class KvaleApp:
             if not controls_changed:
                 return
             self._record_undo_state()
+            self._resize_overrides_for_dimensions(
+                self.document.unit_width,
+                self.document.unit_height,
+                new_width,
+                new_height,
+            )
             self.document.unit_width = new_width
             self.document.unit_height = new_height
             self.document.repeats_x = max(1, self.repeats_x.get())
@@ -377,6 +559,82 @@ class KvaleApp:
             self._document_changed()
         except (tk.TclError, ValueError) as error:
             messagebox.showerror("Ugyldige innstillinger", str(error))
+
+    def _resize_overrides_for_dimensions(
+        self,
+        old_width: int,
+        old_height: int,
+        new_width: int,
+        new_height: int,
+    ) -> None:
+        self.document.backstitches = [
+            backstitch
+            for backstitch in self.document.backstitches
+            if all(
+                0 <= x <= new_width and 0 <= y <= new_height
+                for x, y in (
+                    (backstitch.start_x, backstitch.start_y),
+                    (backstitch.end_x, backstitch.end_y),
+                )
+            )
+        ]
+        for target in ("top", "bottom", "left", "right"):
+            override: RepeatOverride | None = getattr(self.document, f"{target}_repeat_override")
+            if override is None:
+                continue
+            override.removed_cells = [
+                cell for cell in override.removed_cells if cell.x < new_width and cell.y < new_height
+            ]
+            override.removed_backstitches = [
+                key
+                for key in override.removed_backstitches
+                if all(
+                    0 <= x <= new_width and 0 <= y <= new_height
+                    for x, y in (
+                        (key.start_x, key.start_y),
+                        (key.end_x, key.end_y),
+                    )
+                )
+            ]
+            adjusted: list[Mark] = []
+            for mark in override.added_marks:
+                x, y = mark.x, mark.y
+                if target == "right" and x >= old_width:
+                    x += new_width - old_width
+                if target == "bottom" and y >= old_height:
+                    y += new_height - old_height
+
+                minimum_x = -override.extension if target == "left" else 0
+                maximum_x = new_width + override.extension - 1 if target == "right" else new_width - 1
+                minimum_y = -override.extension if target == "top" else 0
+                maximum_y = new_height + override.extension - 1 if target == "bottom" else new_height - 1
+                if minimum_x <= x <= maximum_x and minimum_y <= y <= maximum_y:
+                    adjusted.append(Mark(x, y, mark.colour_slot))
+            override.added_marks = adjusted
+            adjusted_backstitches: list[Backstitch] = []
+            for backstitch in override.added_backstitches:
+                points: list[tuple[int, int]] = []
+                for x, y in (
+                    (backstitch.start_x, backstitch.start_y),
+                    (backstitch.end_x, backstitch.end_y),
+                ):
+                    if target == "right" and x >= old_width:
+                        x += new_width - old_width
+                    if target == "bottom" and y >= old_height:
+                        y += new_height - old_height
+                    points.append((x, y))
+                minimum_x = -override.extension if target == "left" else 0
+                maximum_x = new_width + override.extension if target == "right" else new_width
+                minimum_y = -override.extension if target == "top" else 0
+                maximum_y = new_height + override.extension if target == "bottom" else new_height
+                if all(
+                    minimum_x <= x <= maximum_x and minimum_y <= y <= maximum_y
+                    for x, y in points
+                ) and points[0] != points[1]:
+                    adjusted_backstitches.append(
+                        Backstitch(*points[0], *points[1], backstitch.colour_slot)
+                    )
+            override.added_backstitches = adjusted_backstitches
 
     @staticmethod
     def _transform_grid_axis(
@@ -464,6 +722,7 @@ class KvaleApp:
             return
 
         self._record_undo_state()
+        self._resize_overrides_for_grid_change(columns, rows, insertion=insertion)
         if insertion:
             self.document.motif = [
                 Mark(
@@ -494,6 +753,86 @@ class KvaleApp:
         self.unit_height.set(self.document.unit_height)
         self._apply_symmetry(show_errors=False)
         self._document_changed()
+
+    def _resize_overrides_for_grid_change(
+        self,
+        columns: list[int],
+        rows: list[int],
+        *,
+        insertion: bool,
+    ) -> None:
+        removed_columns = set(columns)
+        removed_rows = set(rows)
+
+        def transform_endpoint(x: int, y: int) -> tuple[int, int]:
+            if insertion:
+                return (
+                    x + sum(position <= x for position in columns),
+                    y + sum(position <= y for position in rows),
+                )
+            return (
+                x - sum(position < x for position in columns),
+                y - sum(position < y for position in rows),
+            )
+
+        def transform_backstitch(backstitch: Backstitch | BackstitchKey) -> Backstitch | BackstitchKey | None:
+            start = transform_endpoint(backstitch.start_x, backstitch.start_y)
+            end = transform_endpoint(backstitch.end_x, backstitch.end_y)
+            if start == end:
+                return None
+            if isinstance(backstitch, Backstitch):
+                return Backstitch(*start, *end, backstitch.colour_slot)
+            return BackstitchKey.between(*start, *end)
+
+        self.document.backstitches = [
+            transformed
+            for backstitch in self.document.backstitches
+            if (transformed := transform_backstitch(backstitch)) is not None
+            and isinstance(transformed, Backstitch)
+        ]
+        for target in ("top", "bottom", "left", "right"):
+            override: RepeatOverride | None = getattr(self.document, f"{target}_repeat_override")
+            if override is None:
+                continue
+
+            def transform(x: int, y: int) -> tuple[int, int] | None:
+                if insertion:
+                    return (
+                        x + sum(position <= x for position in columns),
+                        y + sum(position <= y for position in rows),
+                    )
+                if x in removed_columns or y in removed_rows:
+                    return None
+                return (
+                    x - sum(position < x for position in columns),
+                    y - sum(position < y for position in rows),
+                )
+
+            new_removed: list[Cell] = []
+            for cell in override.removed_cells:
+                transformed = transform(cell.x, cell.y)
+                if transformed is not None:
+                    new_removed.append(Cell(*transformed))
+            override.removed_cells = new_removed
+
+            new_added: list[Mark] = []
+            for mark in override.added_marks:
+                transformed = transform(mark.x, mark.y)
+                if transformed is not None:
+                    new_added.append(Mark(*transformed, mark.colour_slot))
+            override.added_marks = new_added
+            override.removed_backstitches = [
+                transformed
+                for key in override.removed_backstitches
+                if (transformed := transform_backstitch(key)) is not None
+                and isinstance(transformed, BackstitchKey)
+            ]
+            override.added_backstitches = [
+                transformed
+                for backstitch in override.added_backstitches
+                if (transformed := transform_backstitch(backstitch)) is not None
+                and isinstance(transformed, Backstitch)
+            ]
 
     def _insert_column_at(self, index: int) -> None:
         self._resize_grid_axis("column", index, insertion=True)
@@ -779,6 +1118,11 @@ class KvaleApp:
     def _change_mode(self) -> None:
         self.canvas.set_mode(self.mode.get())
 
+    def _change_stitch_tool(self) -> None:
+        self.mode.set("edit")
+        self.canvas.set_mode("edit")
+        self.canvas.set_stitch_tool(self.stitch_tool.get())
+
     def _record_undo_state(self) -> None:
         self.undo_stack.append(deepcopy(self.document))
         if len(self.undo_stack) > self.HISTORY_LIMIT:
@@ -837,6 +1181,9 @@ class KvaleApp:
         self.repeat_top_row.set(self.document.repeat_top_row)
         self.repeat_bottom_row.set(self.document.repeat_bottom_row)
         self.use_palette_sequence.set(self.document.use_palette_sequence)
+        self._sync_override_controls()
+        if hasattr(self, "canvas"):
+            self.canvas.set_edit_target(self.edit_target.get())
         for name, variable in self.symmetry_vars.items():
             variable.set(name in self.document.symmetry)
         if self.document.palette_sequences:
