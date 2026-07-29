@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from collections.abc import Callable
+from copy import deepcopy
 from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, ttk
 
@@ -12,6 +13,8 @@ from kvale.gui.canvas import PatternCanvas
 
 
 class KvaleApp:
+    HISTORY_LIMIT = 100
+
     def __init__(self, initial_path: Path | None = None) -> None:
         self.root = tk.Tk()
         self.root.title("Kvale")
@@ -25,6 +28,8 @@ class KvaleApp:
         self.palette_buttons: list[tk.Canvas] = []
         self.palette_sequences: list[list[str]] = []
         self._palette_single_click_after_id: str | None = None
+        self.undo_stack: list[PatternDocument] = []
+        self.redo_stack: list[PatternDocument] = []
         self._build_ui()
         self._sync_controls_from_document()
         self.canvas.redraw()
@@ -68,6 +73,7 @@ class KvaleApp:
             workspace,
             document_getter=lambda: self.document,
             active_colour_getter=self.active_colour.get,
+            on_before_change=self._record_undo_state,
             on_change=self._document_changed,
             on_insert_column=self._insert_column_at,
             on_remove_column=self._remove_column_at,
@@ -90,6 +96,10 @@ class KvaleApp:
         file_menu.add_separator()
         file_menu.add_command(label="Avslutt", command=self.root.destroy)
         menu.add_cascade(label="Fil", menu=file_menu)
+        self.edit_menu = tk.Menu(menu, tearoff=False)
+        self.edit_menu.add_command(label="Angre", command=self.undo, accelerator="Ctrl+Z")
+        self.edit_menu.add_command(label="Gjør om", command=self.redo, accelerator="Ctrl+Y")
+        menu.add_cascade(label="Rediger", menu=self.edit_menu)
         grid_menu = tk.Menu(menu, tearoff=False)
         grid_menu.add_command(label="Legg til/fjern rad eller kolonne...", command=self._open_resize_grid_dialog)
         menu.add_cascade(label="Rutenett", menu=grid_menu)
@@ -97,6 +107,11 @@ class KvaleApp:
         self.root.bind("<Control-n>", lambda _event: self.new_document())
         self.root.bind("<Control-o>", lambda _event: self.open_document())
         self.root.bind("<Control-s>", lambda _event: self.save_document())
+        self.root.bind("<Control-z>", lambda _event: self._run_history_shortcut(self.undo))
+        self.root.bind("<Control-y>", lambda _event: self._run_history_shortcut(self.redo))
+        self.root.bind("<Control-Shift-Z>", lambda _event: self._run_history_shortcut(self.redo))
+        self.root.bind("<Control-Shift-z>", lambda _event: self._run_history_shortcut(self.redo))
+        self._update_undo_redo_controls()
 
     def _spin_row(self, parent: tk.Misc, label: str, variable: tk.IntVar, row: int) -> None:
         ttk.Label(parent, text=label).grid(row=row, column=0, sticky=tk.W, pady=2)
@@ -275,6 +290,9 @@ class KvaleApp:
         self._choose_palette_colour(index)
 
     def _on_use_palette_sequence_changed(self) -> None:
+        if self.document.use_palette_sequence == self.use_palette_sequence.get():
+            return
+        self._record_undo_state()
         self.document.use_palette_sequence = self.use_palette_sequence.get()
         self._document_changed()
 
@@ -330,6 +348,20 @@ class KvaleApp:
             new_width = max(1, self.unit_width.get())
             new_height = max(1, self.unit_height.get())
 
+            controls_changed = (
+                self.document.unit_width != new_width
+                or self.document.unit_height != new_height
+                or self.document.repeats_x != max(1, self.repeats_x.get())
+                or self.document.repeats_y != max(1, self.repeats_y.get())
+                or self.document.repeat_left_column != self.repeat_left_column.get()
+                or self.document.repeat_right_column != self.repeat_right_column.get()
+                or self.document.repeat_top_row != self.repeat_top_row.get()
+                or self.document.repeat_bottom_row != self.repeat_bottom_row.get()
+                or any(mark.x >= new_width or mark.y >= new_height for mark in self.document.motif)
+            )
+            if not controls_changed:
+                return
+            self._record_undo_state()
             self.document.unit_width = new_width
             self.document.unit_height = new_height
             self.document.repeats_x = max(1, self.repeats_x.get())
@@ -431,6 +463,7 @@ class KvaleApp:
             messagebox.showinfo("Kan ikke fjerne", "Rutenettet må ha minst én rad og én kolonne.")
             return
 
+        self._record_undo_state()
         if insertion:
             self.document.motif = [
                 Mark(
@@ -579,6 +612,8 @@ class KvaleApp:
                     operations.remove(operation)
                 if show_errors:
                     messagebox.showinfo("Kvadratisk enhet kreves", "Kvartrotasjon og diagonal symmetri krever kvadratisk enhet.")
+        if show_errors and operations != self.document.symmetry:
+            self._record_undo_state()
         self.document.symmetry = operations
         if hasattr(self, "canvas"):
             self._document_changed()
@@ -589,7 +624,10 @@ class KvaleApp:
         selected_sequence = self._open_palette_sequence_dialog(index, current_sequence)
         if selected_sequence is None:
             return
+        if selected_sequence == current_sequence:
+            return
 
+        self._record_undo_state()
         self.palette_sequences[index] = selected_sequence
         self.document.palette_sequences = [list(row) for row in self.palette_sequences]
         self.document.palette[index] = selected_sequence[0]
@@ -730,6 +768,7 @@ class KvaleApp:
     def _add_palette_colour(self) -> None:
         selected = colorchooser.askcolor(color="#808080", title="Legg til palettfarge")[1]
         if selected:
+            self._record_undo_state()
             self.document.palette.append(selected)
             self.palette_sequences.append([selected])
             self.document.palette_sequences = [list(row) for row in self.palette_sequences]
@@ -739,6 +778,50 @@ class KvaleApp:
 
     def _change_mode(self) -> None:
         self.canvas.set_mode(self.mode.get())
+
+    def _record_undo_state(self) -> None:
+        self.undo_stack.append(deepcopy(self.document))
+        if len(self.undo_stack) > self.HISTORY_LIMIT:
+            del self.undo_stack[0]
+        self.redo_stack.clear()
+        self._update_undo_redo_controls()
+
+    def _clear_history(self) -> None:
+        self.undo_stack.clear()
+        self.redo_stack.clear()
+        self._update_undo_redo_controls()
+
+    def _update_undo_redo_controls(self) -> None:
+        if not hasattr(self, "edit_menu"):
+            return
+        self.edit_menu.entryconfigure("Angre", state=tk.NORMAL if self.undo_stack else tk.DISABLED)
+        self.edit_menu.entryconfigure("Gjør om", state=tk.NORMAL if self.redo_stack else tk.DISABLED)
+
+    def _restore_history_state(self, document: PatternDocument, status: str) -> None:
+        self.document = document
+        self._sync_controls_from_document()
+        self.canvas.redraw()
+        self.status.set(status)
+        self._update_undo_redo_controls()
+
+    def undo(self) -> None:
+        if not self.undo_stack:
+            return
+        self.redo_stack.append(deepcopy(self.document))
+        previous = self.undo_stack.pop()
+        self._restore_history_state(previous, "Angret siste endring")
+
+    def redo(self) -> None:
+        if not self.redo_stack:
+            return
+        self.undo_stack.append(deepcopy(self.document))
+        following = self.redo_stack.pop()
+        self._restore_history_state(following, "Gjorde om siste endring")
+
+    @staticmethod
+    def _run_history_shortcut(action: Callable[[], None]) -> str:
+        action()
+        return "break"
 
     def _document_changed(self) -> None:
         self.canvas.redraw()
@@ -768,6 +851,7 @@ class KvaleApp:
     def new_document(self) -> None:
         self.document = PatternDocument()
         self.current_path = None
+        self._clear_history()
         self._sync_controls_from_document()
         self.canvas.redraw()
         self.status.set("Nytt dokument")
@@ -787,6 +871,7 @@ class KvaleApp:
     def _load_document_path(self, path: Path) -> None:
         self.document = load_document(path)
         self.current_path = path
+        self._clear_history()
         self._sync_controls_from_document()
         self.canvas.redraw()
         self.status.set(f"Åpnet {self.current_path.name}")

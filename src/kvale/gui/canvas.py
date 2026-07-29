@@ -16,6 +16,7 @@ class PatternCanvas(tk.Canvas):
         master: tk.Misc,
         document_getter: Callable[[], PatternDocument],
         active_colour_getter: Callable[[], int],
+        on_before_change: Callable[[], None],
         on_change: Callable[[], None],
         on_insert_column: Callable[[int], None],
         on_remove_column: Callable[[int], None],
@@ -25,6 +26,7 @@ class PatternCanvas(tk.Canvas):
         super().__init__(master, background="white", highlightthickness=0)
         self.document_getter = document_getter
         self.active_colour_getter = active_colour_getter
+        self.on_before_change = on_before_change
         self.on_change = on_change
         self.on_insert_column = on_insert_column
         self.on_remove_column = on_remove_column
@@ -74,6 +76,10 @@ class PatternCanvas(tk.Canvas):
             target_x = x
             target_y = y
 
+        if source_mark is not None and source_mark.colour_slot == self.active_colour_getter():
+            return
+
+        self.on_before_change()
         document.set_mark(
             target_x,
             target_y,
@@ -104,6 +110,7 @@ class PatternCanvas(tk.Canvas):
         if source_mark is None:
             return
 
+        self.on_before_change()
         document.erase_mark(source_mark.x, source_mark.y)
 
         self.on_change()
