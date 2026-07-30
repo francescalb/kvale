@@ -4,12 +4,15 @@ import tkinter as tk
 from collections.abc import Callable
 from copy import deepcopy
 from pathlib import Path
-from tkinter import colorchooser, filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox, ttk
+from typing import cast
 
 from kvale.core.model import Backstitch, BackstitchKey, Cell, Mark, PatternDocument, RepeatOverride
 from kvale.core.renderer import render_image
 from kvale.core.serialization import load_document, save_document
 from kvale.gui.canvas import PatternCanvas
+from kvale.gui.dmc_palette import ask_dmc_colour
+from kvale.gui.palette_button import PaletteButton, ask_rgb_colour
 
 
 class KvaleApp:
@@ -26,7 +29,7 @@ class KvaleApp:
         self.stitch_tool = tk.StringVar(value="cross")
         self.status = tk.StringVar(value="Klar")
         self.symmetry_vars: dict[str, tk.BooleanVar] = {}
-        self.palette_buttons: list[tk.Canvas] = []
+        self.palette_buttons: list[PaletteButton] = []
         self.palette_sequences: list[list[str]] = []
         self._palette_single_click_after_id: str | None = None
         self.undo_stack: list[PatternDocument] = []
@@ -56,8 +59,8 @@ class KvaleApp:
         sidebar_canvas.create_window((0,0), window=sidebar, anchor="nw")
         sidebar.bind("<Configure>", lambda e: sidebar_canvas.configure(scrollregion=sidebar_canvas.bbox("all")))
         sidebar_canvas.bind("<Configure>", lambda e: sidebar_canvas.itemconfigure(1, width=e.width))
-        def _mw(e):
-            sidebar_canvas.yview_scroll(int(-1*(e.delta/120)), "units")
+        def _mw(event: tk.Event[tk.Misc]) -> None:
+            sidebar_canvas.yview_scroll(int(-(event.delta / 120)), "units")
         sidebar_canvas.bind("<Enter>", lambda e: sidebar_canvas.bind_all("<MouseWheel>", _mw))
         sidebar_canvas.bind("<Leave>", lambda e: sidebar_canvas.unbind_all("<MouseWheel>"))
         sidebar_canvas.pack(side="left", fill="both", expand=True)
@@ -278,7 +281,7 @@ class KvaleApp:
         target = self.edit_target.get()
         if target == "unit":
             return None
-        return getattr(self.document, f"{target}_repeat_override")
+        return cast(RepeatOverride | None, getattr(self.document, f"{target}_repeat_override"))
 
     def _sync_override_controls(self) -> None:
         if not hasattr(self, "edit_target"):
@@ -371,10 +374,59 @@ class KvaleApp:
         self.palette_frame = ttk.LabelFrame(parent, text="Farger", padding=8)
         self.palette_frame.pack(fill=tk.X, pady=(0, 8))
         self.use_palette_sequence = tk.BooleanVar(value=False)
+
+        list_container = ttk.Frame(self.palette_frame)
+        list_container.pack(fill=tk.X, expand=True)
+        self.palette_canvas = tk.Canvas(
+            list_container,
+            width=178,
+            height=240,
+            highlightthickness=0,
+            borderwidth=0,
+        )
+        palette_scroll = ttk.Scrollbar(
+            list_container,
+            orient=tk.VERTICAL,
+            command=self.palette_canvas.yview,
+        )
+        self.palette_canvas.configure(yscrollcommand=palette_scroll.set)
+        self.palette_items = ttk.Frame(self.palette_canvas)
+        self.palette_window = self.palette_canvas.create_window(
+            (0, 0),
+            window=self.palette_items,
+            anchor=tk.NW,
+        )
+        self.palette_items.bind(
+            "<Configure>",
+            lambda _event: self.palette_canvas.configure(scrollregion=self.palette_canvas.bbox("all")),
+        )
+        self.palette_canvas.bind(
+            "<Configure>",
+            lambda event: self.palette_canvas.itemconfigure(self.palette_window, width=event.width),
+        )
+        self.palette_canvas.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        palette_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        ttk.Button(
+            self.palette_frame,
+            text="Legg til farge",
+            command=self._add_palette_colour,
+        ).pack(fill=tk.X, pady=(6, 0))
+        ttk.Button(
+            self.palette_frame,
+            text="Legg til DMC-farge…",
+            command=self._add_dmc_palette_colour,
+        ).pack(fill=tk.X, pady=(4, 0))
+        ttk.Checkbutton(
+            self.palette_frame,
+            text="Bruk fargeskvens",
+            variable=self.use_palette_sequence,
+            command=self._on_use_palette_sequence_changed,
+        ).pack(anchor=tk.W, pady=(6, 0))
         self._rebuild_palette_buttons()
 
     def _rebuild_palette_buttons(self) -> None:
-        for child in self.palette_frame.winfo_children():
+        for child in self.palette_items.winfo_children():
             child.destroy()
 
         selected_index = self.active_colour.get()
@@ -385,70 +437,54 @@ class KvaleApp:
             row = index
             is_selected = index == selected_index
 
-            label = ttk.Label(
-                self.palette_frame,
-                text=f"#{index + 1}",
-                font=("TkDefaultFont", 9, "bold") if is_selected else ("TkDefaultFont", 9),
-            )
-            label.grid(row=row, column=0, sticky=tk.W, padx=(0, 6), pady=2)
-            label.bind("<Button-1>", self._make_palette_single_click_handler(index))
-
-            swatch = tk.Canvas(
-                self.palette_frame,
-                width=120,
-                height=18,
-                highlightthickness=0,
-                borderwidth=0,
-                cursor="hand2",
-            )
-            swatch.grid(row=row, column=1, sticky=tk.W, pady=2)
-
             sequence = self.palette_sequences[index] if index < len(self.palette_sequences) else [colour]
             if not sequence:
                 sequence = [colour]
 
-            segment_width = max(1, 120 // len(sequence))
-            for segment_index, segment_colour in enumerate(sequence):
-                left = segment_index * segment_width
-                right = 120 if segment_index == len(sequence) - 1 else (segment_index + 1) * segment_width
-                swatch.create_rectangle(left, 0, right, 18, fill=segment_colour, outline=segment_colour)
-
-            border = 2 if is_selected else 1
-            swatch.create_rectangle(
-                border // 2,
-                border // 2,
-                120 - border // 2,
-                18 - border // 2,
-                outline="#000000",
-                width=border,
+            button = PaletteButton(
+                self.palette_items,
+                colour=sequence[0],
+                colours=sequence,
+                text=f"Farge {index + 1}",
+                selected=is_selected,
+                command=self._make_palette_select_command(index),
+                edit_command=self._make_palette_edit_command(index),
+                width=164,
+                height=36,
             )
-            swatch.bind("<Button-1>", self._make_palette_single_click_handler(index))
-            swatch.bind("<Double-Button-1>", self._make_palette_double_click_handler(index))
-            self.palette_buttons.append(swatch)
+            button.grid(row=row, column=0, sticky=tk.EW, pady=2)
+            button.bind("<MouseWheel>", self._scroll_palette)
+            button.bind("<Button-4>", self._scroll_palette)
+            button.bind("<Button-5>", self._scroll_palette)
+            self.palette_buttons.append(button)
+        self.palette_items.columnconfigure(0, weight=1)
+        self.root.after_idle(self._finish_palette_rebuild)
 
-        ttk.Button(
-            self.palette_frame,
-            text="Legg til farge",
-            command=self._add_palette_colour,
-        ).grid(
-            row=len(self.document.palette),
-            column=0,
-            columnspan=2,
-            sticky=tk.EW,
-            pady=(6, 0),
-        )
-        ttk.Checkbutton(
-            self.palette_frame,
-            text="Bruk fargeskvens",
-            variable=self.use_palette_sequence,
-            command=self._on_use_palette_sequence_changed,
-        ).grid(
-            row=len(self.document.palette) + 1,
-            column=0,
-            columnspan=2,
-            sticky=tk.W,
-            pady=(6, 0),
-        )
+    def _scroll_palette(self, event: tk.Event[tk.Misc]) -> str:
+        if getattr(event, "num", None) == 4:
+            direction = -1
+        elif getattr(event, "num", None) == 5:
+            direction = 1
+        else:
+            direction = -1 if event.delta > 0 else 1
+        self.palette_canvas.yview_scroll(direction, "units")
+        return "break"
+
+    def _finish_palette_rebuild(self) -> None:
+        self.palette_canvas.configure(scrollregion=self.palette_canvas.bbox("all"))
+        selected = self.active_colour.get()
+        if not self.palette_buttons or selected < 0 or selected >= len(self.palette_buttons):
+            return
+        total_height = max(1, self.palette_items.winfo_reqheight())
+        visible_height = max(1, self.palette_canvas.winfo_height())
+        item_top = self.palette_buttons[selected].winfo_y()
+        item_bottom = item_top + self.palette_buttons[selected].winfo_height()
+        view_top = self.palette_canvas.canvasy(0)
+        view_bottom = view_top + visible_height
+        if item_top < view_top:
+            self.palette_canvas.yview_moveto(item_top / total_height)
+        elif item_bottom > view_bottom:
+            self.palette_canvas.yview_moveto(max(0.0, (item_bottom - visible_height) / total_height))
 
     def _on_palette_single_click(self, index: int) -> None:
         if self._palette_single_click_after_id is not None:
@@ -823,29 +859,32 @@ class KvaleApp:
 
             new_removed: list[Cell] = []
             for cell in override.removed_cells:
-                transformed = transform(cell.x, cell.y)
-                if transformed is not None:
-                    new_removed.append(Cell(*transformed))
+                transformed_cell = transform(cell.x, cell.y)
+                if transformed_cell is not None:
+                    new_removed.append(Cell(transformed_cell[0], transformed_cell[1]))
             override.removed_cells = new_removed
 
             new_added: list[Mark] = []
             for mark in override.added_marks:
-                transformed = transform(mark.x, mark.y)
-                if transformed is not None:
-                    new_added.append(Mark(*transformed, mark.colour_slot))
+                transformed_mark = transform(mark.x, mark.y)
+                if transformed_mark is not None:
+                    new_added.append(
+                        Mark(transformed_mark[0], transformed_mark[1], mark.colour_slot)
+                    )
             override.added_marks = new_added
-            override.removed_backstitches = [
-                transformed
-                for key in override.removed_backstitches
-                if (transformed := transform_backstitch(key)) is not None
-                and isinstance(transformed, BackstitchKey)
-            ]
-            override.added_backstitches = [
-                transformed
-                for backstitch in override.added_backstitches
-                if (transformed := transform_backstitch(backstitch)) is not None
-                and isinstance(transformed, Backstitch)
-            ]
+            transformed_removed_backstitches: list[BackstitchKey] = []
+            for key in override.removed_backstitches:
+                transformed_key = transform_backstitch(key)
+                if isinstance(transformed_key, BackstitchKey):
+                    transformed_removed_backstitches.append(transformed_key)
+            override.removed_backstitches = transformed_removed_backstitches
+
+            transformed_added_backstitches: list[Backstitch] = []
+            for backstitch in override.added_backstitches:
+                transformed_backstitch = transform_backstitch(backstitch)
+                if isinstance(transformed_backstitch, Backstitch):
+                    transformed_added_backstitches.append(transformed_backstitch)
+            override.added_backstitches = transformed_added_backstitches
 
     def _insert_column_at(self, index: int) -> None:
         self._resize_grid_axis("column", index, insertion=True)
@@ -1079,11 +1118,11 @@ class KvaleApp:
 
         def choose_part_colour() -> None:
             part_index = int(part_var.get()) - 1
-            selected = colorchooser.askcolor(
-                color=sequence[part_index],
+            selected = ask_rgb_colour(
+                dialog,
+                sequence[part_index],
                 title=f"Velg farge for del {part_index + 1}",
-                parent=dialog,
-            )[1]
+            )
             if selected:
                 sequence[part_index] = selected
                 redraw_selected_part()
@@ -1118,15 +1157,23 @@ class KvaleApp:
         return result
 
     def _add_palette_colour(self) -> None:
-        selected = colorchooser.askcolor(color="#808080", title="Legg til palettfarge")[1]
+        selected = ask_rgb_colour(self.root, "#808080", title="Legg til palettfarge")
         if selected:
-            self._record_undo_state()
-            self.document.palette.append(selected)
-            self.palette_sequences.append([selected])
-            self.document.palette_sequences = [list(row) for row in self.palette_sequences]
-            self._ensure_palette_sequence_capacity()
-            self._rebuild_palette_buttons()
-            self._document_changed()
+            self._append_palette_colour(selected)
+
+    def _add_dmc_palette_colour(self) -> None:
+        selected = ask_dmc_colour(self.root, title="Legg til DMC-farge")
+        if selected:
+            self._append_palette_colour(selected)
+
+    def _append_palette_colour(self, colour: str) -> None:
+        self._record_undo_state()
+        self.document.palette.append(colour)
+        self.palette_sequences.append([colour])
+        self.document.palette_sequences = [list(row) for row in self.palette_sequences]
+        self._ensure_palette_sequence_capacity()
+        self._rebuild_palette_buttons()
+        self._document_changed()
 
     def _change_mode(self) -> None:
         self.canvas.set_mode(self.mode.get())

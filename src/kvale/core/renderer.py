@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from PIL import Image, ImageDraw
 
-from kvale.core.model import Backstitch, Mark, PatternDocument, RepeatOverride
+from kvale.core.model import Backstitch, BackstitchKey, Mark, PatternDocument, RepeatOverride
 from kvale.core.symmetry import expand_backstitches, expand_marks
 
 
@@ -183,7 +183,7 @@ def build_backstitch_segments(document: PatternDocument) -> list[RenderedBacksti
     rendered: dict[tuple[tuple[int, int], tuple[int, int]], RenderedBackstitch] = {}
 
     def apply_override(
-        stitches: dict[object, Backstitch],
+        stitches: dict[BackstitchKey, Backstitch],
         override: RepeatOverride | None,
     ) -> None:
         if override is None:
@@ -235,13 +235,13 @@ def build_backstitch_segments(document: PatternDocument) -> list[RenderedBacksti
                 start_y = map_y(backstitch.start_y)
                 end_x = map_x(backstitch.end_x)
                 end_y = map_y(backstitch.end_y)
-                if None in (start_x, start_y, end_x, end_y):
+                if start_x is None or start_y is None or end_x is None or end_y is None:
                     continue
-                start = (int(start_x), int(start_y))
-                end = (int(end_x), int(end_y))
+                start: tuple[int, int] = (start_x, start_y)
+                end: tuple[int, int] = (end_x, end_y)
                 if start == end:
                     continue
-                key = tuple(sorted((start, end)))
+                key = (start, end) if start <= end else (end, start)
                 slot = backstitch.colour_slot % len(document.palette)
                 sequence = sequences[slot]
                 colour = sequence[repeat_index % len(sequence)] if document.use_palette_sequence else sequence[0]

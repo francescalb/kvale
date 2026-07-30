@@ -3,6 +3,7 @@ from __future__ import annotations
 import tkinter as tk
 from collections.abc import Callable
 from math import hypot
+from typing import cast
 
 from kvale.core.model import Backstitch, BackstitchKey, Cell, Mark, PatternDocument, RepeatOverride
 from kvale.core.renderer import build_backstitch_segments, build_colour_grid
@@ -67,10 +68,15 @@ class PatternCanvas(tk.Canvas):
 
     def _override(self, document: PatternDocument, *, create: bool = False) -> RepeatOverride | None:
         attribute = f"{self.edit_target}_repeat_override"
-        override = getattr(document, attribute)
+        override = cast(RepeatOverride | None, getattr(document, attribute))
         if override is None and create:
             override = RepeatOverride()
             setattr(document, attribute, override)
+        return override
+
+    def _ensure_override(self, document: PatternDocument) -> RepeatOverride:
+        override = self._override(document, create=True)
+        assert override is not None
         return override
 
     def _event_cell(self, event: tk.Event[tk.Misc]) -> tuple[int, int]:
@@ -173,7 +179,7 @@ class PatternCanvas(tk.Canvas):
                 return
 
             self.on_before_change()
-            override = self._override(document, create=True)
+            override = self._ensure_override(document)
             if base_colour == active_colour:
                 override.removed_cells = [
                     cell for cell in override.removed_cells if not (cell.x == x and cell.y == y)
@@ -241,7 +247,7 @@ class PatternCanvas(tk.Canvas):
                 return
 
             self.on_before_change()
-            override = self._override(document, create=True)
+            override = self._ensure_override(document)
             if 0 <= x < document.unit_width and 0 <= y < document.unit_height and has_base:
                 override.hide_cell(x, y)
             else:
@@ -314,7 +320,7 @@ class PatternCanvas(tk.Canvas):
             return
 
         self.on_before_change()
-        override = self._override(document, create=True)
+        override = self._ensure_override(document)
         if base is not None and base.colour_slot == candidate.colour_slot:
             override.restore_backstitch(candidate.key)
         else:
@@ -378,7 +384,7 @@ class PatternCanvas(tk.Canvas):
             override = self._override(document)
             base_keys = {item.key for item in expanded}
             self.on_before_change()
-            override = self._override(document, create=True)
+            override = self._ensure_override(document)
             if nearest.key in base_keys:
                 override.hide_backstitch(nearest.key)
             else:
@@ -511,7 +517,7 @@ class PatternCanvas(tk.Canvas):
                 self.grid_origin_y + (backstitch.end_y - self.editor_min_y) * self.cell_size,
                 fill=colour,
                 width=max(2, self.cell_size // 5),
-                dash=dash,
+                dash=() if dash is None else dash,
             )
 
     def _draw_override_editor(self, document: PatternDocument) -> None:
