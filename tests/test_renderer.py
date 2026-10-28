@@ -50,7 +50,6 @@ def test_palette_sequence_off_uses_first_sequence_colour_for_all_repeats() -> No
         repeats_y=1,
         motif=[Mark(0, 0, 0)],
         symmetry=["identity"],
-        palette=["#ff0000"],
         palette_sequences=[["#ff0000", "#0000ff"]],
         use_palette_sequence=False,
     )
@@ -67,7 +66,6 @@ def test_palette_sequence_on_cycles_along_repeats() -> None:
         repeats_y=1,
         motif=[Mark(0, 0, 0)],
         symmetry=["identity"],
-        palette=["#ff0000"],
         palette_sequences=[["#ff0000", "#0000ff", "#00ff00"]],
         use_palette_sequence=True,
     )
@@ -84,7 +82,6 @@ def test_palette_sequence_single_entry_stays_constant_when_enabled() -> None:
         repeats_y=1,
         motif=[Mark(0, 0, 0)],
         symmetry=["identity"],
-        palette=["#aaaaaa"],
         palette_sequences=[["#123456"]],
         use_palette_sequence=True,
     )
@@ -101,7 +98,6 @@ def test_palette_sequences_are_applied_per_colour_slot() -> None:
         repeats_y=1,
         motif=[Mark(0, 0, 0), Mark(1, 0, 1)],
         symmetry=["identity"],
-        palette=["#000000", "#111111"],
         palette_sequences=[["#ff0000", "#00ff00"], ["#0000ff"]],
         use_palette_sequence=True,
     )

@@ -15,6 +15,29 @@ SUPPORTED_OPERATIONS = (
     "diag_anti",
 )
 
+# Operations that only make sense when the recurring unit is square.
+SQUARE_ONLY_OPERATIONS = frozenset({"rotate_90", "rotate_270", "diag_main", "diag_anti"})
+
+
+def normalise_symmetry(
+    operations: Iterable[str],
+    width: int,
+    height: int,
+) -> tuple[list[str], list[str]]:
+    """Apply the symmetry rules to a selection of operations.
+
+    "identity" is always included, unknown names are dropped, and square-only
+    operations are removed when the unit is not square. Returns the allowed
+    operations and the square-only operations that were removed, both in the
+    order of SUPPORTED_OPERATIONS, so a UI can tell the user what was switched off.
+    """
+    selected = set(operations) | {"identity"}
+    removed: list[str] = []
+    if width != height:
+        removed = [name for name in SUPPORTED_OPERATIONS if name in selected & SQUARE_ONLY_OPERATIONS]
+    allowed = [name for name in SUPPORTED_OPERATIONS if name in selected and name not in removed]
+    return allowed, removed
+
 
 def transform_point(x: int, y: int, width: int, height: int, operation: str) -> tuple[int, int]:
     if operation == "identity":

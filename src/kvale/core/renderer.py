@@ -56,16 +56,7 @@ def build_colour_grid(document: PatternDocument) -> list[list[str]]:
         document.symmetry,
     )
 
-    sequences: list[list[str]] = []
-    if document.palette_sequences:
-        sequences = [list(row) for row in document.palette_sequences]
-    while len(sequences) < len(document.palette):
-        sequences.append([document.palette[len(sequences)]])
-    if len(sequences) > len(document.palette):
-        sequences = sequences[: len(document.palette)]
-    for slot_index, sequence in enumerate(sequences):
-        if not sequence:
-            sequences[slot_index] = [document.palette[slot_index]]
+    sequences = document.palette_sequences
 
     for unit_y in range(document.repeats_y):
         row_map = {local_y: y_offsets[unit_y] + index for index, local_y in enumerate(unit_rows[unit_y])}
@@ -82,7 +73,7 @@ def build_colour_grid(document: PatternDocument) -> list[list[str]]:
 
                 cell_x = column_map[mark.x]
                 cell_y = row_map[mark.y]
-                slot_index = mark.colour_slot % len(document.palette)
+                slot_index = mark.colour_slot % len(sequences)
                 slot_sequence = sequences[slot_index]
                 if document.use_palette_sequence:
                     colour = slot_sequence[repeat_index % len(slot_sequence)]

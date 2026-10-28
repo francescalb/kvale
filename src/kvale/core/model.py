@@ -23,20 +23,28 @@ class PatternDocument:
     repeat_bottom_row: bool = True
     use_palette_sequence: bool = False
     background: str = "#ffffff"
-    palette: list[str] = field(
-        default_factory=lambda: ["#b1172b", "#2d7d32", "#f2c84b", "#1b1b1b"]
+    # One list of colours per colour slot. The first colour is the slot's base
+    # colour; the rest are used along the repeats when use_palette_sequence is on.
+    palette_sequences: list[list[str]] = field(
+        default_factory=lambda: [["#b1172b"], ["#2d7d32"], ["#f2c84b"], ["#1b1b1b"]]
     )
-    palette_sequences: list[list[str]] = field(default_factory=list)
     symmetry: list[str] = field(default_factory=lambda: ["identity"])
     motif: list[Mark] = field(default_factory=list)
+
+    @property
+    def palette(self) -> list[str]:
+        """Base colour of each slot (read-only, derived from palette_sequences)."""
+        return [sequence[0] for sequence in self.palette_sequences]
 
     def validate(self) -> None:
         if self.unit_width < 1 or self.unit_height < 1:
             raise ValueError("Unit dimensions must be positive")
         if self.repeats_x < 1 or self.repeats_y < 1:
             raise ValueError("Repeat counts must be positive")
-        if not self.palette:
+        if not self.palette_sequences:
             raise ValueError("The palette must contain at least one colour")
+        if not all(self.palette_sequences):
+            raise ValueError("Each palette sequence must contain at least one colour")
         for mark in self.motif:
             if not (0 <= mark.x < self.unit_width and 0 <= mark.y < self.unit_height):
                 raise ValueError(f"Mark outside recurring unit: {mark}")
@@ -56,12 +64,8 @@ class PatternDocument:
         self.motif = [m for m in self.motif if not (m.x == x and m.y == y)]
 
     def to_dict(self) -> dict[str, Any]:
+        # palette is derived from palette_sequences, so it is not stored.
         result = asdict(self)
-        if not result.get("palette_sequences"):
-            result["palette_sequences"] = [[colour] for colour in self.palette]
-        # Keep JSON canonical: palette is derived from palette_sequences.
-        if "palette" in result:
-            del result["palette"]
         result["motif"] = [asdict(mark) for mark in self.motif]
         return result
 
@@ -80,8 +84,6 @@ class PatternDocument:
                 raise ValueError("Palette sequence entries must contain colours")
             palette_sequences.append(row)
 
-        palette = [row[0] for row in palette_sequences]
-
         document = cls(
             unit_width=int(data.get("unit_width", 12)),
             unit_height=int(data.get("unit_height", 12)),
@@ -93,7 +95,6 @@ class PatternDocument:
             repeat_bottom_row=bool(data.get("repeat_bottom_row", True)),
             use_palette_sequence=bool(data.get("use_palette_sequence", False)),
             background=str(data.get("background", "#ffffff")),
-            palette=palette,
             palette_sequences=palette_sequences,
             symmetry=[str(value) for value in data.get("symmetry", ["identity"])],
             motif=[
