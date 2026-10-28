@@ -1,8 +1,11 @@
 """Smoke tests for the Tkinter GUI. Skipped when no display is available."""
 
+import json
+import sys
 import tkinter as tk
 from collections.abc import Iterator
-from tkinter import messagebox
+from pathlib import Path
+from tkinter import filedialog, messagebox
 
 import pytest
 from gui_scenarios import (
@@ -15,9 +18,12 @@ from gui_scenarios import (
     set_target,
     set_tool,
 )
+from PIL import Image
 
+from kvale.__main__ import main
 from kvale.core.model import Backstitch, Cell, Mark
-from kvale.core.renderer import build_colour_grid
+from kvale.core.renderer import build_colour_grid, render_image
+from kvale.core.serialization import load_document
 from kvale.gui import app as app_module
 from kvale.gui.app import KvaleApp
 
@@ -157,3 +163,44 @@ def test_resize_dialog(app: KvaleApp) -> None:
     run_resize_dialog(app, "Fjern", "Nederste rad")
     assert app.document.unit_height == 11
     assert app.status.get() == "Endret"
+
+
+def test_open_save_and_export_png(
+    app: KvaleApp, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    example = Path(__file__).resolve().parent.parent / "examples" / "flower-band.json"
+    monkeypatch.setattr(filedialog, "askopenfilename", lambda **_kwargs: str(example))
+    app.open_document()
+    assert app.status.get() == "Åpnet flower-band.json"
+    assert not app.editor.can_undo
+
+    saved = tmp_path / "copy.json"
+    monkeypatch.setattr(filedialog, "asksaveasfilename", lambda **_kwargs: str(saved))
+    app.save_document_as()
+    assert load_document(saved) == app.document
+    assert json.loads(saved.read_text())["format_version"] == 4
+
+    png = tmp_path / "pattern.png"
+    monkeypatch.setattr(filedialog, "asksaveasfilename", lambda **_kwargs: str(png))
+    app.export_png()
+    with Image.open(png) as exported:
+        expected = render_image(app.document, cell_size=18, draw_grid=True)
+        assert exported.size == expected.size
+        assert exported.convert("RGB").tobytes() == expected.tobytes()
+
+
+def test_command_line_path_opens_file(monkeypatch: pytest.MonkeyPatch) -> None:
+    example = Path(__file__).resolve().parent.parent / "examples" / "flower-band.json"
+    opened: list[KvaleApp] = []
+    monkeypatch.setattr(KvaleApp, "run", lambda self: opened.append(self))
+    monkeypatch.setattr(sys, "argv", ["kvale", str(example)])
+    try:
+        main()
+    except tk.TclError as error:
+        pytest.skip(f"Tkinter cannot open a display: {error}")
+    (kvale_app,) = opened
+    try:
+        assert kvale_app.current_path == example
+        assert kvale_app.document == load_document(example)
+    finally:
+        kvale_app.root.destroy()
