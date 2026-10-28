@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 GOLDEN: dict[str, Any] = json.loads(
     (ROOT / "tests" / "data" / "golden" / "core.json").read_text(encoding="utf-8")
 )
+GOLDEN_PILLOW_VERSION = "13.0.0"
 
 
 def _document(name: str) -> PatternDocument:
@@ -48,6 +49,12 @@ def test_rendered_image(name: str, key: str, cell_size: int, draw_grid: bool) ->
     expected = GOLDEN[name][key]
     assert list(image.size) == expected["size"]
     assert image.mode == expected["mode"]
+    # Line drawing can differ slightly between Pillow releases, so the pixel
+    # hash is only compared with the Pillow version that recorded it.
+    import PIL
+
+    if PIL.__version__ != GOLDEN_PILLOW_VERSION:
+        pytest.skip(f"pixel hashes were recorded with Pillow {GOLDEN_PILLOW_VERSION}")
     assert hashlib.sha256(image.tobytes()).hexdigest() == expected["sha256"]
 
 
