@@ -5,7 +5,9 @@ from collections.abc import Callable
 from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, ttk
 
-from kvale.core.model import Mark, PatternDocument
+from kvale.core.editing import MAX_SEQUENCE_LENGTH, resize_sequence
+from kvale.core.editor import Editor, EditResult
+from kvale.core.model import PatternDocument
 from kvale.core.renderer import render_image
 from kvale.core.serialization import load_document, save_document
 from kvale.gui.canvas import PatternCanvas
@@ -16,18 +18,22 @@ class KvaleApp:
         self.root = tk.Tk()
         self.root.title("Kvale")
         self.root.geometry("1180x760")
-        self.document = PatternDocument()
+        self.editor = Editor()
         self.current_path: Path | None = None
         self.active_colour = tk.IntVar(value=0)
         self.mode = tk.StringVar(value="edit")
         self.status = tk.StringVar(value="Klar")
         self.symmetry_vars: dict[str, tk.BooleanVar] = {}
         self.palette_buttons: list[tk.Canvas] = []
-        self.palette_sequences: list[list[str]] = []
         self._palette_single_click_after_id: str | None = None
         self._build_ui()
         self._sync_controls_from_document()
         self.canvas.redraw()
+
+    @property
+    def document(self) -> PatternDocument:
+        # Undo and redo replace the document object, so always read it from the editor.
+        return self.editor.document
 
     def run(self) -> None:
         self.root.mainloop()
@@ -61,7 +67,7 @@ class KvaleApp:
 
         self.canvas = PatternCanvas(
             workspace,
-            document_getter=lambda: self.document,
+            editor=self.editor,
             active_colour_getter=self.active_colour.get,
             on_change=self._document_changed,
             on_insert_column=self._insert_column_at,
@@ -85,10 +91,17 @@ class KvaleApp:
         file_menu.add_separator()
         file_menu.add_command(label="Avslutt", command=self.root.destroy)
         menu.add_cascade(label="Fil", menu=file_menu)
+        edit_menu = tk.Menu(menu, tearoff=False)
+        edit_menu.add_command(label="Angre", command=self.undo, accelerator="Ctrl+Z")
+        edit_menu.add_command(label="Gjør om", command=self.redo, accelerator="Ctrl+Y")
+        menu.add_cascade(label="Rediger", menu=edit_menu)
         self.root.config(menu=menu)
         self.root.bind("<Control-n>", lambda _event: self.new_document())
         self.root.bind("<Control-o>", lambda _event: self.open_document())
         self.root.bind("<Control-s>", lambda _event: self.save_document())
+        self.root.bind("<Control-z>", lambda _event: self.undo())
+        self.root.bind("<Control-y>", lambda _event: self.redo())
+        self.root.bind("<Control-Z>", lambda _event: self.redo())  # Ctrl+Shift+Z
 
     def _spin_row(self, parent: tk.Misc, label: str, variable: tk.IntVar, row: int) -> None:
         ttk.Label(parent, text=label).grid(row=row, column=0, sticky=tk.W, pady=2)
@@ -161,10 +174,9 @@ class KvaleApp:
             child.destroy()
 
         selected_index = self.active_colour.get()
-        self._ensure_palette_sequence_capacity()
         self.palette_buttons = []
 
-        for index, colour in enumerate(self.document.palette):
+        for index, sequence in enumerate(self.document.palette_sequences):
             row = index
             is_selected = index == selected_index
 
@@ -185,10 +197,6 @@ class KvaleApp:
                 cursor="hand2",
             )
             swatch.grid(row=row, column=1, sticky=tk.W, pady=2)
-
-            sequence = self.palette_sequences[index] if index < len(self.palette_sequences) else [colour]
-            if not sequence:
-                sequence = [colour]
 
             segment_width = max(1, 120 // len(sequence))
             for segment_index, segment_colour in enumerate(sequence):
@@ -262,7 +270,7 @@ class KvaleApp:
         self._choose_palette_colour(index)
 
     def _on_use_palette_sequence_changed(self) -> None:
-        self.document.use_palette_sequence = self.use_palette_sequence.get()
+        self.editor.set_use_palette_sequence(self.use_palette_sequence.get())
         self._document_changed()
 
     def _select_palette_colour(self, index: int) -> None:
@@ -314,115 +322,68 @@ class KvaleApp:
 
     def _apply_controls(self) -> None:
         try:
-            new_width = max(1, self.unit_width.get())
-            new_height = max(1, self.unit_height.get())
-
-            self.document.unit_width = new_width
-            self.document.unit_height = new_height
-            self.document.repeats_x = max(1, self.repeats_x.get())
-            self.document.repeats_y = max(1, self.repeats_y.get())
-            self.document.repeat_left_column = self.repeat_left_column.get()
-            self.document.repeat_right_column = self.repeat_right_column.get()
-            self.document.repeat_top_row = self.repeat_top_row.get()
-            self.document.repeat_bottom_row = self.repeat_bottom_row.get()
-            self.document.motif = [
-                mark for mark in self.document.motif if mark.x < new_width and mark.y < new_height
-            ]
-            self._apply_symmetry(show_errors=False)
+            # Read every control before changing anything, so an invalid entry
+            # leaves the document untouched.
+            self.editor.set_grid(
+                unit_width=self.unit_width.get(),
+                unit_height=self.unit_height.get(),
+                repeats_x=self.repeats_x.get(),
+                repeats_y=self.repeats_y.get(),
+                repeat_left_column=self.repeat_left_column.get(),
+                repeat_right_column=self.repeat_right_column.get(),
+                repeat_top_row=self.repeat_top_row.get(),
+                repeat_bottom_row=self.repeat_bottom_row.get(),
+            )
+            self._sync_symmetry_vars()
             self._document_changed()
         except (tk.TclError, ValueError) as error:
             messagebox.showerror("Ugyldige innstillinger", str(error))
 
-    def _insert_column_at(self, index: int) -> None:
-        old_width = self.document.unit_width
-        index = max(0, min(index, old_width))
-        self.document.unit_width = old_width + 1
-        self.document.motif = [
-            Mark(mark.x + 1, mark.y, mark.colour_slot) if mark.x >= index else mark
-            for mark in self.document.motif
-        ]
-        self.unit_width.set(self.document.unit_width)
-        self._apply_symmetry(show_errors=False)
-        self._document_changed()
-
-    def _remove_column_at(self, index: int) -> None:
-        if self.document.unit_width <= 1:
-            return
-        index = max(0, min(index, self.document.unit_width - 1))
-        self.document.unit_width -= 1
-        self.document.motif = [
-            Mark(mark.x - 1, mark.y, mark.colour_slot) if mark.x > index else mark
-            for mark in self.document.motif
-            if mark.x != index
-        ]
-        self.unit_width.set(self.document.unit_width)
-        self._apply_symmetry(show_errors=False)
-        self._document_changed()
-
-    def _insert_row_at(self, index: int) -> None:
-        old_height = self.document.unit_height
-        index = max(0, min(index, old_height))
-        self.document.unit_height = old_height + 1
-        self.document.motif = [
-            Mark(mark.x, mark.y + 1, mark.colour_slot) if mark.y >= index else mark
-            for mark in self.document.motif
-        ]
-        self.unit_height.set(self.document.unit_height)
-        self._apply_symmetry(show_errors=False)
-        self._document_changed()
-
-    def _remove_row_at(self, index: int) -> None:
-        if self.document.unit_height <= 1:
-            return
-        index = max(0, min(index, self.document.unit_height - 1))
-        self.document.unit_height -= 1
-        self.document.motif = [
-            Mark(mark.x, mark.y - 1, mark.colour_slot) if mark.y > index else mark
-            for mark in self.document.motif
-            if mark.y != index
-        ]
-        self.unit_height.set(self.document.unit_height)
-        self._apply_symmetry(show_errors=False)
-        self._document_changed()
-
-    def _apply_symmetry(self, show_errors: bool = True) -> None:
-        operations = [name for name, variable in self.symmetry_vars.items() if variable.get()]
-        if "identity" not in operations:
-            operations.insert(0, "identity")
-            self.symmetry_vars["identity"].set(True)
-        square_only = {"rotate_90", "rotate_270", "diag_main", "diag_anti"}
-        if self.document.unit_width != self.document.unit_height:
-            selected = square_only.intersection(operations)
-            if selected:
-                for operation in selected:
-                    self.symmetry_vars[operation].set(False)
-                    operations.remove(operation)
-                if show_errors:
-                    messagebox.showinfo("Kvadratisk enhet kreves", "Kvartrotasjon og diagonal symmetri krever kvadratisk enhet.")
-        self.document.symmetry = operations
-        if hasattr(self, "canvas"):
+    def _column_count_changed(self, result: EditResult) -> None:
+        if result.changed:
+            self.unit_width.set(self.document.unit_width)
+            self._sync_symmetry_vars()
             self._document_changed()
 
+    def _row_count_changed(self, result: EditResult) -> None:
+        if result.changed:
+            self.unit_height.set(self.document.unit_height)
+            self._sync_symmetry_vars()
+            self._document_changed()
+
+    def _insert_column_at(self, index: int) -> None:
+        self._column_count_changed(self.editor.insert_column(index))
+
+    def _remove_column_at(self, index: int) -> None:
+        self._column_count_changed(self.editor.remove_column(index))
+
+    def _insert_row_at(self, index: int) -> None:
+        self._row_count_changed(self.editor.insert_row(index))
+
+    def _remove_row_at(self, index: int) -> None:
+        self._row_count_changed(self.editor.remove_row(index))
+
+    def _sync_symmetry_vars(self) -> None:
+        for name, variable in self.symmetry_vars.items():
+            variable.set(name in self.document.symmetry)
+
+    def _apply_symmetry(self) -> None:
+        operations = [name for name, variable in self.symmetry_vars.items() if variable.get()]
+        result = self.editor.set_symmetry(operations)
+        self._sync_symmetry_vars()
+        if result.removed_symmetry:
+            messagebox.showinfo("Kvadratisk enhet kreves", "Kvartrotasjon og diagonal symmetri krever kvadratisk enhet.")
+        self._document_changed()
+
     def _choose_palette_colour(self, index: int) -> None:
-        self._ensure_palette_sequence_capacity()
-        current_sequence = list(self.palette_sequences[index])
+        current_sequence = list(self.document.palette_sequences[index])
         selected_sequence = self._open_palette_sequence_dialog(index, current_sequence)
         if selected_sequence is None:
             return
 
-        self.palette_sequences[index] = selected_sequence
-        self.document.palette_sequences = [list(row) for row in self.palette_sequences]
-        self.document.palette[index] = selected_sequence[0]
+        self.editor.set_colour_sequence(index, selected_sequence)
         self._rebuild_palette_buttons()
         self._document_changed()
-
-    def _ensure_palette_sequence_capacity(self) -> None:
-        while len(self.palette_sequences) < len(self.document.palette):
-            palette_index = len(self.palette_sequences)
-            self.palette_sequences.append([self.document.palette[palette_index]])
-        if len(self.palette_sequences) > len(self.document.palette):
-            self.palette_sequences = self.palette_sequences[: len(self.document.palette)]
-        self.document.palette_sequences = [list(row) for row in self.palette_sequences]
 
     def _open_palette_sequence_dialog(self, index: int, initial_sequence: list[str]) -> list[str] | None:
         sequence = list(initial_sequence) if initial_sequence else [self.document.palette[index]]
@@ -446,7 +407,7 @@ class KvaleApp:
         current_part_colour = tk.StringVar(value=sequence[0])
 
         ttk.Label(body, text="Antall farger").grid(row=2, column=0, sticky=tk.W)
-        count_spin = ttk.Spinbox(body, from_=1, to=24, textvariable=count_var, width=8)
+        count_spin = ttk.Spinbox(body, from_=1, to=MAX_SEQUENCE_LENGTH, textvariable=count_var, width=8)
         count_spin.grid(row=2, column=1, sticky=tk.W, padx=(6, 0))
 
         ttk.Label(body, text="Del i sekvens").grid(row=3, column=0, sticky=tk.W, pady=(8, 0))
@@ -500,10 +461,7 @@ class KvaleApp:
                 target = max(1, int(count_var.get()))
             except (tk.TclError, ValueError):
                 return
-            if target > len(sequence):
-                sequence.extend([sequence[-1]] * (target - len(sequence)))
-            elif target < len(sequence):
-                del sequence[target:]
+            sequence[:] = resize_sequence(sequence, target)
             refresh_part_options()
             draw_preview()
 
@@ -550,10 +508,7 @@ class KvaleApp:
     def _add_palette_colour(self) -> None:
         selected = colorchooser.askcolor(color="#808080", title="Legg til palettfarge")[1]
         if selected:
-            self.document.palette.append(selected)
-            self.palette_sequences.append([selected])
-            self.document.palette_sequences = [list(row) for row in self.palette_sequences]
-            self._ensure_palette_sequence_capacity()
+            self.editor.add_colour(selected)
             self._rebuild_palette_buttons()
             self._document_changed()
 
@@ -564,7 +519,7 @@ class KvaleApp:
         self.canvas.redraw()
         self.status.set("Endret")
 
-    def _sync_controls_from_document(self) -> None:
+    def _sync_controls_from_document(self, reset_selection: bool = True) -> None:
         self.unit_width.set(self.document.unit_width)
         self.unit_height.set(self.document.unit_height)
         self.repeats_x.set(self.document.repeats_x)
@@ -574,19 +529,26 @@ class KvaleApp:
         self.repeat_top_row.set(self.document.repeat_top_row)
         self.repeat_bottom_row.set(self.document.repeat_bottom_row)
         self.use_palette_sequence.set(self.document.use_palette_sequence)
-        for name, variable in self.symmetry_vars.items():
-            variable.set(name in self.document.symmetry)
-        if self.document.palette_sequences:
-            self.palette_sequences = [list(row) for row in self.document.palette_sequences]
-        else:
-            self.palette_sequences = [[colour] for colour in self.document.palette]
-            self.document.palette_sequences = [list(row) for row in self.palette_sequences]
-        self._ensure_palette_sequence_capacity()
-        self.active_colour.set(0)
+        self._sync_symmetry_vars()
+        if reset_selection or self.active_colour.get() >= len(self.document.palette_sequences):
+            self.active_colour.set(0)
         self._rebuild_palette_buttons()
 
+    def undo(self) -> None:
+        if self.editor.undo():
+            self._history_changed("Angret")
+
+    def redo(self) -> None:
+        if self.editor.redo():
+            self._history_changed("Gjort om")
+
+    def _history_changed(self, message: str) -> None:
+        self._sync_controls_from_document(reset_selection=False)
+        self.canvas.redraw()
+        self.status.set(message)
+
     def new_document(self) -> None:
-        self.document = PatternDocument()
+        self.editor.load(PatternDocument())
         self.current_path = None
         self._sync_controls_from_document()
         self.canvas.redraw()
@@ -597,7 +559,7 @@ class KvaleApp:
         if not filename:
             return
         try:
-            self.document = load_document(Path(filename))
+            self.editor.load(load_document(Path(filename)))
             self.current_path = Path(filename)
             self._sync_controls_from_document()
             self.canvas.redraw()

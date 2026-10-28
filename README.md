@@ -18,6 +18,7 @@ CLI, SVG exporter or embroidery-format plugin.
 - Repeated-band preview
 - Per-slot palette sequences edited from the colour dialog
 - Toggle to apply sequence over repeats (`Bruk fargeskvens`)
+- Undo/redo (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z)
 - JSON save/load
 - PNG export
 - Unit tests and GitHub Actions
@@ -29,7 +30,9 @@ CLI, SVG exporter or embroidery-format plugin.
 src/kvale/
 ├── core/
 │   ├── model.py          # document data model
-│   ├── symmetry.py       # symmetry operations
+│   ├── symmetry.py       # symmetry operations and rules
+│   ├── editing.py        # edit operations (paint, rows/columns, resize, colours)
+│   ├── editor.py         # Editor: command layer with undo/redo
 │   ├── renderer.py       # repeat-aware colour grid and raster export
 │   └── serialization.py  # JSON persistence
 └── gui/
@@ -39,6 +42,12 @@ src/kvale/
 
 The GUI depends on interfaces from `core`, but `core` does not depend on the GUI.
 That boundary is the main extension point.
+
+A UI holds one `Editor`, calls its methods for every change (`paint`, `erase`,
+`insert_column`, `set_grid`, `set_symmetry`, `set_colour_sequence`, ...) and draws
+`editor.document`. The editor keeps undo/redo history; wrap a drag-paint stroke in
+`with editor.batch():` to make it one undo step. Edits that switch off square-only
+symmetry return the removed operations in `EditResult.removed_symmetry`.
 
 ## Run locally
 
@@ -104,6 +113,7 @@ Pattern files now use `palette_sequences` as canonical colour storage.
 ```bash
 pytest
 ruff check .
+mypy src tests
 ```
 
 ## Pre-commit
@@ -116,23 +126,24 @@ pre-commit run --all-files
 
 ## Suggested roadmap
 
-1. Undo/redo command system
-2. Multiple motif layers and named palettes
-3. Half-drop, brick and glide-reflection repeats
-4. Visual draggable mirror planes
-5. SVG and printable chart export
-6. Plugin interface for exporters and symmetry groups
-7. Optional PySide6 or browser front end
-8. Raster-image tracing and palette reduction
+1. Multiple motif layers and named palettes
+2. Half-drop, brick and glide-reflection repeats
+3. Visual draggable mirror planes
+4. SVG and printable chart export
+5. Plugin interface for exporters and symmetry groups
+6. Optional PySide6 or browser front end
+7. Raster-image tracing and palette reduction
 
 ## Extension strategy
 
 New functionality should normally be added behind a small interface:
 
+- New edit operation: add a function to `core/editing.py` and a method on `Editor`
+  in `core/editor.py`, so every UI gets it with undo/redo.
 - New symmetry: add a transform in `core/symmetry.py`.
 - New colour behaviour: extend sequence handling in `core/renderer.py` and document model fields in `core/model.py`.
 - New export format: consume `PatternDocument` or `build_colour_grid()` in a new exporter module.
-- New GUI: reuse the entire `core` package without importing Tkinter.
+- New GUI: reuse the entire `core` package, driving it through `Editor`, without importing Tkinter.
 
 ## Licence
 

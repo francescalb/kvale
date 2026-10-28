@@ -3,7 +3,8 @@ from __future__ import annotations
 import tkinter as tk
 from collections.abc import Callable
 
-from kvale.core.model import PatternDocument, Mark
+from kvale.core.editor import Editor
+from kvale.core.model import PatternDocument
 from kvale.core.renderer import build_colour_grid
 from kvale.core.symmetry import expand_marks
 
@@ -14,7 +15,7 @@ class PatternCanvas(tk.Canvas):
     def __init__(
         self,
         master: tk.Misc,
-        document_getter: Callable[[], PatternDocument],
+        editor: Editor,
         active_colour_getter: Callable[[], int],
         on_change: Callable[[], None],
         on_insert_column: Callable[[int], None],
@@ -23,7 +24,7 @@ class PatternCanvas(tk.Canvas):
         on_remove_row: Callable[[int], None],
     ) -> None:
         super().__init__(master, background="white", highlightthickness=0)
-        self.document_getter = document_getter
+        self.editor = editor
         self.active_colour_getter = active_colour_getter
         self.on_change = on_change
         self.on_insert_column = on_insert_column
@@ -48,76 +49,41 @@ class PatternCanvas(tk.Canvas):
 
 
     def _paint(self, event: tk.Event[tk.Misc]) -> None:
-        """Add a mark, or apply hover action when clicking margin controls."""
+        """Paint a cell, or apply hover action when clicking margin controls.
+
+        Clicking a symmetry-generated copy recolours the stored mark behind it.
+        """
         if self.mode != "edit":
             return
-
-        document = self.document_getter()
 
         if self._apply_hover_action(event.x, event.y, is_add=True):
             return
 
-        x = int((event.x - self.grid_origin_x) // self.cell_size)
-        y = int((event.y - self.grid_origin_y) // self.cell_size)
-
-        if not (
-            0 <= x < document.unit_width
-            and 0 <= y < document.unit_height
-        ):
-            return
-
-        source_mark = self._find_source_mark(document, x, y)
-
-        if source_mark is not None:
-            # The user clicked either the stored mark or one of its
-            # symmetry-generated copies. Change the original stored mark.
-            target_x = source_mark.x
-            target_y = source_mark.y
-        else:
-            # No existing mark generated this cell, so create a new mark
-            # at the clicked position.
-            target_x = x
-            target_y = y
-
-        document.set_mark(
-            target_x,
-            target_y,
-            self.active_colour_getter(),
-        )
-
-        self.on_change()
+        x, y = self._cell_at(event.x, event.y)
+        if self.editor.paint(x, y, self.active_colour_getter()).changed:
+            self.on_change()
 
     def _erase(self, event: tk.Event[tk.Misc]) -> None:
         """Erase a mark, or apply hover action when clicking margin controls."""
         if self.mode != "edit":
             return
 
-        document = self.document_getter()
-
         if self._apply_hover_action(event.x, event.y, is_add=False):
             return
 
-        x = int((event.x - self.grid_origin_x) // self.cell_size)
-        y = int((event.y - self.grid_origin_y) // self.cell_size)
+        x, y = self._cell_at(event.x, event.y)
+        if self.editor.erase(x, y).changed:
+            self.on_change()
 
-        if not (
-            0 <= x < document.unit_width
-            and 0 <= y < document.unit_height
-        ):
-            return
-
-        source_mark = self._find_source_mark(document, x, y)
-
-        if source_mark is None:
-            return
-
-        document.erase_mark(source_mark.x, source_mark.y)
-
-        self.on_change()
+    def _cell_at(self, px: int, py: int) -> tuple[int, int]:
+        return (
+            int((px - self.grid_origin_x) // self.cell_size),
+            int((py - self.grid_origin_y) // self.cell_size),
+        )
 
     def redraw(self) -> None:
         self.delete("all")
-        document = self.document_getter()
+        document = self.editor.document
         if self.mode == "edit":
             self._draw_editor(document)
         else:
@@ -235,7 +201,7 @@ class PatternCanvas(tk.Canvas):
         if self.mode != "edit":
             return
 
-        document = self.document_getter()
+        document = self.editor.document
         new_target = self._resize_target(document, event.x, event.y)
 
         # If pointer is on a margin, that position should always control target.
@@ -330,40 +296,24 @@ class PatternCanvas(tk.Canvas):
                     if placement == "before":
                         target_index = index
                     else:
-                        target_index = min(index + 1, self.document_getter().unit_width)
+                        target_index = min(index + 1, self.editor.document.unit_width)
 
                     if is_add:
                         self.on_insert_column(target_index)
                     else:
-                        remove_index = min(target_index, self.document_getter().unit_width - 1)
+                        remove_index = min(target_index, self.editor.document.unit_width - 1)
                         self.on_remove_column(remove_index)
                 else:
                     if placement == "before":
                         target_index = index
                     else:
-                        target_index = min(index + 1, self.document_getter().unit_height)
+                        target_index = min(index + 1, self.editor.document.unit_height)
 
                     if is_add:
                         self.on_insert_row(target_index)
                     else:
-                        remove_index = min(target_index, self.document_getter().unit_height - 1)
+                        remove_index = min(target_index, self.editor.document.unit_height - 1)
                         self.on_remove_row(remove_index)
 
                 return True
         return False
-    def _find_source_mark(self, document: PatternDocument, x: int, y: int) -> Mark | None:
-        """Find the stored mark responsible for a displayed cell."""
-
-        for mark in document.motif:
-            generated_marks = expand_marks(
-                [mark],
-                width=document.unit_width,
-                height=document.unit_height,
-                operations=document.symmetry,
-            )
-
-            for generated in generated_marks:
-                if generated.x == x and generated.y == y:
-                    return mark
-
-        return None
