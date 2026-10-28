@@ -2,11 +2,12 @@
 
 import tkinter as tk
 from collections.abc import Iterator
-from tkinter import colorchooser, messagebox
+from tkinter import messagebox
 
 import pytest
 
 from kvale.core.model import Mark
+from kvale.gui import app as app_module
 from kvale.gui.app import KvaleApp
 
 
@@ -55,15 +56,22 @@ def test_paint_copy_edits_source_and_undo_redo(app: KvaleApp) -> None:
 
 
 def test_insert_column_updates_controls_and_undo(app: KvaleApp) -> None:
+    app._insert_column_at(0)
+    assert app.unit_width.get() == 13
+    assert app.unit_height.get() == 12
+
+    # A quarter turn maps the new column onto rows, so the unit stays square
+    # and keeps its symmetry.
+    app.unit_width.set(12)
+    app._apply_controls()
     app.symmetry_vars["rotate_90"].set(True)
     app._apply_symmetry()
-
     app._insert_column_at(0)
 
-    assert app.unit_width.get() == 13
-    assert not app.symmetry_vars["rotate_90"].get()
+    assert (app.unit_width.get(), app.unit_height.get()) == (14, 14)
+    assert app.symmetry_vars["rotate_90"].get()
     app.undo()
-    assert app.unit_width.get() == 12
+    assert (app.unit_width.get(), app.unit_height.get()) == (12, 12)
     assert app.symmetry_vars["rotate_90"].get()
 
 
@@ -84,7 +92,7 @@ def test_square_only_symmetry_shows_message(app: KvaleApp, monkeypatch: pytest.M
 
 
 def test_add_colour_and_undo_keeps_valid_selection(app: KvaleApp, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(colorchooser, "askcolor", lambda **_kwargs: ((0, 0, 0), "#010203"))
+    monkeypatch.setattr(app_module, "ask_rgb_colour", lambda *_args, **_kwargs: "#010203")
 
     app._add_palette_colour()
     app.active_colour.set(4)

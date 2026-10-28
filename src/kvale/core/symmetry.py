@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
 
-from kvale.core.model import Mark
+from kvale.core.model import Backstitch, Mark
 
 SUPPORTED_OPERATIONS = (
     "identity",
@@ -61,6 +61,34 @@ def transform_point(x: int, y: int, width: int, height: int, operation: str) -> 
     raise ValueError(f"Unknown symmetry operation: {operation}")
 
 
+def transform_intersection(
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+    operation: str,
+) -> tuple[int, int]:
+    if operation == "identity":
+        return x, y
+    if operation == "mirror_x":
+        return width - x, y
+    if operation == "mirror_y":
+        return x, height - y
+    if operation == "rotate_180":
+        return width - x, height - y
+    if width != height:
+        raise ValueError(f"{operation} requires a square recurring unit")
+    if operation == "rotate_90":
+        return height - y, x
+    if operation == "rotate_270":
+        return y, width - x
+    if operation == "diag_main":
+        return y, x
+    if operation == "diag_anti":
+        return width - y, height - x
+    raise ValueError(f"Unknown symmetry operation: {operation}")
+
+
 def expand_marks(
     marks: Iterable[Mark],
     width: int,
@@ -103,4 +131,43 @@ def expand_marks(
                     )
                     changed = True
 
+    return list(result.values())
+
+
+def expand_backstitches(
+    backstitches: Iterable[Backstitch],
+    width: int,
+    height: int,
+    operations: Sequence[str],
+) -> list[Backstitch]:
+    result = {backstitch.key: backstitch for backstitch in backstitches}
+    changed = True
+    while changed:
+        changed = False
+        for backstitch in list(result.values()):
+            for operation in operations:
+                start_x, start_y = transform_intersection(
+                    backstitch.start_x,
+                    backstitch.start_y,
+                    width,
+                    height,
+                    operation,
+                )
+                end_x, end_y = transform_intersection(
+                    backstitch.end_x,
+                    backstitch.end_y,
+                    width,
+                    height,
+                    operation,
+                )
+                transformed = Backstitch(
+                    start_x,
+                    start_y,
+                    end_x,
+                    end_y,
+                    backstitch.colour_slot,
+                )
+                if transformed.key not in result:
+                    result[transformed.key] = transformed
+                    changed = True
     return list(result.values())
