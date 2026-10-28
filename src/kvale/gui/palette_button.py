@@ -1,5 +1,5 @@
-from collections.abc import Callable
 import tkinter as tk
+from collections.abc import Callable
 from tkinter import font as tkfont
 
 

@@ -66,7 +66,7 @@ class PatternDocument:
         return result
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "PatternDocument":
+    def from_dict(cls, data: dict[str, Any]) -> PatternDocument:
         raw_sequences = data.get("palette_sequences")
         if not isinstance(raw_sequences, list) or not raw_sequences:
             raise ValueError("Pattern file must contain non-empty palette_sequences")

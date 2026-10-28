@@ -4,7 +4,6 @@ from collections.abc import Iterable, Sequence
 
 from kvale.core.model import Mark
 
-
 SUPPORTED_OPERATIONS = (
     "identity",
     "mirror_x",

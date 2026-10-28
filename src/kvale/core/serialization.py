@@ -13,5 +13,6 @@ def save_document(document: PatternDocument, path: Path) -> None:
 def load_document(path: Path) -> PatternDocument:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
-        raise ValueError("Pattern file must contain a JSON object")
+        # ValueError (not TypeError) so callers can handle all bad files the same way.
+        raise ValueError("Pattern file must contain a JSON object")  # noqa: TRY004
     return PatternDocument.from_dict(data)

@@ -3,7 +3,7 @@ from __future__ import annotations
 import tkinter as tk
 from collections.abc import Callable
 
-from kvale.core.model import PatternDocument, Mark
+from kvale.core.model import Mark, PatternDocument
 from kvale.core.renderer import build_colour_grid
 from kvale.core.symmetry import expand_marks
 
