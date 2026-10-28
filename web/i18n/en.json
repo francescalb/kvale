@@ -1,0 +1,23 @@
+{
+  "language": "Language",
+  "undo": "Undo",
+  "undo_hint": "Undo (Ctrl+Z)",
+  "redo": "Redo",
+  "redo_hint": "Redo (Ctrl+Y)",
+  "view": "View",
+  "edit": "Edit",
+  "preview": "Preview repeats",
+  "palette": "Colours",
+  "colour_slot": "Colour {number}",
+  "erase": "Eraser",
+  "symmetry": "Symmetry",
+  "mirror_x": "Mirror vertically",
+  "mirror_y": "Mirror horizontally",
+  "rotate_180": "Rotate 180°",
+  "rotate_90": "Rotate 90°",
+  "rotate_270": "Rotate 270°",
+  "diag_main": "Main diagonal",
+  "diag_anti": "Anti-diagonal",
+  "hint": "Left-click paints, right-click erases. Drag to paint several cells.",
+  "symmetry_removed": "Switched off because the unit is not square: {operations}"
+}

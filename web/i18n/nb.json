@@ -1,0 +1,23 @@
+{
+  "language": "Språk",
+  "undo": "Angre",
+  "undo_hint": "Angre (Ctrl+Z)",
+  "redo": "Gjør om",
+  "redo_hint": "Gjør om (Ctrl+Y)",
+  "view": "Visning",
+  "edit": "Rediger",
+  "preview": "Forhåndsvis gjentak",
+  "palette": "Farger",
+  "colour_slot": "Farge {number}",
+  "erase": "Viskelær",
+  "symmetry": "Symmetri",
+  "mirror_x": "Speil vertikalt",
+  "mirror_y": "Speil horisontalt",
+  "rotate_180": "Roter 180°",
+  "rotate_90": "Roter 90°",
+  "rotate_270": "Roter 270°",
+  "diag_main": "Hoveddiagonal",
+  "diag_anti": "Motdiagonal",
+  "hint": "Venstreklikk maler, høyreklikk visker. Dra for å male flere ruter.",
+  "symmetry_removed": "Slått av fordi enheten ikke er kvadratisk: {operations}"
+}

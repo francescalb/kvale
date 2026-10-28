@@ -18,4 +18,4 @@ repos:
       - id: mypy
         additional_dependencies: [types-Pillow, pytest]
         pass_filenames: false
-        args: [src, tests]
+        args: [src, tests, web/kvale_web, tools]

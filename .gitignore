@@ -54,3 +54,6 @@ Thumbs.db
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# Built web app
+_site/

@@ -1,0 +1,23 @@
+{
+  "language": "Lingua",
+  "undo": "Annulla",
+  "undo_hint": "Annulla (Ctrl+Z)",
+  "redo": "Ripeti",
+  "redo_hint": "Ripeti (Ctrl+Y)",
+  "view": "Vista",
+  "edit": "Modifica",
+  "preview": "Anteprima ripetizioni",
+  "palette": "Colori",
+  "colour_slot": "Colore {number}",
+  "erase": "Gomma",
+  "symmetry": "Simmetria",
+  "mirror_x": "Specchia verticalmente",
+  "mirror_y": "Specchia orizzontalmente",
+  "rotate_180": "Ruota di 180°",
+  "rotate_90": "Ruota di 90°",
+  "rotate_270": "Ruota di 270°",
+  "diag_main": "Diagonale principale",
+  "diag_anti": "Antidiagonale",
+  "hint": "Clic sinistro dipinge, clic destro cancella. Trascina per dipingere più celle.",
+  "symmetry_removed": "Disattivate perché l'unità non è quadrata: {operations}"
+}

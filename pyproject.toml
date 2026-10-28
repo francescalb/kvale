@@ -14,6 +14,8 @@ dependencies = ["Pillow>=10.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.5", "mypy>=1.10", "pre-commit>=3.8", "types-Pillow"]
+# Browser smoke tests (pytest -m browser); also run: playwright install chromium
+browser = ["playwright>=1.45"]
 
 [project.scripts]
 kvale = "kvale.__main__:main"
@@ -25,12 +27,24 @@ where = ["src"]
 "kvale.core" = ["dmc_palette.json"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "web"]
 testpaths = ["tests"]
+# The browser tests are slow and need network access: run them with `pytest -m browser`.
+addopts = "-m 'not browser'"
+markers = ["browser: drives the web app in headless Chromium (needs Playwright)"]
 
 [tool.ruff]
 line-length = 100
+# First-party code: the core package, the browser UI package and the tests.
+src = ["src", "web", "tests"]
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
+mypy_path = ["src", "web"]
+
+# Browser-only modules (PyScript/Pyodide) and optional test tools have no stubs;
+# their objects are typed as Any.
+[[tool.mypy.overrides]]
+module = ["js", "pyodide", "pyodide.*", "pyodide_js", "pyscript", "pyscript.*", "playwright", "playwright.*"]
+ignore_missing_imports = true

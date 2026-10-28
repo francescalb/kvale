@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kvale</title>
+  <!-- All paths are relative so the site works under a sub-path such as /kvale/. -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css">
+  <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
+</head>
+<body class="booting">
+  <!-- Loading screen: plain HTML/CSS, shown until Python has started (3-7 s).
+       app.start() removes the "booting" class from <body>. -->
+  <div id="boot" class="boot" role="status" aria-live="polite">
+    <div class="boot-card">
+      <div class="boot-title">Kvale</div>
+      <div class="spinner" aria-hidden="true"></div>
+      <p lang="nb">Starter … Første gang kan det ta noen sekunder.</p>
+      <p lang="en">Starting … The first time can take a few seconds.</p>
+      <p lang="it">Avvio … La prima volta può richiedere alcuni secondi.</p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <h1>Kvale</h1>
+    <div class="toolbar">
+      <button type="button" id="undo" data-i18n="undo" data-i18n-title="undo_hint" disabled>Angre</button>
+      <button type="button" id="redo" data-i18n="redo" data-i18n-title="redo_hint" disabled>Gjør om</button>
+      <div class="segmented" role="group" data-i18n-aria-label="view">
+        <button type="button" id="mode-edit" class="active" data-i18n="edit">Rediger</button>
+        <button type="button" id="mode-preview" data-i18n="preview">Forhåndsvis gjentak</button>
+      </div>
+      <label class="lang">
+        <span data-i18n="language">Språk</span>
+        <select id="lang">
+          <option value="nb">Norsk bokmål</option>
+          <option value="en">English</option>
+          <option value="it">Italiano</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel">
+      <!-- Chunk 5: grid settings, colour slots, sequence editor, background. -->
+      <section id="palette-panel">
+        <h2 data-i18n="palette">Farger</h2>
+        <div id="palette" class="swatches"></div>
+        <label class="toggle"><input type="checkbox" id="erase"> <span data-i18n="erase">Viskelær</span></label>
+      </section>
+
+      <section id="symmetry-panel">
+        <h2 data-i18n="symmetry">Symmetri</h2>
+        <label class="toggle"><input type="checkbox" class="sym" value="mirror_x"> <span data-i18n="mirror_x">Speil vertikalt</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="mirror_y"> <span data-i18n="mirror_y">Speil horisontalt</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="rotate_180"> <span data-i18n="rotate_180">Roter 180°</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="rotate_90"> <span data-i18n="rotate_90">Roter 90°</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="rotate_270"> <span data-i18n="rotate_270">Roter 270°</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="diag_main"> <span data-i18n="diag_main">Hoveddiagonal</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="diag_anti"> <span data-i18n="diag_anti">Motdiagonal</span></label>
+      </section>
+
+      <!-- Chunk 6: file buttons (open/save JSON, export PNG, new). -->
+      <section id="file-panel" hidden></section>
+    </aside>
+
+    <section class="stage">
+      <div class="canvas-wrap">
+        <canvas id="grid"></canvas>
+      </div>
+      <p class="hint" data-i18n="hint">Venstreklikk maler, høyreklikk visker.</p>
+      <p id="status" class="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script type="py" src="main.py" config="pyscript.toml"></script>
+</body>
+</html>
