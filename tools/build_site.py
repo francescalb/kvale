@@ -84,7 +84,7 @@ class _QuietHandler(http.server.SimpleHTTPRequestHandler):
 def serve(directory: Path, port: int) -> None:
     handler = functools.partial(_QuietHandler, directory=str(directory))
     with http.server.ThreadingHTTPServer(("127.0.0.1", port), handler) as server:
-        print(f"Serving {directory} at http://localhost:{port}/  (Ctrl+C to stop)")
+        print(f"Serving {directory} at http://localhost:{port}/  (Ctrl+C to stop)", flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:
