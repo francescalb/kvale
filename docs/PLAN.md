@@ -21,13 +21,17 @@ Every item must work in the new app before the Tkinter interface is removed.
 - [ ] Toggles for whether the outer left/right column and top/bottom row repeat
 - [ ] Left-click paints, right-click erases; clicking a generated copy edits the source mark
 - [ ] Seed marks have an inset border; generated marks do not
-- [ ] Hover at the grid edge to insert/remove rows and columns (before/after)
+- [ ] Row/column dialog: add or remove the top/bottom row, first/last column or a numbered row/column; symmetry adds/removes the matching ones; the last row/column cannot be removed
 - [ ] 8 symmetry operations; square-only ones are switched off with a message on non-square units
 - [ ] Edit mode and repeat-preview mode
+- [ ] Backstitch tool: click two intersections to draw, right-click to remove, Esc cancels; expanded by symmetry; drawn in preview and PNG
+- [ ] End pieces for the top, bottom, left and right repeats: hide/add/recolour cells and backstitches, extension with extra rows/columns beyond the unit, reset
 - [ ] Colour slots: select, edit, add; per-slot sequences (1–24 colours); "use sequence" toggle; split legend swatch
-- [ ] Open/save JSON in the current format (existing files still open); PNG export
+- [ ] Colour dialog with RGB/hex entry, and a searchable DMC floss colour picker
+- [ ] Open/save JSON in the current format (format_version 4; older files still open); PNG export
+- [ ] Open a pattern given at start (`kvale path.json` today; a file link or URL parameter in the browser)
 - [ ] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app)
-- [ ] New: undo/redo (Ctrl+Z / Ctrl+Y)
+- [ ] Undo/redo (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z), Edit menu entries disabled when there is nothing to undo/redo
 - [ ] New: control for the background colour (already stored in the file)
 
 ## Chunks
