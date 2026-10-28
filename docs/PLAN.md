@@ -11,7 +11,7 @@ features and leaving room for new ones.
 | Where it runs | In the browser, as a static site on GitHub Pages (no server) |
 | Language | As much Python as possible. `kvale.core` runs in the browser via Pyodide |
 | Interface languages | Norwegian (nb), English (en), Italian (it), switchable in the app |
-| UI toolkit | Flet or PyScript, chosen after the toolkit test (chunk 0) |
+| UI toolkit | PyScript: Python for all logic, plain HTML/CSS for layout and look, no build step. Chosen over Flet after the toolkit test (faster start, smaller download, faster with large grids, normal web page) |
 
 ## Feature checklist
 
@@ -26,7 +26,8 @@ Every item must work in the new app before the Tkinter interface is removed.
 - [ ] Edit mode and repeat-preview mode
 - [ ] Colour slots: select, edit, add; per-slot sequences (1–24 colours); "use sequence" toggle; split legend swatch
 - [ ] Open/save JSON in the current format (existing files still open); PNG export
-- [ ] Ctrl+N / Ctrl+O / Ctrl+S
+- [ ] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app)
+- [ ] New: undo/redo (Ctrl+Z / Ctrl+Y)
 - [ ] New: control for the background colour (already stored in the file)
 
 ## Chunks
@@ -35,9 +36,9 @@ Each chunk is one pull request.
 
 | # | Chunk | Needs |
 |---|---|---|
-| 0 | Toolkit test: throwaway Flet and PyScript apps with a paintable grid and symmetry, built as static sites using the real core. Pick one | – |
-| 1 | Strengthen the core: move row/column insert/remove, palette-sequence handling and symmetry rules from `gui/app.py` into `core/` with tests; add a single command layer with undo/redo; cleanup | – |
-| 2 | Project skeleton for the chosen toolkit; GitHub Actions run tests and publish to GitHub Pages | 0 |
+| 0 | ✅ Toolkit test: throwaway Flet and PyScript apps (branches `spike/flet`, `spike/pyscript`). PyScript chosen | – |
+| 1 | ✅ Strengthen the core: move row/column insert/remove, palette-sequence handling and symmetry rules from `gui/app.py` into `core/` with tests; add a single command layer with undo/redo; cleanup | – |
+| 2 | PyScript project skeleton (starting from the `spike/pyscript` prototype); GitHub Actions run tests and publish to GitHub Pages | 0 |
 | 3 | Look and languages: layout, light/dark, all UI text in nb/en/it files, language switch | 2 |
 | 4 | Drawing grid: paint/erase (click, drag, touch), seed vs generated marking, row/column insert/remove, zoom | 1, 3 |
 | 5 | Side panels: grid settings, symmetry, colour slots, sequence editor | 1, 3 |
