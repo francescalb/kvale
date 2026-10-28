@@ -26,3 +26,26 @@ jobs:
 
       - name: Run pre-commit
         run: pre-commit run --all-files
+
+  browser:
+    name: Browser smoke tests (Playwright)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install project, dev and browser-test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev,browser]
+          python -m playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: pytest -m browser -v
