@@ -1,0 +1,55 @@
+# Kvale modernisation plan
+
+Goal: turn the Tkinter program into an app that non-technical users can open on
+Windows, macOS and Linux without a command line, while keeping all existing
+features and leaving room for new ones.
+
+## Decisions
+
+| Topic | Decision |
+|---|---|
+| Where it runs | In the browser, as a static site on GitHub Pages (no server) |
+| Language | As much Python as possible. `kvale.core` runs in the browser via Pyodide |
+| Interface languages | Norwegian (nb), English (en), Italian (it), switchable in the app |
+| UI toolkit | PyScript: Python for all logic, plain HTML/CSS for layout and look, no build step. Chosen over Flet after the toolkit test (faster start, smaller download, faster with large grids, normal web page) |
+
+## Feature checklist
+
+Every item must work in the new app before the Tkinter interface is removed.
+
+- [ ] Unit width/height and repeats across/down (1–100)
+- [ ] Toggles for whether the outer left/right column and top/bottom row repeat
+- [ ] Left-click paints, right-click erases; clicking a generated copy edits the source mark
+- [ ] Seed marks have an inset border; generated marks do not
+- [ ] Hover at the grid edge to insert/remove rows and columns (before/after)
+- [ ] 8 symmetry operations; square-only ones are switched off with a message on non-square units
+- [ ] Edit mode and repeat-preview mode
+- [ ] Colour slots: select, edit, add; per-slot sequences (1–24 colours); "use sequence" toggle; split legend swatch
+- [ ] Open/save JSON in the current format (existing files still open); PNG export
+- [ ] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app)
+- [ ] New: undo/redo (Ctrl+Z / Ctrl+Y)
+- [ ] New: control for the background colour (already stored in the file)
+
+## Chunks
+
+Each chunk is one pull request.
+
+| # | Chunk | Needs |
+|---|---|---|
+| 0 | ✅ Toolkit test: throwaway Flet and PyScript apps (branches `spike/flet`, `spike/pyscript`). PyScript chosen | – |
+| 1 | ✅ Strengthen the core: move row/column insert/remove, palette-sequence handling and symmetry rules from `gui/app.py` into `core/` with tests; add a single command layer with undo/redo; cleanup | – |
+| 2 | PyScript project skeleton (starting from the `spike/pyscript` prototype); GitHub Actions run tests and publish to GitHub Pages | 0 |
+| 3 | Look and languages: layout, light/dark, all UI text in nb/en/it files, language switch | 2 |
+| 4 | Drawing grid: paint/erase (click, drag, touch), seed vs generated marking, row/column insert/remove, zoom | 1, 3 |
+| 5 | Side panels: grid settings, symmetry, colour slots, sequence editor | 1, 3 |
+| 6 | Files: open/save JSON, PNG export, autosave in the browser | 1, 2 |
+| 7 | Installable/offline (PWA) and a short user guide in nb/en/it | 4–6 |
+| 8 | Feature check against the checklist; remove the Tkinter interface | 7 |
+
+Rounds: 0+1, then 2+3, then 4+5+6, then 7+8. Pull requests are reviewed after
+each round before the next one starts.
+
+## Later
+
+Printable charts with a symbol per colour (SVG/PDF), named thread palettes,
+half-drop and brick repeats, draggable mirror lines, and the roadmap in the README.
