@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+from typing import Literal
 
 from kvale.core.model import Backstitch, Mark
 
@@ -87,6 +88,35 @@ def transform_intersection(
     if operation == "diag_anti":
         return width - y, height - x
     raise ValueError(f"Unknown symmetry operation: {operation}")
+
+
+def transform_grid_line(
+    axis: Literal["row", "column"],
+    index: int,
+    operation: str,
+    width: int,
+    height: int,
+    *,
+    insertion: bool,
+) -> tuple[Literal["row", "column"], int]:
+    """Transform a row or column (or, with ``insertion``, a gap between them) by one operation.
+
+    Gaps are numbered 0 to the size, so gap ``i`` lies before row/column ``i``.
+    Unknown operations leave the line unchanged.
+    """
+    x_limit = width if insertion else width - 1
+    y_limit = height if insertion else height - 1
+    transforms: dict[str, dict[str, tuple[Literal["row", "column"], int]]] = {
+        "identity": {"column": ("column", index), "row": ("row", index)},
+        "mirror_x": {"column": ("column", x_limit - index), "row": ("row", index)},
+        "mirror_y": {"column": ("column", index), "row": ("row", y_limit - index)},
+        "rotate_180": {"column": ("column", x_limit - index), "row": ("row", y_limit - index)},
+        "rotate_90": {"column": ("row", index), "row": ("column", y_limit - index)},
+        "rotate_270": {"column": ("row", x_limit - index), "row": ("column", index)},
+        "diag_main": {"column": ("row", index), "row": ("column", index)},
+        "diag_anti": {"column": ("row", x_limit - index), "row": ("column", y_limit - index)},
+    }
+    return transforms.get(operation, transforms["identity"])[axis]
 
 
 def expand_marks(

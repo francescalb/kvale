@@ -14,6 +14,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 
 from kvale.core import editing
+from kvale.core.editing import Axis, Edge, Target
 from kvale.core.model import PatternDocument
 
 
@@ -126,35 +127,96 @@ class Editor:
 
     # Marks -------------------------------------------------------------
 
-    def paint(self, x: int, y: int, colour_slot: int) -> EditResult:
-        """Paint a cell of the unit; painting a generated copy recolours its source mark."""
+    def paint(self, x: int, y: int, colour_slot: int, target: Target = "unit") -> EditResult:
+        """Paint a cell of the unit or of an end piece.
+
+        In the unit, painting a generated copy recolours its source mark. See
+        ``editing.paint_cell`` and ``editing.paint_end_piece_cell``.
+        """
 
         def edit(document: PatternDocument) -> None:
-            editing.paint_cell(document, x, y, colour_slot)
+            if target == "unit":
+                editing.paint_cell(document, x, y, colour_slot)
+            else:
+                editing.paint_end_piece_cell(document, target, x, y, colour_slot)
 
         return self._apply(edit)
 
-    def erase(self, x: int, y: int) -> EditResult:
-        """Erase the source mark of a cell of the unit, removing all its copies."""
+    def erase(self, x: int, y: int, target: Target = "unit") -> EditResult:
+        """Erase a cell of the unit (with all its copies) or hide/remove one in an end piece."""
 
         def edit(document: PatternDocument) -> None:
-            editing.erase_cell(document, x, y)
+            if target == "unit":
+                editing.erase_cell(document, x, y)
+            else:
+                editing.erase_end_piece_cell(document, target, x, y)
+
+        return self._apply(edit)
+
+    # Backstitches ------------------------------------------------------
+
+    def add_backstitch(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        colour_slot: int,
+        target: Target = "unit",
+    ) -> EditResult:
+        """Add a backstitch between two grid intersections of the unit or an end piece."""
+
+        def edit(document: PatternDocument) -> None:
+            if target == "unit":
+                editing.add_backstitch(document, start, end, colour_slot)
+            else:
+                editing.add_end_piece_backstitch(document, target, start, end, colour_slot)
+
+        return self._apply(edit)
+
+    def erase_backstitch_near(self, x: float, y: float, target: Target = "unit") -> EditResult:
+        """Erase the backstitch nearest to grid point (x, y); see ``editing.erase_backstitch_near``."""
+
+        def edit(document: PatternDocument) -> None:
+            editing.erase_backstitch_near(document, x, y, target)
+
+        return self._apply(edit)
+
+    # End pieces --------------------------------------------------------
+
+    def set_end_piece_extension(self, edge: Edge, extension: int) -> EditResult:
+        """Set the extra rows/columns of an end piece beyond the unit."""
+
+        def edit(document: PatternDocument) -> None:
+            editing.set_end_piece_extension(document, edge, extension)
+
+        return self._apply(edit)
+
+    def reset_end_piece(self, edge: Edge) -> EditResult:
+        """Remove every change an end piece makes."""
+
+        def edit(document: PatternDocument) -> None:
+            editing.reset_end_piece(document, edge)
 
         return self._apply(edit)
 
     # Grid --------------------------------------------------------------
 
+    def change_grid_line(self, axis: Axis, index: int, *, insertion: bool) -> EditResult:
+        """Insert or remove a row/column and its symmetric partners; see ``editing.change_grid_line``."""
+        return self._apply(
+            lambda document: editing.change_grid_line(document, axis, index, insertion=insertion)
+        )
+
     def insert_column(self, index: int) -> EditResult:
-        return self._apply(lambda document: editing.insert_column(document, index))
+        return self.change_grid_line("column", index, insertion=True)
 
     def remove_column(self, index: int) -> EditResult:
-        return self._apply(lambda document: editing.remove_column(document, index))
+        return self.change_grid_line("column", index, insertion=False)
 
     def insert_row(self, index: int) -> EditResult:
-        return self._apply(lambda document: editing.insert_row(document, index))
+        return self.change_grid_line("row", index, insertion=True)
 
     def remove_row(self, index: int) -> EditResult:
-        return self._apply(lambda document: editing.remove_row(document, index))
+        return self.change_grid_line("row", index, insertion=False)
 
     def set_grid(
         self,
@@ -170,10 +232,33 @@ class Editor:
     ) -> EditResult:
         """Change grid settings in one undo step. Arguments left as None are kept.
 
-        The unit is resized from its top-left corner and marks outside it are dropped.
+        The unit is resized from its top-left corner; see ``editing.resize_unit``.
+        When no setting changes, the document is left exactly as it is.
         """
 
         def edit(document: PatternDocument) -> list[str]:
+            requested = (
+                max(1, document.unit_width if unit_width is None else unit_width),
+                max(1, document.unit_height if unit_height is None else unit_height),
+                max(1, document.repeats_x if repeats_x is None else repeats_x),
+                max(1, document.repeats_y if repeats_y is None else repeats_y),
+                document.repeat_left_column if repeat_left_column is None else repeat_left_column,
+                document.repeat_right_column if repeat_right_column is None else repeat_right_column,
+                document.repeat_top_row if repeat_top_row is None else repeat_top_row,
+                document.repeat_bottom_row if repeat_bottom_row is None else repeat_bottom_row,
+            )
+            current = (
+                document.unit_width,
+                document.unit_height,
+                document.repeats_x,
+                document.repeats_y,
+                document.repeat_left_column,
+                document.repeat_right_column,
+                document.repeat_top_row,
+                document.repeat_bottom_row,
+            )
+            if requested == current:
+                return []
             editing.set_repeats(
                 document,
                 document.repeats_x if repeats_x is None else repeats_x,

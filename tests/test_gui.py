@@ -5,8 +5,19 @@ from collections.abc import Iterator
 from tkinter import messagebox
 
 import pytest
+from gui_scenarios import (
+    backstitch,
+    click_cell,
+    click_point,
+    run_resize_dialog,
+    set_extension,
+    set_symmetry,
+    set_target,
+    set_tool,
+)
 
-from kvale.core.model import Mark
+from kvale.core.model import Backstitch, Cell, Mark
+from kvale.core.renderer import build_colour_grid
 from kvale.gui import app as app_module
 from kvale.gui.app import KvaleApp
 
@@ -101,3 +112,48 @@ def test_add_colour_and_undo_keeps_valid_selection(app: KvaleApp, monkeypatch: p
     app.undo()
     assert len(app.document.palette_sequences) == 4
     assert app.active_colour.get() == 0
+
+
+def test_end_piece_editing_with_extension(app: KvaleApp, monkeypatch: pytest.MonkeyPatch) -> None:
+    app.active_colour.set(1)
+    _click_cell(app, 2, 2)
+    set_target(app, "bottom")
+    set_extension(app, 2)
+    assert app.canvas.editor_min_y == 0
+
+    click_cell(app, 2, 2, button=3)  # hide the unit cell in the end piece
+    click_cell(app, 4, 13)  # paint in the extension
+    override = app.document.bottom_repeat_override
+    assert override is not None
+    assert override.extension == 2
+    assert override.removed_cells == [Cell(2, 2)]
+    assert override.added_marks == [Mark(4, 13, 1)]
+    assert len(build_colour_grid(app.document)) == 24 + 2
+
+    monkeypatch.setattr(messagebox, "askyesno", lambda *_args, **_kwargs: True)
+    app._reset_selected_override()
+    assert app.document.bottom_repeat_override is None
+    app.undo()
+    assert app.document.bottom_repeat_override == override
+
+
+def test_backstitch_tool(app: KvaleApp) -> None:
+    set_tool(app, "backstitch")
+    app.active_colour.set(2)
+    backstitch(app, (1, 1), (3, 2))
+    assert app.document.backstitches == [Backstitch(1, 1, 3, 2, 2)]
+
+    click_point(app, 2.0, 1.5, button=3)
+    assert app.document.backstitches == []
+    app.undo()
+    assert app.document.backstitches == [Backstitch(1, 1, 3, 2, 2)]
+
+
+def test_resize_dialog(app: KvaleApp) -> None:
+    set_symmetry(app, "identity", "mirror_x")
+    run_resize_dialog(app, "Legg til", "Kolonne med nummer", 2)
+    assert (app.document.unit_width, app.unit_width.get()) == (14, 14)
+
+    run_resize_dialog(app, "Fjern", "Nederste rad")
+    assert app.document.unit_height == 11
+    assert app.status.get() == "Endret"
