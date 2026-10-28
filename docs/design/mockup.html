@@ -1,0 +1,1392 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kvale mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS START (kept identical to docs/design/tokens.css) ===== */
+:root {
+  /* Light theme: unbleached linen, walnut ink, madder-red thread */
+  --bg: #f4efe6;
+  --bg-weave: rgba(120, 95, 60, 0.045);
+  --surface: #fbf8f2;
+  --surface-2: #efe8dc;
+  --surface-sunken: #e9e1d3;
+  --border: #d8ccb8;
+  --border-strong: #a8998a;
+  --text: #2a2420;
+  --text-muted: #635a50;
+  --accent: #9e1b2c;
+  --accent-hover: #841523;
+  --accent-text: #ffffff;
+  --accent-soft: #f4dfdc;
+  --accent-soft-text: #7a1220;
+  --focus: #2f5d9e;
+  --notice-bg: #fbf0d6;
+  --notice-border: #e0c27a;
+  --notice-text: #5a4210;
+  --stage: #e8e0d2;
+  --swatch-ring: rgba(0, 0, 0, 0.25);
+  --shadow: 0 1px 2px rgba(60, 40, 20, 0.08), 0 6px 18px rgba(60, 40, 20, 0.08);
+  --cloth-line: rgba(70, 50, 30, 0.16);
+  --cloth-line-strong: rgba(70, 50, 30, 0.38);
+  --axis: rgba(158, 27, 44, 0.55);
+  --edge-tint: rgba(47, 93, 158, 0.16);
+
+  /* Type */
+  --font-ui: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.625rem;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Radii and sizes */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --hit: 44px;
+  --panel-width: 368px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1815;
+    --bg-weave: rgba(255, 240, 220, 0.025);
+    --surface: #25211d;
+    --surface-2: #2f2a25;
+    --surface-sunken: #171411;
+    --border: #463e36;
+    --border-strong: #7a6e62;
+    --text: #f2ece3;
+    --text-muted: #b8ad9f;
+    --accent: #e8838b;
+    --accent-hover: #f09aa1;
+    --accent-text: #1b1815;
+    --accent-soft: #4a262a;
+    --accent-soft-text: #ffd4d7;
+    --focus: #8fb4ec;
+    --notice-bg: #3a3020;
+    --notice-border: #7d6630;
+    --notice-text: #f3dfae;
+    --stage: #13110f;
+    --swatch-ring: rgba(255, 255, 255, 0.5);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1815;
+  --bg-weave: rgba(255, 240, 220, 0.025);
+  --surface: #25211d;
+  --surface-2: #2f2a25;
+  --surface-sunken: #171411;
+  --border: #463e36;
+  --border-strong: #7a6e62;
+  --text: #f2ece3;
+  --text-muted: #b8ad9f;
+  --accent: #e8838b;
+  --accent-hover: #f09aa1;
+  --accent-text: #1b1815;
+  --accent-soft: #4a262a;
+  --accent-soft-text: #ffd4d7;
+  --focus: #8fb4ec;
+  --notice-bg: #3a3020;
+  --notice-border: #7d6630;
+  --notice-text: #f3dfae;
+  --stage: #13110f;
+  --swatch-ring: rgba(255, 255, 255, 0.5);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+:root[data-theme="light"] {
+  --bg: #f4efe6;
+  --bg-weave: rgba(120, 95, 60, 0.045);
+  --surface: #fbf8f2;
+  --surface-2: #efe8dc;
+  --surface-sunken: #e9e1d3;
+  --border: #d8ccb8;
+  --border-strong: #a8998a;
+  --text: #2a2420;
+  --text-muted: #635a50;
+  --accent: #9e1b2c;
+  --accent-hover: #841523;
+  --accent-text: #ffffff;
+  --accent-soft: #f4dfdc;
+  --accent-soft-text: #7a1220;
+  --focus: #2f5d9e;
+  --notice-bg: #fbf0d6;
+  --notice-border: #e0c27a;
+  --notice-text: #5a4210;
+  --stage: #e8e0d2;
+  --swatch-ring: rgba(0, 0, 0, 0.25);
+  --shadow: 0 1px 2px rgba(60, 40, 20, 0.08), 0 6px 18px rgba(60, 40, 20, 0.08);
+}
+/* ===== TOKENS END ===== */
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  line-height: 1.45;
+  color: var(--text);
+  background-color: var(--bg);
+  /* very faint plain weave */
+  background-image:
+    repeating-linear-gradient(0deg, var(--bg-weave) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, var(--bg-weave) 0 1px, transparent 1px 4px);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+svg.icon { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--hit); min-width: var(--hit); padding: 0 var(--space-4);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--surface); color: var(--text);
+  font-weight: 700; font-size: var(--text-sm); white-space: nowrap;
+}
+.btn:hover { background: var(--surface-2); border-color: var(--border-strong); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.ghost { background: transparent; border-color: transparent; }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.icon-only { padding: 0; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.seg {
+  display: inline-flex; padding: 3px; gap: 2px;
+  background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--radius-md);
+}
+.seg button {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: 40px; min-width: 40px; padding: 0 var(--space-3);
+  border: 0; border-radius: 7px; background: transparent; color: var(--text-muted);
+  font-weight: 700; font-size: var(--text-sm); white-space: nowrap;
+}
+.seg button:hover { color: var(--text); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.12), inset 0 0 0 1px var(--border); }
+.seg.accent button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); box-shadow: none; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap;
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface);
+  border-bottom: 2px dashed var(--border); /* running stitch */
+}
+.brand { display: flex; align-items: center; gap: var(--space-3); min-width: 0; margin-right: auto; }
+.logo { width: 34px; height: 34px; flex: none; color: var(--accent); }
+.wordmark { font-family: var(--font-display); font-weight: 600; font-size: var(--text-xl); letter-spacing: .01em; line-height: 1; }
+.docinfo { display: flex; flex-direction: column; min-width: 0; padding-left: var(--space-3); border-left: 1px solid var(--border); }
+.docname { font-weight: 700; font-size: var(--text-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.autosave { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--text-muted); }
+.autosave .dot { width: 8px; height: 8px; border-radius: 50%; background: #3d8b4f; flex: none; }
+.file-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.prefs { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+.prefs .seg button { min-width: 44px; padding: 0 var(--space-2); }
+
+/* ---------- Workspace ---------- */
+.workspace {
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--panel-width);
+  gap: var(--space-5); padding: var(--space-5); align-items: start;
+}
+.stage {
+  background: var(--stage); border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; min-width: 0; min-height: 560px;
+  position: sticky; top: var(--space-5);
+}
+.stage-toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  padding: var(--space-3); border-bottom: 1px solid var(--border);
+}
+.stage-toolbar .spacer { flex: 1; }
+.toolgroup { display: inline-flex; align-items: center; gap: 4px; }
+.zoom-label { min-width: 44px; text-align: center; font-size: var(--text-sm); font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.chip { display: inline-block; width: 16px; height: 16px; border-radius: 4px; box-shadow: inset 0 0 0 1px var(--swatch-ring); flex: none; }
+
+.stage-body { flex: 1; padding: var(--space-5); overflow: auto; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+
+/* Edit grid with rulers */
+.editor {
+  --ruler: 30px;
+  position: relative;
+  display: grid; grid-template-columns: var(--ruler) auto; grid-template-rows: var(--ruler) auto;
+}
+.ruler { display: flex; }
+.ruler-top { grid-column: 2; grid-row: 1; }
+.ruler-left { grid-column: 1; grid-row: 2; flex-direction: column; }
+.ruler button {
+  flex: none; border: 0; background: transparent; padding: 0;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  font-variant-numeric: tabular-nums; border-radius: 4px; position: relative;
+}
+.ruler-top button { height: var(--ruler); }
+.ruler-left button { width: var(--ruler); }
+.ruler button:hover, .ruler button[aria-expanded="true"] { background: var(--accent-soft); color: var(--accent-soft-text); }
+.ruler button:hover::after { content: "+"; position: absolute; font-size: 10px; right: 2px; top: 0; }
+.cloth { grid-column: 2; grid-row: 2; box-shadow: var(--shadow); border-radius: 2px; touch-action: none; display: block; cursor: crosshair; }
+.corner { grid-column: 1; grid-row: 1; }
+
+.popover {
+  position: absolute; z-index: 5; width: 250px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow);
+  padding: var(--space-2);
+}
+.popover h3 { margin: var(--space-1) var(--space-2) var(--space-2); font-size: var(--text-sm); display: flex; justify-content: space-between; align-items: center; }
+.popover .btn { width: 100%; justify-content: flex-start; min-height: 42px; border-color: transparent; background: transparent; font-weight: 400; }
+.popover .btn:hover { background: var(--surface-2); }
+.popover .btn.danger { color: var(--accent); }
+.popover .close { width: 36px; min-width: 36px; min-height: 36px; padding: 0; justify-content: center; }
+
+.legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--text-sm); color: var(--text-muted); justify-content: center; }
+.legend span { display: inline-flex; align-items: center; gap: var(--space-2); }
+.legend .key { width: 22px; height: 22px; border-radius: 2px; background: #b1172b; position: relative; }
+.legend .key.seed::after { content: ""; position: absolute; inset: 4px; border: 2px solid #fff; }
+.hint { margin: 0; font-size: var(--text-sm); color: var(--text-muted); text-align: center; max-width: 52ch; }
+
+.edit-layout { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: var(--space-6); }
+.edit-side { flex: 1 1 260px; max-width: 340px; display: flex; flex-direction: column; gap: var(--space-4); padding-top: 30px; }
+.edit-side .legend { flex-direction: column; justify-content: flex-start; }
+.edit-side .hint { text-align: left; }
+.edit-layout.narrow .edit-side { max-width: 100%; flex-basis: 100%; padding-top: 0; }
+.edit-layout.narrow .legend { flex-direction: row; justify-content: center; }
+.edit-layout.narrow .hint { text-align: center; margin: 0 auto; }
+.miniband {
+  width: 100%; max-width: 760px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2);
+}
+.miniband header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.miniband h3 { margin: 0; font-size: var(--text-sm); }
+.miniband canvas { display: block; max-width: 100%; border-radius: 2px; }
+.preview-wrap { max-width: 100%; overflow: auto; padding: 4px; }
+.preview-wrap canvas { display: block; box-shadow: var(--shadow); border-radius: 2px; }
+.caption { font-size: var(--text-sm); color: var(--text-muted); }
+
+/* ---------- Side panel ---------- */
+.panel { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-4); }
+.card > h2 {
+  margin: 0 0 var(--space-3); font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg);
+  display: flex; align-items: center; gap: var(--space-2);
+}
+.card > h2::after { content: ""; flex: 1; border-top: 2px dashed var(--border); margin-left: var(--space-2); }
+.card p.intro { margin: 0 0 var(--space-3); font-size: var(--text-sm); color: var(--text-muted); }
+.subhead { margin: var(--space-4) 0 var(--space-2); font-size: var(--text-sm); font-weight: 700; }
+.subhead small { font-weight: 400; color: var(--text-muted); display: block; }
+
+/* Colour slots */
+.slots { display: flex; flex-direction: column; gap: var(--space-2); }
+.slot { display: flex; align-items: stretch; gap: var(--space-2); }
+.slot-select {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--space-3);
+  min-height: 52px; padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--border); border-radius: var(--radius-md); background: var(--surface); text-align: left;
+}
+.slot-select:hover { border-color: var(--border-strong); }
+.slot-select[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.slot-num { font-weight: 700; font-variant-numeric: tabular-nums; width: 2.2em; flex: none; }
+.slot-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.swatchbar { display: flex; height: 22px; border-radius: 5px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--swatch-ring); }
+.swatchbar i { flex: 1; }
+.slot-meta { font-size: var(--text-xs); color: var(--text-muted); display: flex; justify-content: space-between; gap: var(--space-2); }
+.slot-select[aria-pressed="true"] .slot-meta { color: var(--accent-soft-text); }
+.slot-edit { flex: none; }
+.row { display: flex; align-items: center; gap: var(--space-3); }
+.toggle-row { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0 0; }
+.toggle-row .text { flex: 1; min-width: 0; }
+.toggle-row .text strong { display: block; font-size: var(--text-sm); }
+.toggle-row .text span { display: block; font-size: var(--text-xs); color: var(--text-muted); }
+.switch {
+  position: relative; flex: none; width: 52px; height: 32px; border-radius: var(--radius-pill);
+  border: 2px solid var(--border-strong); background: var(--surface-sunken); padding: 0;
+}
+.switch::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--border-strong); transition: transform .15s;
+}
+.switch[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
+.switch[aria-checked="true"]::after { transform: translateX(20px); background: var(--accent-text); }
+.switch-wrap { display: flex; align-items: center; min-height: var(--hit); }
+.bg-row { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+.bg-swatch { width: 44px; height: 44px; border-radius: var(--radius-sm); box-shadow: inset 0 0 0 1px var(--swatch-ring);
+  background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.07) 0 1px, transparent 1px 5px), repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 1px, transparent 1px 5px); }
+.bg-row .text { flex: 1; font-size: var(--text-sm); }
+.bg-row .text span { display: block; color: var(--text-muted); font-size: var(--text-xs); }
+.visually-hidden-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+
+/* Symmetry */
+.sym-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.sym {
+  display: flex; align-items: center; gap: var(--space-2); min-height: 60px; padding: var(--space-2);
+  border: 2px solid var(--border); border-radius: var(--radius-md); background: var(--surface); text-align: left;
+  font-size: var(--text-sm); line-height: 1.2; position: relative;
+}
+.sym:hover:not(:disabled) { border-color: var(--border-strong); }
+.sym[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-soft-text); }
+.sym svg { width: 42px; height: 42px; flex: none; }
+.sym .lbl { display: flex; flex-direction: column; min-width: 0; }
+.sym .lbl small { font-size: var(--text-xs); color: var(--text-muted); }
+.sym[aria-pressed="true"] .lbl small { color: inherit; }
+.sym.locked { cursor: default; }
+.sym:disabled { cursor: not-allowed; background: repeating-linear-gradient(135deg, var(--surface) 0 6px, var(--surface-2) 6px 12px); color: var(--text-muted); }
+.sym:disabled svg { opacity: .45; }
+.sym .tick { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: none; align-items: center; justify-content: center; }
+.sym[aria-pressed="true"] .tick { display: flex; }
+.sym .tick svg { width: 12px; height: 12px; stroke-width: 3; }
+.notice {
+  display: flex; gap: var(--space-2); align-items: flex-start; margin-bottom: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md);
+  background: var(--notice-bg); border: 1px solid var(--notice-border); color: var(--notice-text); font-size: var(--text-sm);
+}
+.notice .btn { margin-top: var(--space-2); min-height: 40px; }
+
+/* Grid settings */
+.fieldgrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.field label { display: block; font-size: var(--text-sm); font-weight: 700; margin-bottom: 4px; }
+.stepper { display: flex; align-items: stretch; border: 1px solid var(--border-strong); border-radius: var(--radius-md); overflow: hidden; background: var(--surface); }
+.stepper button { width: 40px; min-height: var(--hit); border: 0; background: var(--surface-2); font-size: 1.25rem; font-weight: 700; flex: none; }
+.stepper button:hover { background: var(--surface-sunken); }
+.stepper input { width: 100%; min-width: 0; border: 0; text-align: center; font-weight: 700; font-size: var(--text-md); background: transparent; -moz-appearance: textfield; font-variant-numeric: tabular-nums; }
+.stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.field .unit { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
+
+.edges { margin-top: var(--space-2); }
+.edges-explain { font-size: var(--text-sm); color: var(--text-muted); margin: 0 0 var(--space-3); }
+.edges-diagram { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: var(--space-3); background: var(--surface-sunken); border-radius: var(--radius-md); margin-bottom: var(--space-2); }
+.edges-diagram svg { max-width: 100%; height: auto; }
+.edges-diagram .caption { font-size: var(--text-xs); }
+.diagram-key { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; font-size: var(--text-xs); color: var(--text-muted); }
+.diagram-key span { display: inline-flex; align-items: center; gap: 4px; }
+.diagram-key i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.edge-list .toggle-row { padding-top: var(--space-2); }
+
+/* ---------- Dialog ---------- */
+dialog {
+  border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 0;
+  background: var(--surface); color: var(--text); box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  width: min(560px, calc(100vw - 24px)); max-height: calc(100vh - 24px);
+}
+dialog::backdrop { background: rgba(30, 22, 15, .45); }
+.dlg { display: flex; flex-direction: column; max-height: calc(100vh - 26px); }
+.dlg header { padding: var(--space-4) var(--space-5) 0; }
+.dlg h2 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: var(--text-xl); }
+.dlg header p { margin: var(--space-1) 0 0; color: var(--text-muted); font-size: var(--text-sm); }
+.dlg .content { padding: var(--space-4) var(--space-5); overflow: auto; display: flex; flex-direction: column; gap: var(--space-4); }
+.dlg footer { padding: var(--space-3) var(--space-5) var(--space-4); display: flex; justify-content: flex-end; gap: var(--space-2); border-top: 1px solid var(--border); }
+.bigbar { display: flex; height: 44px; border-radius: var(--radius-sm); overflow: hidden; box-shadow: inset 0 0 0 1px var(--swatch-ring); }
+.bigbar i { flex: 1; }
+.parts { display: flex; flex-wrap: wrap; gap: 6px; }
+.part {
+  width: 44px; height: 44px; border-radius: var(--radius-sm); border: 2px solid var(--border);
+  font-weight: 700; font-size: var(--text-sm); display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 0 2px var(--surface);
+}
+.part[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 3px var(--surface), 0 0 0 2px var(--text); }
+.threads { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; }
+.thread { height: 44px; border-radius: var(--radius-sm); border: 2px solid transparent; box-shadow: inset 0 0 0 1px var(--swatch-ring); }
+.thread[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 2px var(--surface); }
+.custom-colour { position: relative; }
+.repeats-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.repeats-row span { width: 34px; height: 34px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 700; box-shadow: inset 0 0 0 1px var(--swatch-ring); }
+.dlg .label { font-weight: 700; font-size: var(--text-sm); margin: 0 0 var(--space-2); }
+.dlg .stepper { max-width: 180px; }
+
+/* ---------- Loading screen ---------- */
+.loading {
+  position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+  background-color: var(--bg);
+  background-image:
+    repeating-linear-gradient(0deg, var(--bg-weave) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, var(--bg-weave) 0 1px, transparent 1px 4px);
+  padding: var(--space-5);
+}
+.loading-inner { text-align: center; max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+.loading .wordmark { font-size: 2.75rem; }
+.stitch-row { width: 260px; max-width: 100%; height: auto; color: var(--accent); }
+.stitch-row path { stroke-dasharray: 26; stroke-dashoffset: 26; animation: stitch 2.8s infinite; }
+@keyframes stitch { 0% { stroke-dashoffset: 26; } 30%, 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.thread-bar { width: 260px; max-width: 100%; height: 4px; border-radius: 2px; background: var(--surface-sunken); overflow: hidden; }
+.thread-bar::after { content: ""; display: block; width: 40%; height: 100%; background: var(--accent); border-radius: 2px; animation: pull 1.6s ease-in-out infinite; }
+@keyframes pull { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+.loading h1 { margin: 0; font-size: var(--text-lg); font-weight: 700; }
+.loading p { margin: 0; color: var(--text-muted); font-size: var(--text-sm); }
+@media (prefers-reduced-motion: reduce) {
+  .stitch-row path { animation: none; stroke-dashoffset: 0; }
+  .thread-bar::after { animation: none; width: 60%; }
+  .switch::after { transition: none; }
+}
+
+/* ---------- Mockup-only controls (not part of the design) ---------- */
+.mock {
+  position: fixed; right: 12px; bottom: 12px; z-index: 60; font-size: var(--text-xs);
+  background: #2b2b2b; color: #fff; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,.3); max-width: calc(100vw - 24px);
+}
+.mock summary { padding: 8px 12px; cursor: pointer; font-weight: 700; list-style: none; }
+.mock summary::-webkit-details-marker { display: none; }
+.mock div { display: flex; flex-direction: column; gap: 6px; padding: 0 12px 12px; }
+.mock button { background: #444; color: #fff; border: 0; border-radius: 6px; padding: 8px 10px; text-align: left; }
+.mock button:hover { background: #555; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1500px) { .fit-label { display: none; } }
+.lang-short { display: none; }
+@media (max-width: 1180px) {
+  /* keep file labels (plain words beat icons); shorten the language names instead */
+  .lang-long { display: none; }
+  .lang-short { display: inline; }
+  .file-actions .btn { padding: 0 var(--space-3); }
+}
+@media (max-width: 980px) {
+  :root { --panel-width: 320px; }
+  .workspace { gap: var(--space-3); padding: var(--space-3); }
+}
+@media (max-width: 820px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .stage { position: static; min-height: 0; }
+  .panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
+}
+@media (max-width: 640px) {
+  .topbar { padding: var(--space-3); gap: var(--space-3); }
+  .brand { width: 100%; }
+  .file-actions { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .file-actions .btn { width: auto; flex-direction: column; gap: 0; min-height: 52px; font-size: var(--text-xs); }
+  .file-actions .btn span { display: inline; }
+  .prefs { width: 100%; justify-content: space-between; }
+  .stage-toolbar { gap: var(--space-2); }
+  .stage-toolbar .spacer { display: none; }
+  .stage-toolbar > .seg:first-child { width: 100%; }
+  .stage-toolbar > .seg:first-child button { flex: 1; }
+  .stage-body { padding: var(--space-3); }
+  .editor { --ruler: 24px; }
+  .panel { display: flex; }
+  .card { padding: var(--space-3); }
+  .workspace { padding: var(--space-2); }
+  .sym-grid { grid-template-columns: 1fr 1fr; }
+  .sym svg { width: 34px; height: 34px; }
+  .dlg header, .dlg .content, .dlg footer { padding-left: var(--space-4); padding-right: var(--space-4); }
+}
+</style>
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-new" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M12 11v6M9 14h6"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h10a6 6 0 0 1 0 12h-2" transform="translate(0 -5)"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 7l5 5-5 5"/><path d="M20 12H10a6 6 0 0 0 0 12h2" transform="translate(0 -5)"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M16.5 16.5L21 21"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M11 8v6M16.5 16.5L21 21"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-needle" viewBox="0 0 24 24"><path d="M4 20L18 6"/><ellipse cx="19" cy="5" rx="1.6" ry="2.6" transform="rotate(45 19 5)"/><path d="M4 20c3-1 4 1 7 0s3-3 6-2"/></symbol>
+  <symbol id="i-eraser" viewBox="0 0 24 24"><path d="M15 4l5 5-9 9H6l-3-3z"/><path d="M9 10l5 5M11 20h9"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></symbol>
+  <symbol id="i-band" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="1"/><path d="M7 7v10M12 7v10M17 7v10"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></symbol>
+</svg>
+
+<!-- ============ LOADING STATE ============ -->
+<div class="loading" id="loading" role="status" aria-live="polite" hidden>
+  <div class="loading-inner">
+    <div class="row" style="gap:12px">
+      <svg class="logo" style="width:46px;height:46px" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l16 16M25 9L9 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <span class="wordmark">Kvale</span>
+    </div>
+    <svg class="stitch-row" viewBox="0 0 260 30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></svg>
+    <h1 data-i18n="loading.title">Gjør klar Kvale …</h1>
+    <div class="thread-bar" aria-hidden="true"></div>
+    <p data-i18n="loading.body">Første gang kan det ta noen sekunder. Neste gang går det raskere.</p>
+    <p data-i18n="loading.restore">Mønsteret du jobbet med sist, åpnes når alt er klart.</p>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l16 16M25 9L9 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <span class="wordmark">Kvale</span>
+      <div class="docinfo">
+        <span class="docname">flower-band.json</span>
+        <span class="autosave" data-i18n-title="autosave.hint" title=""><span class="dot" aria-hidden="true"></span><span data-i18n="autosave.saved">Lagret i nettleseren kl. 14:32</span></span>
+      </div>
+    </div>
+
+    <nav class="file-actions" aria-label="File">
+      <button class="btn" data-i18n-title="file.new.hint"><svg class="icon"><use href="#i-new"/></svg><span data-i18n="file.new">Ny</span></button>
+      <button class="btn" data-i18n-title="file.open.hint"><svg class="icon"><use href="#i-open"/></svg><span data-i18n="file.open">Åpne</span></button>
+      <button class="btn" data-i18n-title="file.save.hint"><svg class="icon"><use href="#i-save"/></svg><span data-i18n="file.save">Lagre</span></button>
+      <button class="btn" data-i18n-title="file.export.hint"><svg class="icon"><use href="#i-image"/></svg><span data-i18n="file.export">Lagre bilde</span></button>
+    </nav>
+
+    <div class="prefs">
+      <div class="seg" role="group" data-i18n-aria="lang.label" id="langSeg">
+        <button data-lang="nb" aria-pressed="true" title="Norsk bokmål" lang="nb"><span class="lang-long">Norsk</span><span class="lang-short">NB</span></button>
+        <button data-lang="en" aria-pressed="false" title="English" lang="en"><span class="lang-long">English</span><span class="lang-short">EN</span></button>
+        <button data-lang="it" aria-pressed="false" title="Italiano" lang="it"><span class="lang-long">Italiano</span><span class="lang-short">IT</span></button>
+      </div>
+      <div class="seg" role="group" data-i18n-aria="theme.label" id="themeSeg">
+        <button data-theme-set="light" aria-pressed="true" data-i18n-title="theme.light" data-i18n-aria="theme.light"><svg class="icon"><use href="#i-sun"/></svg></button>
+        <button data-theme-set="dark" aria-pressed="false" data-i18n-title="theme.dark" data-i18n-aria="theme.dark"><svg class="icon"><use href="#i-moon"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- ===== Stage: the pattern is the hero ===== -->
+    <section class="stage" aria-label="Pattern">
+      <div class="stage-toolbar">
+        <div class="seg accent" role="group" id="modeSeg">
+          <button data-mode="edit" aria-pressed="true"><svg class="icon"><use href="#i-grid"/></svg><span data-i18n="mode.edit">Tegn</span></button>
+          <button data-mode="preview" aria-pressed="false"><svg class="icon"><use href="#i-band"/></svg><span data-i18n="mode.preview">Se gjentakelsene</span></button>
+        </div>
+        <div class="seg" role="group" id="toolSeg" data-i18n-aria="tool.label">
+          <button data-tool="paint" aria-pressed="true" data-i18n-title="tool.paint.hint"><svg class="icon"><use href="#i-needle"/></svg><span data-i18n="tool.paint">Sy</span><i class="chip" id="activeChip"></i></button>
+          <button data-tool="erase" aria-pressed="false" data-i18n-title="tool.erase.hint"><svg class="icon"><use href="#i-eraser"/></svg><span data-i18n="tool.erase">Visk ut</span></button>
+        </div>
+        <div class="toolgroup">
+          <button class="btn ghost icon-only" id="undoBtn" data-i18n-title="history.undo" data-i18n-aria="history.undo"><svg class="icon"><use href="#i-undo"/></svg></button>
+          <button class="btn ghost icon-only" id="redoBtn" data-i18n-title="history.redo" data-i18n-aria="history.redo"><svg class="icon"><use href="#i-redo"/></svg></button>
+        </div>
+        <span class="spacer"></span>
+        <div class="toolgroup">
+          <button class="btn ghost icon-only" id="zoomOut" data-i18n-title="zoom.out" data-i18n-aria="zoom.out"><svg class="icon"><use href="#i-minus"/></svg></button>
+          <span class="zoom-label" id="zoomLabel">100 %</span>
+          <button class="btn ghost icon-only" id="zoomIn" data-i18n-title="zoom.in" data-i18n-aria="zoom.in"><svg class="icon"><use href="#i-plus"/></svg></button>
+          <button class="btn ghost" id="zoomFit" data-i18n-title="zoom.fit.hint"><svg class="icon"><use href="#i-fit"/></svg><span class="fit-label" data-i18n="zoom.fit">Tilpass</span></button>
+        </div>
+      </div>
+
+      <div class="stage-body" id="stageBody">
+        <!-- Edit view -->
+        <div id="editView" class="edit-layout">
+          <div class="editor" id="editor">
+            <div class="corner"></div>
+            <div class="ruler ruler-top" id="rulerTop"></div>
+            <div class="ruler ruler-left" id="rulerLeft"></div>
+            <canvas class="cloth" id="editCanvas"></canvas>
+            <div class="popover" id="edgePop" hidden role="dialog">
+              <h3><span id="edgePopTitle">Kolonne 6</span>
+                <button class="btn close" id="edgePopClose" data-i18n-aria="edge.close" data-i18n-title="edge.close"><svg class="icon"><use href="#i-x"/></svg></button></h3>
+              <button class="btn" id="edgeBefore"><svg class="icon"><use href="#i-add"/></svg><span></span></button>
+              <button class="btn" id="edgeAfter"><svg class="icon"><use href="#i-add"/></svg><span></span></button>
+              <button class="btn danger" id="edgeRemove"><svg class="icon"><use href="#i-trash"/></svg><span></span></button>
+            </div>
+          </div>
+          <div class="edit-side">
+          <div class="legend">
+            <span><i class="key seed"></i><span data-i18n="legend.seed">Sting du har satt</span></span>
+            <span><i class="key"></i><span data-i18n="legend.copy">Kopier fra symmetrien</span></span>
+          </div>
+          <p class="hint" id="editHint"><span data-i18n="canvas.hint.edit">Trykk i rutene for å sy. Høyreklikk visker ut.</span> <span data-i18n="canvas.hint.edges">Trykk på et tall i kanten for å legge til eller fjerne rader og kolonner.</span></p>
+          <section class="miniband">
+            <header>
+              <h3 data-i18n="band.mini.title">Slik blir bordet</h3>
+              <button class="btn ghost" id="miniOpen"><span data-i18n="band.mini.open">Vis stort</span><svg class="icon"><use href="#i-band"/></svg></button>
+            </header>
+            <canvas id="miniCanvas"></canvas>
+          </section>
+          </div>
+        </div>
+        <!-- Preview view -->
+        <div id="previewView" hidden style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
+          <div class="preview-wrap"><canvas id="previewCanvas"></canvas></div>
+          <p class="caption" id="previewCaption"></p>
+          <p class="hint" data-i18n="preview.hint">Her kan du bare se. Gå tilbake til «Tegn» for å endre mønsteret.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Side panel ===== -->
+    <aside class="panel">
+      <!-- Colours -->
+      <section class="card" aria-labelledby="hColours">
+        <h2 id="hColours" data-i18n="panel.colours">Farger</h2>
+        <div class="slots" id="slots"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" id="addColour" style="flex:1"><svg class="icon"><use href="#i-add"/></svg><span data-i18n="colours.add">Legg til farge</span></button>
+        </div>
+        <div class="toggle-row">
+          <div class="text"><strong data-i18n="colours.useSeq">Bruk fargesekvens</strong><span data-i18n="colours.useSeq.hint">På: fargene skifter for hver gjentakelse. Av: bare den første fargen brukes.</span></div>
+          <div class="switch-wrap"><button class="switch" role="switch" id="useSeq" aria-checked="true" data-i18n-aria="colours.useSeq"></button></div>
+        </div>
+        <div class="bg-row">
+          <div class="bg-swatch" id="bgSwatch"></div>
+          <div class="text"><strong data-i18n="colours.background">Stoffet (bakgrunn)</strong><span id="bgHex">#f5f1e8</span></div>
+          <label class="btn">
+            <svg class="icon"><use href="#i-pencil"/></svg><span data-i18n="colours.change">Endre</span>
+            <input type="color" class="visually-hidden-input" id="bgInput" value="#f5f1e8">
+          </label>
+        </div>
+      </section>
+
+      <!-- Symmetry -->
+      <section class="card" aria-labelledby="hSym">
+        <h2 id="hSym" data-i18n="panel.symmetry">Symmetri</h2>
+        <p class="intro" data-i18n="symmetry.intro">Velg hvordan stingene dine kopieres inne i mønsterruten.</p>
+        <div class="sym-grid" id="symA"></div>
+        <p class="subhead"><span data-i18n="symmetry.squareGroup">Bare for kvadratisk rute</span></p>
+        <div class="notice" id="squareNotice" hidden>
+          <svg class="icon"><use href="#i-info"/></svg>
+          <div><span id="squareNoticeText"></span><br><button class="btn" id="makeSquare"></button></div>
+        </div>
+        <div class="sym-grid" id="symB"></div>
+      </section>
+
+      <!-- Grid -->
+      <section class="card" aria-labelledby="hGrid">
+        <h2 id="hGrid" data-i18n="panel.grid">Rute og gjentakelser</h2>
+        <p class="subhead"><span data-i18n="grid.unit">Mønsterruten</span><small data-i18n="grid.unit.hint">Den lille ruten du tegner i, som gjentas.</small></p>
+        <div class="fieldgrid">
+          <div class="field"><label for="fW" data-i18n="grid.width">Bredde</label>
+            <div class="stepper"><button data-step="fW:-1" data-i18n-aria="step.less">−</button><input id="fW" type="number" min="1" max="100" value="12" inputmode="numeric"><button data-step="fW:1" data-i18n-aria="step.more">+</button></div>
+            <div class="unit" data-i18n="grid.cells">ruter</div></div>
+          <div class="field"><label for="fH" data-i18n="grid.height">Høyde</label>
+            <div class="stepper"><button data-step="fH:-1" data-i18n-aria="step.less">−</button><input id="fH" type="number" min="1" max="100" value="12" inputmode="numeric"><button data-step="fH:1" data-i18n-aria="step.more">+</button></div>
+            <div class="unit" data-i18n="grid.cells">ruter</div></div>
+        </div>
+        <p class="subhead"><span data-i18n="grid.repeats">Gjentakelser</span><small data-i18n="grid.repeats.hint">Hvor mange ganger ruten gjentas i bordet (1–100).</small></p>
+        <div class="fieldgrid">
+          <div class="field"><label for="fRX" data-i18n="grid.across">Bortover</label>
+            <div class="stepper"><button data-step="fRX:-1" data-i18n-aria="step.less">−</button><input id="fRX" type="number" min="1" max="100" value="7" inputmode="numeric"><button data-step="fRX:1" data-i18n-aria="step.more">+</button></div>
+            <div class="unit" data-i18n="grid.times">ganger</div></div>
+          <div class="field"><label for="fRY" data-i18n="grid.down">Nedover</label>
+            <div class="stepper"><button data-step="fRY:-1" data-i18n-aria="step.less">−</button><input id="fRY" type="number" min="1" max="100" value="2" inputmode="numeric"><button data-step="fRY:1" data-i18n-aria="step.more">+</button></div>
+            <div class="unit" data-i18n="grid.times">ganger</div></div>
+        </div>
+
+        <div class="edges">
+          <p class="subhead"><span data-i18n="edges.title">Der rutene møtes</span></p>
+          <p class="edges-explain" data-i18n="edges.explain">Ligger en speillinje helt i kanten av ruten, blir kanten dobbel der to ruter møtes. Slå av kanten for å la naboene dele den – da sys den bare ytterst i bordet.</p>
+          <div class="edges-diagram">
+            <svg id="edgeSvg" aria-hidden="true"></svg>
+            <div class="diagram-key">
+              <span><i style="background:#2f5d9e"></i><span data-i18n="edges.key.cols">Venstre/høyre kolonne</span></span>
+              <span><i style="background:#c08a1e"></i><span data-i18n="edges.key.rows">Øverste/nederste rad</span></span>
+            </div>
+            <span class="caption" data-i18n="edges.diagramCaption">Eksempel: 3 × 2 ruter</span>
+          </div>
+          <div class="edge-list" id="edgeList"></div>
+        </div>
+      </section>
+    </aside>
+  </main>
+</div>
+
+<!-- ============ SEQUENCE DIALOG ============ -->
+<dialog id="seqDialog" aria-labelledby="dlgTitle">
+  <form method="dialog" class="dlg">
+    <header>
+      <h2 id="dlgTitle">Farge 1</h2>
+      <p data-i18n="dialog.intro">En farge kan være én tråd, eller en rekke farger som skifter for hver gjentakelse.</p>
+    </header>
+    <div class="content">
+      <div class="bigbar" id="dlgBar"></div>
+      <div>
+        <p class="label"><label for="dlgCount" data-i18n="dialog.count">Antall farger</label> <span class="caption">(1–24)</span></p>
+        <div class="stepper"><button type="button" data-dstep="-1" data-i18n-aria="step.less">−</button><input id="dlgCount" type="number" min="1" max="24" value="3" inputmode="numeric"><button type="button" data-dstep="1" data-i18n-aria="step.more">+</button></div>
+      </div>
+      <div>
+        <p class="label" data-i18n="dialog.parts">Trykk på en del for å velge fargen</p>
+        <div class="parts" id="dlgParts"></div>
+      </div>
+      <div>
+        <p class="label" id="dlgPickLabel">Farge for del 1</p>
+        <div class="threads" id="dlgThreads"></div>
+        <label class="btn" style="margin-top:8px">
+          <span class="chip" id="dlgCustomChip"></span><span data-i18n="dialog.custom">Egen farge …</span>
+          <input type="color" class="visually-hidden-input" id="dlgCustom">
+        </label>
+      </div>
+      <div>
+        <p class="label" data-i18n="dialog.howItRepeats">Slik skifter fargen bortover i bordet:</p>
+        <div class="repeats-row" id="dlgRepeats"></div>
+        <p class="caption" id="dlgOffNote" data-i18n="dialog.offNote" hidden>Fargesekvens er slått av – bare del 1 brukes nå.</p>
+      </div>
+    </div>
+    <footer>
+      <button class="btn" value="cancel" data-i18n="dialog.cancel">Avbryt</button>
+      <button class="btn primary" value="ok" id="dlgOk" data-i18n="dialog.ok">Bruk</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ MOCKUP-ONLY CONTROLS ============ -->
+<details class="mock">
+  <summary data-i18n="mock.title">Mockup ▸</summary>
+  <div>
+    <button id="mLoading" data-i18n="mock.loading">Vis lastesiden</button>
+    <button id="mSquare" data-i18n="mock.square">Bytt kvadratisk / ikke kvadratisk</button>
+    <button id="mDialog" data-i18n="mock.dialog">Åpne fargesekvens for farge 1</button>
+    <button id="mEdge" data-i18n="mock.edge">Vis kantmenyen</button>
+  </div>
+</details>
+
+<script>
+"use strict";
+/* ---------------- Strings (nb / en / it) ---------------- */
+const STR = {
+  nb: {
+    "loading.title": "Gjør klar Kvale …",
+    "loading.body": "Første gang kan det ta noen sekunder. Neste gang går det raskere.",
+    "loading.restore": "Mønsteret du jobbet med sist, åpnes når alt er klart.",
+    "autosave.saved": "Lagret i nettleseren kl. {time}",
+    "autosave.hint": "Arbeidet lagres automatisk her i nettleseren. Bruk «Lagre» for å få en fil du kan ta vare på.",
+    "file.new": "Ny", "file.new.hint": "Start et nytt mønster",
+    "file.open": "Åpne", "file.open.hint": "Åpne en mønsterfil (.json) – Ctrl+O",
+    "file.save": "Lagre", "file.save.hint": "Lagre mønsteret som fil på maskinen – Ctrl+S",
+    "file.export": "Lagre bilde", "file.export.hint": "Last ned hele bordet som bilde (PNG)",
+    "lang.label": "Språk",
+    "theme.label": "Utseende", "theme.light": "Lys visning", "theme.dark": "Mørk visning",
+    "mode.edit": "Tegn", "mode.preview": "Se gjentakelsene",
+    "tool.label": "Verktøy",
+    "tool.paint": "Sy", "tool.paint.hint": "Sy sting med valgt farge",
+    "tool.erase": "Visk ut", "tool.erase.hint": "Fjern sting (med mus: høyreklikk)",
+    "history.undo": "Angre (Ctrl+Z)", "history.redo": "Gjør om (Ctrl+Y)",
+    "zoom.in": "Zoom inn", "zoom.out": "Zoom ut", "zoom.fit": "Tilpass", "zoom.fit.hint": "Tilpass mønsteret til skjermen",
+    "canvas.hint.edit": "Trykk i rutene for å sy. Høyreklikk visker ut.",
+    "canvas.hint.edges": "Trykk på et tall i kanten for å legge til eller fjerne rader og kolonner.",
+    "legend.seed": "Sting du har satt", "legend.copy": "Kopier fra symmetrien",
+    "band.mini.title": "Slik blir bordet", "band.mini.open": "Vis stort",
+    "preview.caption": "{rx} × {ry} gjentakelser · {w} × {h} sting",
+    "preview.hint": "Her kan du bare se. Gå tilbake til «Tegn» for å endre mønsteret.",
+    "edge.col.title": "Kolonne {n}", "edge.row.title": "Rad {n}",
+    "edge.col.insertBefore": "Ny kolonne til venstre", "edge.col.insertAfter": "Ny kolonne til høyre", "edge.col.remove": "Fjern denne kolonnen",
+    "edge.row.insertBefore": "Ny rad over", "edge.row.insertAfter": "Ny rad under", "edge.row.remove": "Fjern denne raden",
+    "edge.close": "Lukk",
+    "panel.colours": "Farger",
+    "colours.slot": "Farge {n}",
+    "colours.selected": "Valgt",
+    "colours.one": "Én farge", "colours.many": "{n} farger etter hverandre",
+    "colours.edit": "Endre farge {n}",
+    "colours.change": "Endre",
+    "colours.add": "Legg til farge",
+    "colours.useSeq": "Bruk fargesekvens",
+    "colours.useSeq.hint": "På: fargene skifter for hver gjentakelse. Av: bare den første fargen brukes.",
+    "colours.background": "Stoffet (bakgrunn)",
+    "panel.symmetry": "Symmetri",
+    "symmetry.intro": "Velg hvordan stingene dine kopieres inne i mønsterruten.",
+    "symmetry.squareGroup": "Bare for kvadratisk rute",
+    "symmetry.alwaysOn": "Alltid på",
+    "symmetry.needsSquare": "Krever kvadratisk rute",
+    "symmetry.squareNotice": "Disse virker bare når ruten er like bred som høy. Nå er den {w} × {h}.",
+    "symmetry.makeSquare": "Gjør ruten {n} × {n}",
+    "sym.identity": "Original",
+    "sym.mirror_x": "Speil venstre–høyre",
+    "sym.mirror_y": "Speil opp–ned",
+    "sym.rotate_180": "Roter 180°",
+    "sym.rotate_90": "Roter 90°",
+    "sym.rotate_270": "Roter 270°",
+    "sym.diag_main": "Speil på skrå\u00a0╲",
+    "sym.diag_anti": "Speil på skrå\u00a0╱",
+    "panel.grid": "Rute og gjentakelser",
+    "grid.unit": "Mønsterruten", "grid.unit.hint": "Den lille ruten du tegner i, som gjentas.",
+    "grid.width": "Bredde", "grid.height": "Høyde", "grid.cells": "ruter",
+    "grid.repeats": "Gjentakelser", "grid.repeats.hint": "Hvor mange ganger ruten gjentas i bordet (1–100).",
+    "grid.across": "Bortover", "grid.down": "Nedover", "grid.times": "ganger",
+    "step.less": "Mindre", "step.more": "Mer",
+    "edges.title": "Der rutene møtes",
+    "edges.explain": "Ligger en speillinje helt i kanten av ruten, blir kanten dobbel der to ruter møtes. Slå av kanten for å la naboene dele den – da sys den bare ytterst i bordet.",
+    "edges.key.cols": "Venstre/høyre kolonne", "edges.key.rows": "Øverste/nederste rad",
+    "edges.diagramCaption": "Eksempel: 3 × 2 ruter",
+    "edges.left": "Venstre kolonne", "edges.right": "Høyre kolonne", "edges.top": "Øverste rad", "edges.bottom": "Nederste rad",
+    "edges.on": "Med i hver gjentakelse", "edges.off.left": "Bare helt til venstre i bordet", "edges.off.right": "Bare helt til høyre i bordet",
+    "edges.off.top": "Bare helt øverst i bordet", "edges.off.bottom": "Bare helt nederst i bordet",
+    "dialog.title": "Farge {n}",
+    "dialog.intro": "En farge kan være én tråd, eller en rekke farger som skifter for hver gjentakelse.",
+    "dialog.count": "Antall farger",
+    "dialog.parts": "Trykk på en del for å velge fargen",
+    "dialog.part": "Del {n}",
+    "dialog.pick": "Farge for del {n}",
+    "dialog.custom": "Egen farge …",
+    "dialog.howItRepeats": "Slik skifter fargen bortover i bordet:",
+    "dialog.offNote": "Fargesekvens er slått av – bare del 1 brukes nå.",
+    "dialog.cancel": "Avbryt", "dialog.ok": "Bruk",
+    "mock.title": "Mockup ▸", "mock.loading": "Vis lastesiden", "mock.square": "Bytt kvadratisk / ikke kvadratisk",
+    "mock.dialog": "Åpne fargesekvens for farge 1", "mock.edge": "Vis kantmenyen"
+  },
+  en: {
+    "loading.title": "Getting Kvale ready …",
+    "loading.body": "The first time can take a few seconds. Next time it is quicker.",
+    "loading.restore": "The pattern you were working on will open when everything is ready.",
+    "autosave.saved": "Saved in this browser at {time}",
+    "autosave.hint": "Your work is saved automatically here in the browser. Use “Save” to get a file you can keep.",
+    "file.new": "New", "file.new.hint": "Start a new pattern",
+    "file.open": "Open", "file.open.hint": "Open a pattern file (.json) – Ctrl+O",
+    "file.save": "Save", "file.save.hint": "Save the pattern as a file on your computer – Ctrl+S",
+    "file.export": "Save image", "file.export.hint": "Download the whole band as a picture (PNG)",
+    "lang.label": "Language",
+    "theme.label": "Appearance", "theme.light": "Light mode", "theme.dark": "Dark mode",
+    "mode.edit": "Draw", "mode.preview": "See the repeats",
+    "tool.label": "Tool",
+    "tool.paint": "Stitch", "tool.paint.hint": "Place stitches in the selected colour",
+    "tool.erase": "Erase", "tool.erase.hint": "Remove stitches (with a mouse: right-click)",
+    "history.undo": "Undo (Ctrl+Z)", "history.redo": "Redo (Ctrl+Y)",
+    "zoom.in": "Zoom in", "zoom.out": "Zoom out", "zoom.fit": "Fit", "zoom.fit.hint": "Fit the pattern to the screen",
+    "canvas.hint.edit": "Tap the squares to stitch. Right-click erases.",
+    "canvas.hint.edges": "Tap a number along the edge to add or remove rows and columns.",
+    "legend.seed": "Stitches you placed", "legend.copy": "Copies made by symmetry",
+    "band.mini.title": "How the band will look", "band.mini.open": "Show large",
+    "preview.caption": "{rx} × {ry} repeats · {w} × {h} stitches",
+    "preview.hint": "This view is for looking only. Go back to “Draw” to change the pattern.",
+    "edge.col.title": "Column {n}", "edge.row.title": "Row {n}",
+    "edge.col.insertBefore": "New column to the left", "edge.col.insertAfter": "New column to the right", "edge.col.remove": "Remove this column",
+    "edge.row.insertBefore": "New row above", "edge.row.insertAfter": "New row below", "edge.row.remove": "Remove this row",
+    "edge.close": "Close",
+    "panel.colours": "Colours",
+    "colours.slot": "Colour {n}",
+    "colours.selected": "Selected",
+    "colours.one": "One colour", "colours.many": "{n} colours in turn",
+    "colours.edit": "Change colour {n}",
+    "colours.change": "Change",
+    "colours.add": "Add colour",
+    "colours.useSeq": "Use colour sequence",
+    "colours.useSeq.hint": "On: the colours change with each repeat. Off: only the first colour is used.",
+    "colours.background": "Fabric (background)",
+    "panel.symmetry": "Symmetry",
+    "symmetry.intro": "Choose how your stitches are copied inside the pattern unit.",
+    "symmetry.squareGroup": "Only for a square unit",
+    "symmetry.alwaysOn": "Always on",
+    "symmetry.needsSquare": "Needs a square unit",
+    "symmetry.squareNotice": "These only work when the unit is as wide as it is tall. It is now {w} × {h}.",
+    "symmetry.makeSquare": "Make the unit {n} × {n}",
+    "sym.identity": "Original",
+    "sym.mirror_x": "Mirror left–right",
+    "sym.mirror_y": "Mirror top–bottom",
+    "sym.rotate_180": "Rotate 180°",
+    "sym.rotate_90": "Rotate 90°",
+    "sym.rotate_270": "Rotate 270°",
+    "sym.diag_main": "Mirror diagonally\u00a0╲",
+    "sym.diag_anti": "Mirror diagonally\u00a0╱",
+    "panel.grid": "Unit and repeats",
+    "grid.unit": "Pattern unit", "grid.unit.hint": "The small square you draw in, which is repeated.",
+    "grid.width": "Width", "grid.height": "Height", "grid.cells": "squares",
+    "grid.repeats": "Repeats", "grid.repeats.hint": "How many times the unit is repeated in the band (1–100).",
+    "grid.across": "Across", "grid.down": "Down", "grid.times": "times",
+    "step.less": "Less", "step.more": "More",
+    "edges.title": "Where the units meet",
+    "edges.explain": "If a mirror line runs right along the edge of the unit, that edge is doubled where two units meet. Switch the edge off to let neighbours share it – it is then only stitched at the very outside of the band.",
+    "edges.key.cols": "Left/right column", "edges.key.rows": "Top/bottom row",
+    "edges.diagramCaption": "Example: 3 × 2 units",
+    "edges.left": "Left column", "edges.right": "Right column", "edges.top": "Top row", "edges.bottom": "Bottom row",
+    "edges.on": "Included in every repeat", "edges.off.left": "Only at the far left of the band", "edges.off.right": "Only at the far right of the band",
+    "edges.off.top": "Only at the very top of the band", "edges.off.bottom": "Only at the very bottom of the band",
+    "dialog.title": "Colour {n}",
+    "dialog.intro": "A colour can be a single thread, or a row of colours that changes with each repeat.",
+    "dialog.count": "Number of colours",
+    "dialog.parts": "Tap a part to choose its colour",
+    "dialog.part": "Part {n}",
+    "dialog.pick": "Colour for part {n}",
+    "dialog.custom": "Custom colour …",
+    "dialog.howItRepeats": "How the colour changes across the band:",
+    "dialog.offNote": "Colour sequence is switched off – only part 1 is used now.",
+    "dialog.cancel": "Cancel", "dialog.ok": "Apply",
+    "mock.title": "Mockup ▸", "mock.loading": "Show loading screen", "mock.square": "Toggle square / not square",
+    "mock.dialog": "Open colour sequence for colour 1", "mock.edge": "Show the edge menu"
+  },
+  it: {
+    "loading.title": "Preparazione di Kvale …",
+    "loading.body": "La prima volta può richiedere qualche secondo. Le volte successive sarà più veloce.",
+    "loading.restore": "Il disegno su cui stavi lavorando si aprirà appena tutto sarà pronto.",
+    "autosave.saved": "Salvato nel browser alle {time}",
+    "autosave.hint": "Il lavoro viene salvato automaticamente qui nel browser. Usa «Salva» per avere un file da conservare.",
+    "file.new": "Nuovo", "file.new.hint": "Inizia un nuovo disegno",
+    "file.open": "Apri", "file.open.hint": "Apri un file di disegno (.json) – Ctrl+O",
+    "file.save": "Salva", "file.save.hint": "Salva il disegno come file sul computer – Ctrl+S",
+    "file.export": "Salva immagine", "file.export.hint": "Scarica l’intera bordura come immagine (PNG)",
+    "lang.label": "Lingua",
+    "theme.label": "Aspetto", "theme.light": "Tema chiaro", "theme.dark": "Tema scuro",
+    "mode.edit": "Disegna", "mode.preview": "Vedi le ripetizioni",
+    "tool.label": "Strumento",
+    "tool.paint": "Ricama", "tool.paint.hint": "Aggiungi punti nel colore scelto",
+    "tool.erase": "Cancella", "tool.erase.hint": "Togli punti (con il mouse: clic destro)",
+    "history.undo": "Annulla (Ctrl+Z)", "history.redo": "Ripeti (Ctrl+Y)",
+    "zoom.in": "Ingrandisci", "zoom.out": "Riduci", "zoom.fit": "Adatta", "zoom.fit.hint": "Adatta il disegno allo schermo",
+    "canvas.hint.edit": "Tocca i quadretti per ricamare. Il clic destro cancella.",
+    "canvas.hint.edges": "Tocca un numero sul bordo per aggiungere o togliere righe e colonne.",
+    "legend.seed": "Punti messi da te", "legend.copy": "Copie create dalla simmetria",
+    "band.mini.title": "Ecco come verrà la bordura", "band.mini.open": "Mostra in grande",
+    "preview.caption": "{rx} × {ry} ripetizioni · {w} × {h} punti",
+    "preview.hint": "Questa vista serve solo a guardare. Torna a «Disegna» per modificare il disegno.",
+    "edge.col.title": "Colonna {n}", "edge.row.title": "Riga {n}",
+    "edge.col.insertBefore": "Nuova colonna a sinistra", "edge.col.insertAfter": "Nuova colonna a destra", "edge.col.remove": "Togli questa colonna",
+    "edge.row.insertBefore": "Nuova riga sopra", "edge.row.insertAfter": "Nuova riga sotto", "edge.row.remove": "Togli questa riga",
+    "edge.close": "Chiudi",
+    "panel.colours": "Colori",
+    "colours.slot": "Colore {n}",
+    "colours.selected": "Scelto",
+    "colours.one": "Un colore", "colours.many": "{n} colori a turno",
+    "colours.edit": "Modifica il colore {n}",
+    "colours.change": "Modifica",
+    "colours.add": "Aggiungi colore",
+    "colours.useSeq": "Usa la sequenza di colori",
+    "colours.useSeq.hint": "Attiva: i colori cambiano a ogni ripetizione. Disattiva: si usa solo il primo colore.",
+    "colours.background": "Tessuto (sfondo)",
+    "panel.symmetry": "Simmetria",
+    "symmetry.intro": "Scegli come vengono copiati i tuoi punti all’interno del modulo.",
+    "symmetry.squareGroup": "Solo per moduli quadrati",
+    "symmetry.alwaysOn": "Sempre attivo",
+    "symmetry.needsSquare": "Serve un modulo quadrato",
+    "symmetry.squareNotice": "Funzionano solo se il modulo è largo quanto è alto. Ora è {w} × {h}.",
+    "symmetry.makeSquare": "Rendi il modulo {n} × {n}",
+    "sym.identity": "Originale",
+    "sym.mirror_x": "Specchia sinistra–destra",
+    "sym.mirror_y": "Specchia sopra–sotto",
+    "sym.rotate_180": "Ruota di 180°",
+    "sym.rotate_90": "Ruota di 90°",
+    "sym.rotate_270": "Ruota di 270°",
+    "sym.diag_main": "Specchia in diagonale\u00a0╲",
+    "sym.diag_anti": "Specchia in diagonale\u00a0╱",
+    "panel.grid": "Modulo e ripetizioni",
+    "grid.unit": "Modulo", "grid.unit.hint": "Il riquadro in cui disegni e che viene ripetuto.",
+    "grid.width": "Larghezza", "grid.height": "Altezza", "grid.cells": "quadretti",
+    "grid.repeats": "Ripetizioni", "grid.repeats.hint": "Quante volte il modulo si ripete nella bordura (1–100).",
+    "grid.across": "In orizzontale", "grid.down": "In verticale", "grid.times": "volte",
+    "step.less": "Meno", "step.more": "Più",
+    "edges.title": "Dove i moduli si toccano",
+    "edges.explain": "Se una linea di simmetria corre proprio sul bordo del modulo, quel bordo raddoppia dove due moduli si toccano. Disattivalo per farlo condividere ai moduli vicini: verrà ricamato solo all’esterno della bordura.",
+    "edges.key.cols": "Colonna sinistra/destra", "edges.key.rows": "Riga superiore/inferiore",
+    "edges.diagramCaption": "Esempio: 3 × 2 moduli",
+    "edges.left": "Colonna sinistra", "edges.right": "Colonna destra", "edges.top": "Riga superiore", "edges.bottom": "Riga inferiore",
+    "edges.on": "In ogni ripetizione", "edges.off.left": "Solo all’estrema sinistra della bordura", "edges.off.right": "Solo all’estrema destra della bordura",
+    "edges.off.top": "Solo in cima alla bordura", "edges.off.bottom": "Solo in fondo alla bordura",
+    "dialog.title": "Colore {n}",
+    "dialog.intro": "Un colore può essere un solo filo, oppure una serie di colori che cambia a ogni ripetizione.",
+    "dialog.count": "Numero di colori",
+    "dialog.parts": "Tocca una parte per sceglierne il colore",
+    "dialog.part": "Parte {n}",
+    "dialog.pick": "Colore della parte {n}",
+    "dialog.custom": "Colore personalizzato …",
+    "dialog.howItRepeats": "Come cambia il colore lungo la bordura:",
+    "dialog.offNote": "La sequenza di colori è disattivata: ora si usa solo la parte 1.",
+    "dialog.cancel": "Annulla", "dialog.ok": "Applica",
+    "mock.title": "Mockup ▸", "mock.loading": "Mostra la schermata di caricamento", "mock.square": "Alterna quadrato / non quadrato",
+    "mock.dialog": "Apri la sequenza del colore 1", "mock.edge": "Mostra il menu del bordo"
+  }
+};
+let lang = "nb";
+const t = (k, v = {}) => (STR[lang][k] ?? STR.nb[k] ?? k).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
+
+/* ---------------- Document (from examples/flower-band.json) ---------------- */
+const doc = {
+  w: 12, h: 12, rx: 7, ry: 2,
+  edges: { left: true, right: true, top: true, bottom: true },
+  useSeq: true,
+  bg: "#f5f1e8",
+  // Base colours from flower-band.json; slots 1 and 3 get demo sequences to show the split swatch.
+  seqs: [["#b1172b", "#2d7d32", "#f2c84b"], ["#2d7d32"], ["#f2c84b", "#b1172b"], ["#1b1b1b"]],
+  sym: ["identity", "mirror_x", "mirror_y", "rotate_180"],
+  motif: [[5,1,0],[5,2,0],[4,2,0],[5,3,1],[4,3,1],[3,3,1],[5,4,2],[4,4,2],[3,4,2],[2,4,2],[1,5,3],[2,5,3],[3,5,3]]
+};
+let active = 0, mode = "edit", tool = "paint", zoom = 1;
+const undoStack = [], future = [];
+const snapshot = () => JSON.stringify(doc);
+function commit() { undoStack.push(snapshot()); future.length = 0; }
+function restore(s) { Object.assign(doc, JSON.parse(s)); syncFields(); renderAll(); }
+
+/* ---------------- Core logic (ported from kvale.core) ---------------- */
+const OPS = ["identity","mirror_x","mirror_y","rotate_180","rotate_90","rotate_270","diag_main","diag_anti"];
+const SQUARE_ONLY = new Set(["rotate_90","rotate_270","diag_main","diag_anti"]);
+function tp(x, y, w, h, op) {
+  switch (op) {
+    case "identity": return [x, y];
+    case "mirror_x": return [w-1-x, y];
+    case "mirror_y": return [x, h-1-y];
+    case "rotate_180": return [w-1-x, h-1-y];
+    case "rotate_90": return [h-1-y, x];
+    case "rotate_270": return [y, w-1-x];
+    case "diag_main": return [y, x];
+    case "diag_anti": return [w-1-y, h-1-x];
+  }
+}
+// Returns Map "x,y" -> {slot, seed (index into motif), isSeed}
+function expand(d = doc, ops = d.sym) {
+  const out = new Map(); const queue = [];
+  d.motif.forEach(([x, y, s], i) => { if (x < d.w && y < d.h) { out.set(x+","+y, {slot: s, seed: i, isSeed: true}); queue.push([x, y, s, i]); } });
+  while (queue.length) {
+    const [x, y, s, i] = queue.pop();
+    for (const op of ops) {
+      const [nx, ny] = tp(x, y, d.w, d.h, op); const k = nx+","+ny;
+      if (!out.has(k)) { out.set(k, {slot: s, seed: i, isSeed: false}); queue.push([nx, ny, s, i]); }
+    }
+  }
+  return out;
+}
+function includedCols(d, ux) { const last = d.rx-1; const kl = d.edges.left || ux === 0, kr = d.edges.right || ux === last;
+  return [...Array(d.w).keys()].filter(x => (x !== 0 || kl) && (x !== d.w-1 || kr)); }
+function includedRows(d, uy) { const last = d.ry-1; const kt = d.edges.top || uy === 0, kb = d.edges.bottom || uy === last;
+  return [...Array(d.h).keys()].filter(y => (y !== 0 || kt) && (y !== d.h-1 || kb)); }
+function buildGrid(d = doc) {
+  const cols = [...Array(d.rx).keys()].map(u => includedCols(d, u));
+  const rows = [...Array(d.ry).keys()].map(u => includedRows(d, u));
+  const W = cols.reduce((a, c) => a + c.length, 0), H = rows.reduce((a, r) => a + r.length, 0);
+  const grid = Array.from({length: H}, () => Array(W).fill(d.bg));
+  const ex = expand(d); const vB = [], hB = [];
+  let oy = 0;
+  rows.forEach((rr, uy) => {
+    let ox = 0; hB.push(oy);
+    cols.forEach((cc, ux) => {
+      if (uy === 0) vB.push(ox);
+      const rep = uy * d.rx + ux;
+      rr.forEach((ly, iy) => cc.forEach((lx, ix) => {
+        const m = ex.get(lx+","+ly); if (!m) return;
+        const seq = d.seqs[m.slot % d.seqs.length];
+        grid[oy+iy][ox+ix] = d.useSeq ? seq[rep % seq.length] : seq[0];
+      }));
+      ox += cc.length;
+    });
+    oy += rr.length;
+  });
+  return {grid, W, H, vB, hB};
+}
+const lum = hex => { const n = parseInt(hex.slice(1), 16); const c = [n>>16, (n>>8)&255, n&255].map(v => { v /= 255; return v <= .03928 ? v/12.92 : ((v+.055)/1.055)**2.4; }); return .2126*c[0]+.7152*c[1]+.0722*c[2]; };
+
+/* ---------------- Canvas helpers ---------------- */
+function sizeCanvas(cv, w, h) { const r = window.devicePixelRatio || 1; cv.width = Math.round(w*r); cv.height = Math.round(h*r); cv.style.width = w+"px"; cv.style.height = h+"px"; const g = cv.getContext("2d"); g.setTransform(r,0,0,r,0,0); return g; }
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const $ = id => document.getElementById(id);
+
+let cs = 32, hoverCell = null, edgeTarget = null;
+function stageInnerWidth() { const b = $("stageBody"); const s = getComputedStyle(b); return b.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); }
+
+function drawEdit() {
+  const ruler = parseFloat(getComputedStyle($("editor")).getPropertyValue("--ruler")) || 30;
+  const inner = stageInnerWidth(), wide = inner >= 700;
+  $("editView").classList.toggle("narrow", !wide);
+  const availW = inner - ruler - 4 - (wide ? 340 + 24 : 0);
+  const availH = Math.max(260, window.innerHeight - (wide ? 250 : 420));
+  const fit = Math.max(8, Math.min(44, Math.floor(availW / doc.w), Math.floor(availH / doc.h)));
+  cs = Math.max(6, Math.round(fit * zoom));
+  const W = doc.w*cs, H = doc.h*cs, g = sizeCanvas($("editCanvas"), W, H);
+  const ex = expand();
+  g.fillStyle = doc.bg; g.fillRect(0, 0, W, H);
+  for (let y = 0; y < doc.h; y++) for (let x = 0; x < doc.w; x++) {
+    const m = ex.get(x+","+y); if (!m) continue;
+    const col = doc.seqs[m.slot % doc.seqs.length][0];
+    g.fillStyle = col; g.fillRect(x*cs, y*cs, cs, cs);
+  }
+  // highlighted row/column for the open edge menu
+  if (edgeTarget) { g.fillStyle = css("--edge-tint") || "rgba(47,93,158,.16)";
+    if (edgeTarget.axis === "col") g.fillRect(edgeTarget.i*cs, 0, cs, H); else g.fillRect(0, edgeTarget.i*cs, W, cs); }
+  // grid lines (aida)
+  g.strokeStyle = "rgba(70,50,30,.18)"; g.lineWidth = 1; g.beginPath();
+  for (let x = 0; x <= doc.w; x++) { g.moveTo(x*cs+.5, 0); g.lineTo(x*cs+.5, H); }
+  for (let y = 0; y <= doc.h; y++) { g.moveTo(0, y*cs+.5); g.lineTo(W, y*cs+.5); }
+  g.stroke();
+  // symmetry axes
+  g.save(); g.setLineDash([6, 5]); g.strokeStyle = "rgba(158,27,44,.6)"; g.lineWidth = 1.5; g.beginPath();
+  if (doc.sym.includes("mirror_x")) { g.moveTo(W/2, 0); g.lineTo(W/2, H); }
+  if (doc.sym.includes("mirror_y")) { g.moveTo(0, H/2); g.lineTo(W, H/2); }
+  if (doc.sym.includes("diag_main")) { g.moveTo(0, 0); g.lineTo(W, H); }
+  if (doc.sym.includes("diag_anti")) { g.moveTo(W, 0); g.lineTo(0, H); }
+  g.stroke(); g.restore();
+  // seed marks: inset border in a contrasting colour
+  const inset = Math.max(3, cs*.17);
+  for (const [k, m] of ex) { if (!m.isSeed) continue; const [x, y] = k.split(",").map(Number);
+    const col = doc.seqs[m.slot % doc.seqs.length][0];
+    g.strokeStyle = lum(col) > .35 ? "#1b1712" : "#ffffff"; g.lineWidth = Math.max(1.5, cs*.08);
+    g.strokeRect(x*cs+inset, y*cs+inset, cs-2*inset, cs-2*inset); }
+  if (hoverCell) { g.strokeStyle = "rgba(47,93,158,.9)"; g.lineWidth = 2; g.strokeRect(hoverCell[0]*cs+1, hoverCell[1]*cs+1, cs-2, cs-2); }
+  buildRulers();
+}
+function buildRulers() {
+  const top = $("rulerTop"), left = $("rulerLeft");
+  const label = (i, n) => (n <= 30 || i === 0 || (i+1) % 5 === 0) ? String(i+1) : "";
+  top.innerHTML = ""; left.innerHTML = "";
+  for (let i = 0; i < doc.w; i++) { const b = document.createElement("button"); b.style.width = cs+"px"; b.textContent = label(i, doc.w);
+    b.setAttribute("aria-label", t("edge.col.title", {n: i+1})); b.setAttribute("aria-expanded", String(edgeTarget?.axis === "col" && edgeTarget.i === i));
+    b.onclick = () => openEdge("col", i); top.appendChild(b); }
+  for (let i = 0; i < doc.h; i++) { const b = document.createElement("button"); b.style.height = cs+"px"; b.textContent = label(i, doc.h);
+    b.setAttribute("aria-label", t("edge.row.title", {n: i+1})); b.setAttribute("aria-expanded", String(edgeTarget?.axis === "row" && edgeTarget.i === i));
+    b.onclick = () => openEdge("row", i); left.appendChild(b); }
+}
+function openEdge(axis, i) {
+  if (edgeTarget && edgeTarget.axis === axis && edgeTarget.i === i) return closeEdge();
+  edgeTarget = {axis, i}; renderEdgePop(); drawEdit();
+}
+function closeEdge() { edgeTarget = null; $("edgePop").hidden = true; drawEdit(); }
+function renderEdgePop() {
+  const p = $("edgePop"); if (!edgeTarget) { p.hidden = true; return; }
+  const {axis, i} = edgeTarget, ruler = parseFloat(getComputedStyle($("editor")).getPropertyValue("--ruler")) || 30;
+  $("edgePopTitle").textContent = t(axis === "col" ? "edge.col.title" : "edge.row.title", {n: i+1});
+  const a = axis === "col" ? "col" : "row";
+  $("edgeBefore").lastElementChild.textContent = t(`edge.${a}.insertBefore`);
+  $("edgeAfter").lastElementChild.textContent = t(`edge.${a}.insertAfter`);
+  $("edgeRemove").lastElementChild.textContent = t(`edge.${a}.remove`);
+  p.hidden = false;
+  const ew = $("editor").offsetWidth, pw = p.offsetWidth;
+  if (axis === "col") { p.style.top = (ruler + 4) + "px"; p.style.left = Math.max(0, Math.min(ew - pw, ruler + i*cs + cs/2 - pw/2)) + "px"; }
+  else { p.style.left = (ruler + 4) + "px"; p.style.top = (ruler + i*cs + cs) + "px"; }
+}
+function editStructure(kind) {
+  if (!edgeTarget) return; commit();
+  const {axis, i} = edgeTarget; const key = axis === "col" ? 0 : 1; const dim = axis === "col" ? "w" : "h";
+  if (kind === "remove") { if (doc[dim] <= 1) return; doc.motif = doc.motif.filter(m => m[key] !== i).map(m => { m = [...m]; if (m[key] > i) m[key]--; return m; }); doc[dim]--; }
+  else { const at = kind === "before" ? i : i+1; if (doc[dim] >= 100) return; doc.motif = doc.motif.map(m => { m = [...m]; if (m[key] >= at) m[key]++; return m; }); doc[dim]++; if (kind === "before") edgeTarget.i++; }
+  if (edgeTarget.i >= doc[dim]) edgeTarget.i = doc[dim]-1;
+  enforceSquare(); syncFields(); renderAll(); renderEdgePop();
+}
+
+function drawBand(cv, cell, maxW) {
+  const {grid, W, H, vB, hB} = buildGrid();
+  let c = cell; if (maxW) c = Math.max(2, Math.min(cell, Math.floor(maxW / W)));
+  const g = sizeCanvas(cv, W*c, H*c);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { g.fillStyle = grid[y][x]; g.fillRect(x*c, y*c, c, c); }
+  if (c >= 5) { g.strokeStyle = "rgba(70,50,30,.14)"; g.lineWidth = 1; g.beginPath();
+    for (let x = 0; x <= W; x++) { g.moveTo(x*c+.5, 0); g.lineTo(x*c+.5, H*c); }
+    for (let y = 0; y <= H; y++) { g.moveTo(0, y*c+.5); g.lineTo(W*c, y*c+.5); }
+    g.stroke();
+    g.strokeStyle = "rgba(70,50,30,.32)"; g.beginPath();
+    vB.slice(1).forEach(x => { g.moveTo(x*c+.5, 0); g.lineTo(x*c+.5, H*c); });
+    hB.slice(1).forEach(y => { g.moveTo(0, y*c+.5); g.lineTo(W*c, y*c+.5); });
+    g.stroke(); }
+  return {W, H};
+}
+function drawPreview() {
+  const avail = stageInnerWidth() - 8;
+  const fit = Math.max(2, Math.min(24, Math.floor(avail / buildGrid().W)));
+  const {W, H} = drawBand($("previewCanvas"), Math.max(2, Math.round(fit*zoom)));
+  $("previewCaption").textContent = t("preview.caption", {rx: doc.rx, ry: doc.ry, w: W, h: H});
+}
+function drawMini() { const mb = $("miniCanvas").parentElement; drawBand($("miniCanvas"), 7, mb.clientWidth - 26); }
+
+/* ---------------- Painting ---------------- */
+function cellFromEvent(e) { const r = $("editCanvas").getBoundingClientRect(); const x = Math.floor((e.clientX - r.left)/cs), y = Math.floor((e.clientY - r.top)/cs); return (x >= 0 && y >= 0 && x < doc.w && y < doc.h) ? [x, y] : null; }
+function applyAt(cell, erase) {
+  const ex = expand(); const m = ex.get(cell.join(","));
+  if (erase) { if (!m) return; doc.motif.splice(m.seed, 1); }
+  else if (m) { if (doc.motif[m.seed][2] === active) return; doc.motif[m.seed][2] = active; }   // copy -> edits its source mark
+  else doc.motif.push([cell[0], cell[1], active]);
+  renderAll();
+}
+let painting = false;
+$("editCanvas").addEventListener("contextmenu", e => e.preventDefault());
+$("editCanvas").addEventListener("pointerdown", e => { const c = cellFromEvent(e); if (!c) return; painting = e.button === 2 ? "erase" : tool; commit(); applyAt(c, painting === "erase"); $("editCanvas").setPointerCapture(e.pointerId); });
+$("editCanvas").addEventListener("pointermove", e => { const c = cellFromEvent(e);
+  if (painting && c) { const m = expand().get(c.join(",")); if ((painting === "erase") === !!m) applyAt(c, painting === "erase"); }
+  if (String(c) !== String(hoverCell)) { hoverCell = c; drawEdit(); } });
+$("editCanvas").addEventListener("pointerup", () => painting = false);
+$("editCanvas").addEventListener("pointerleave", () => { hoverCell = null; drawEdit(); });
+
+/* ---------------- Side panel: colours ---------------- */
+function renderSlots() {
+  const box = $("slots"); box.innerHTML = "";
+  doc.seqs.forEach((seq, i) => {
+    const row = document.createElement("div"); row.className = "slot";
+    const sel = document.createElement("button"); sel.className = "slot-select"; sel.setAttribute("aria-pressed", String(i === active));
+    sel.innerHTML = `<span class="slot-num">#${i+1}</span><span class="slot-body"><span class="swatchbar">${seq.map(c => `<i style="background:${c}"></i>`).join("")}</span>
+      <span class="slot-meta"><span>${seq.length === 1 ? t("colours.one") : t("colours.many", {n: seq.length})}</span><span>${i === active ? "✓ " + t("colours.selected") : ""}</span></span></span>`;
+    sel.setAttribute("aria-label", t("colours.slot", {n: i+1}));
+    sel.onclick = () => { active = i; renderSlots(); updateChip(); };
+    sel.ondblclick = () => openSeq(i);
+    const ed = document.createElement("button"); ed.className = "btn slot-edit icon-only";
+    ed.title = t("colours.edit", {n: i+1}); ed.setAttribute("aria-label", t("colours.edit", {n: i+1}));
+    ed.innerHTML = `<svg class="icon"><use href="#i-pencil"/></svg>`; ed.onclick = () => openSeq(i);
+    row.append(sel, ed); box.appendChild(row);
+  });
+}
+function updateChip() { $("activeChip").style.background = doc.seqs[active][0]; }
+$("addColour").onclick = () => { commit(); doc.seqs.push(["#3b5b92"]); active = doc.seqs.length - 1; renderAll(); openSeq(active); };
+$("useSeq").onclick = () => { commit(); doc.useSeq = !doc.useSeq; renderAll(); };
+$("bgInput").oninput = e => { doc.bg = e.target.value; renderAll(); };
+
+/* ---------------- Symmetry tiles ---------------- */
+const ICON_SEED = [[1,0],[2,0],[2,1]];
+function symIcon(op) {
+  const n = 6, c = 7, pad = 0, size = n*c;
+  const cells = new Map(ICON_SEED.map(p => [p.join(","), "s"]));
+  if (op !== "identity") ICON_SEED.forEach(([x, y]) => { const k = tp(x, y, n, n, op).join(","); if (!cells.has(k)) cells.set(k, "c"); });
+  let s = `<svg viewBox="-1 -1 ${size+2} ${size+2}" aria-hidden="true"><rect x="0" y="0" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-opacity=".35"/>`;
+  for (const [k, v] of cells) { const [x, y] = k.split(",").map(Number);
+    s += `<rect x="${x*c+.8}" y="${y*c+.8}" width="${c-1.6}" height="${c-1.6}" rx="1" fill="currentColor" fill-opacity="${v === "s" ? 1 : .45}"/>`; }
+  const ax = {mirror_x: `M${size/2} -1V${size+1}`, mirror_y: `M-1 ${size/2}H${size+1}`, diag_main: `M0 0L${size} ${size}`, diag_anti: `M${size} 0L0 ${size}`}[op];
+  if (ax) s += `<path d="${ax}" stroke="currentColor" stroke-dasharray="3 2" stroke-width="1.2"/>`;
+  if (op.startsWith("rotate")) s += `<circle cx="${size/2}" cy="${size/2}" r="2" fill="currentColor"/>`;
+  return s + "</svg>";
+}
+function renderSym() {
+  const square = doc.w === doc.h;
+  [["symA", OPS.slice(0, 4)], ["symB", OPS.slice(4)]].forEach(([id, ops]) => {
+    const box = $(id); box.innerHTML = "";
+    ops.forEach(op => {
+      const b = document.createElement("button"); b.className = "sym";
+      const on = doc.sym.includes(op), locked = op === "identity", dis = SQUARE_ONLY.has(op) && !square;
+      b.setAttribute("aria-pressed", String(on)); b.disabled = dis; if (locked) { b.classList.add("locked"); b.setAttribute("aria-disabled", "true"); }
+      const sub = locked ? t("symmetry.alwaysOn") : dis ? t("symmetry.needsSquare") : "";
+      b.innerHTML = `${symIcon(op)}<span class="lbl"><span>${t("sym." + op)}</span>${sub ? `<small>${sub}</small>` : ""}</span><span class="tick"><svg class="icon"><use href="#i-check"/></svg></span>`;
+      if (!locked && !dis) b.onclick = () => { commit(); doc.sym = on ? doc.sym.filter(o => o !== op) : OPS.filter(o => o === op || doc.sym.includes(o)); renderAll(); };
+      box.appendChild(b);
+    });
+  });
+  $("squareNotice").hidden = square;
+  if (!square) { const n = Math.max(doc.w, doc.h);
+    $("squareNoticeText").textContent = t("symmetry.squareNotice", {w: doc.w, h: doc.h});
+    $("makeSquare").textContent = t("symmetry.makeSquare", {n}); }
+}
+$("makeSquare").onclick = () => { commit(); const n = Math.max(doc.w, doc.h); doc.w = doc.h = n; syncFields(); renderAll(); };
+function enforceSquare() { if (doc.w !== doc.h) doc.sym = doc.sym.filter(o => !SQUARE_ONLY.has(o)); }
+
+/* ---------------- Grid settings ---------------- */
+const FIELD = {fW: "w", fH: "h", fRX: "rx", fRY: "ry"};
+function syncFields() { for (const [id, k] of Object.entries(FIELD)) $(id).value = doc[k]; }
+function setField(id, v) { v = Math.max(1, Math.min(100, Math.round(v) || 1)); if (doc[FIELD[id]] === v) { syncFields(); return; } commit(); doc[FIELD[id]] = v; enforceSquare(); syncFields(); edgeTarget = null; $("edgePop").hidden = true; renderAll(); }
+document.querySelectorAll("[data-step]").forEach(b => b.onclick = () => { const [id, d] = b.dataset.step.split(":"); setField(id, doc[FIELD[id]] + Number(d)); });
+Object.keys(FIELD).forEach(id => $(id).onchange = e => setField(id, Number(e.target.value)));
+
+const EDGES = ["left", "right", "top", "bottom"];
+function renderEdges() {
+  const box = $("edgeList"); box.innerHTML = "";
+  EDGES.forEach(e => {
+    const on = doc.edges[e]; const r = document.createElement("div"); r.className = "toggle-row";
+    r.innerHTML = `<div class="text"><strong>${t("edges." + e)}</strong><span>${on ? t("edges.on") : t("edges.off." + e)}</span></div>
+      <div class="switch-wrap"><button class="switch" role="switch" aria-checked="${on}" aria-label="${t("edges." + e)}"></button></div>`;
+    r.querySelector("button").onclick = () => { commit(); doc.edges[e] = !doc.edges[e]; renderAll(); };
+    box.appendChild(r);
+  });
+  // Schematic 3 x 2 band of 5 x 4 units using the same inclusion rules as the renderer.
+  const d = {...doc, w: 5, h: 4, rx: 3, ry: 2}; const c = 12;
+  const cols = [0,1,2].map(u => includedCols(d, u)), rows = [0,1].map(u => includedRows(d, u));
+  const W = cols.reduce((a, x) => a + x.length, 0)*c, H = rows.reduce((a, x) => a + x.length, 0)*c;
+  let s = ""; let oy = 0;
+  rows.forEach((rr, uy) => { let ox = 0; cols.forEach((cc, ux) => {
+    rr.forEach((ly, iy) => cc.forEach((lx, ix) => {
+      const colEdge = lx === 0 || lx === 4, rowEdge = ly === 0 || ly === 3;
+      const fill = colEdge ? "#2f5d9e" : rowEdge ? "#c08a1e" : "var(--surface)";
+      s += `<rect x="${(ox+ix)*c+.5}" y="${(oy+iy)*c+.5}" width="${c-1}" height="${c-1}" style="fill:${fill}" ${colEdge || rowEdge ? 'fill-opacity=".85"' : ""}/>`;
+    }));
+    s += `<rect x="${ox*c}" y="${oy*c}" width="${cc.length*c}" height="${rr.length*c}" fill="none" style="stroke:var(--text)" stroke-width="1.5"/>`;
+    ox += cc.length; }); oy += rr.length; });
+  const svg = $("edgeSvg"); svg.setAttribute("viewBox", `-1 -1 ${W+2} ${H+2}`); svg.setAttribute("width", W+2); svg.setAttribute("height", H+2); svg.innerHTML = s;
+}
+
+/* ---------------- Sequence dialog ---------------- */
+const THREADS = ["#b1172b","#7d1022","#d9603b","#f2c84b","#e9d9a6","#2d7d32","#1f4d2b","#7fa36b","#2b4a8b","#6c8fc7","#5b2a6e","#c26a9a","#6b4226","#1b1b1b","#ffffff","#8a8a8a"];
+let dlgSlot = 0, dlgSeq = [], dlgPart = 0;
+function openSeq(i) { dlgSlot = i; dlgSeq = [...doc.seqs[i]]; dlgPart = 0; renderDlg(); $("seqDialog").showModal(); }
+function renderDlg() {
+  $("dlgTitle").textContent = t("dialog.title", {n: dlgSlot+1});
+  $("dlgBar").innerHTML = dlgSeq.map(c => `<i style="background:${c}"></i>`).join("");
+  $("dlgCount").value = dlgSeq.length;
+  $("dlgParts").innerHTML = "";
+  dlgSeq.forEach((c, k) => { const b = document.createElement("button"); b.type = "button"; b.className = "part"; b.textContent = k+1;
+    b.style.background = c; b.style.color = lum(c) > .35 ? "#1b1712" : "#fff"; b.setAttribute("aria-pressed", String(k === dlgPart));
+    b.setAttribute("aria-label", t("dialog.part", {n: k+1})); b.onclick = () => { dlgPart = k; renderDlg(); }; $("dlgParts").appendChild(b); });
+  $("dlgPickLabel").textContent = t("dialog.pick", {n: dlgPart+1});
+  $("dlgThreads").innerHTML = "";
+  THREADS.forEach(c => { const b = document.createElement("button"); b.type = "button"; b.className = "thread"; b.style.background = c; b.title = c;
+    b.setAttribute("aria-label", c); b.setAttribute("aria-pressed", String(dlgSeq[dlgPart].toLowerCase() === c)); b.onclick = () => { dlgSeq[dlgPart] = c; renderDlg(); }; $("dlgThreads").appendChild(b); });
+  $("dlgCustom").value = dlgSeq[dlgPart]; $("dlgCustomChip").style.background = dlgSeq[dlgPart];
+  $("dlgRepeats").innerHTML = [...Array(Math.min(doc.rx, 10)).keys()].map(r => { const c = doc.useSeq ? dlgSeq[r % dlgSeq.length] : dlgSeq[0];
+    return `<span style="background:${c};color:${lum(c) > .35 ? "#1b1712" : "#fff"}">${r+1}</span>`; }).join("");
+  $("dlgOffNote").hidden = doc.useSeq;
+}
+function resizeSeq(n) { n = Math.max(1, Math.min(24, n)); while (dlgSeq.length < n) dlgSeq.push(dlgSeq[dlgSeq.length-1]); dlgSeq.length = n; dlgPart = Math.min(dlgPart, n-1); renderDlg(); }
+document.querySelectorAll("[data-dstep]").forEach(b => b.onclick = () => resizeSeq(dlgSeq.length + Number(b.dataset.dstep)));
+$("dlgCount").onchange = e => resizeSeq(Number(e.target.value));
+$("dlgCustom").oninput = e => { dlgSeq[dlgPart] = e.target.value; renderDlg(); };
+$("seqDialog").addEventListener("close", () => { if ($("seqDialog").returnValue === "ok") { commit(); doc.seqs[dlgSlot] = [...dlgSeq]; renderAll(); } });
+
+/* ---------------- Toolbar, modes, theme, language ---------------- */
+function pressGroup(groupId, attr, val) { document.querySelectorAll(`#${groupId} button`).forEach(b => b.setAttribute("aria-pressed", String(b.dataset[attr] === val))); }
+document.querySelectorAll("#modeSeg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+function setMode(m) { mode = m; zoom = 1; pressGroup("modeSeg", "mode", m); $("editView").hidden = m !== "edit"; $("previewView").hidden = m !== "preview";
+  $("toolSeg").style.visibility = m === "edit" ? "visible" : "hidden"; renderAll(); }
+$("miniOpen").onclick = () => setMode("preview");
+document.querySelectorAll("#toolSeg button").forEach(b => b.onclick = () => { tool = b.dataset.tool; pressGroup("toolSeg", "tool", tool); });
+$("undoBtn").onclick = () => { if (!undoStack.length) return; future.push(snapshot()); restore(undoStack.pop()); };
+$("redoBtn").onclick = () => { if (!future.length) return; undoStack.push(snapshot()); restore(future.pop()); };
+document.addEventListener("keydown", e => { if (!(e.ctrlKey || e.metaKey)) return; const k = e.key.toLowerCase();
+  if (k === "z" && !e.shiftKey) { e.preventDefault(); $("undoBtn").click(); } else if (k === "y" || (k === "z" && e.shiftKey)) { e.preventDefault(); $("redoBtn").click(); } });
+const ZOOMS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+$("zoomIn").onclick = () => { zoom = ZOOMS.find(z => z > zoom) ?? zoom; renderAll(); };
+$("zoomOut").onclick = () => { zoom = [...ZOOMS].reverse().find(z => z < zoom) ?? zoom; renderAll(); };
+$("zoomFit").onclick = () => { zoom = 1; renderAll(); };
+
+function setTheme(th) { document.documentElement.setAttribute("data-theme", th); pressGroup("themeSeg", "themeSet", th); }
+document.querySelectorAll("#themeSeg button").forEach(b => b.onclick = () => setTheme(b.dataset.themeSet));
+pressGroup("themeSeg", "themeSet", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
+function setLang(l) {
+  lang = l; document.documentElement.lang = l; pressGroup("langSeg", "lang", l);
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n, {time: "14:32"}));
+  document.querySelectorAll("[data-i18n-title]").forEach(el => el.title = t(el.dataset.i18nTitle));
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
+  renderAll(); renderEdgePop(); if ($("seqDialog").open) renderDlg();
+}
+document.querySelectorAll("#langSeg button").forEach(b => b.onclick = () => setLang(b.dataset.lang));
+
+/* ---------------- Loading screen ---------------- */
+(function buildStitches() { const svg = document.querySelector(".stitch-row"); let s = "";
+  for (let i = 0; i < 10; i++) { const x = 6 + i*25, d = (i*0.18).toFixed(2);
+    s += `<path d="M${x} 5l18 18" style="animation-delay:${d}s"/><path d="M${x+18} 5l-18 18" style="animation-delay:${(i*0.18+0.09).toFixed(2)}s"/>`; }
+  svg.innerHTML = s; })();
+function showLoading(ms) { $("loading").hidden = false; if (ms) setTimeout(() => $("loading").hidden = true, ms); }
+$("loading").onclick = () => $("loading").hidden = true;
+
+/* ---------------- Mockup controls ---------------- */
+$("mLoading").onclick = () => showLoading(0);
+$("mSquare").onclick = () => setField("fH", doc.w === doc.h ? doc.w - 3 : doc.w);
+$("mDialog").onclick = () => openSeq(0);
+$("mEdge").onclick = () => { setMode("edit"); edgeTarget = null; openEdge("col", 5); };
+$("edgePopClose").onclick = closeEdge;
+$("edgeBefore").onclick = () => editStructure("before");
+$("edgeAfter").onclick = () => editStructure("after");
+$("edgeRemove").onclick = () => editStructure("remove");
+
+/* ---------------- Render ---------------- */
+function renderAll() {
+  $("useSeq").setAttribute("aria-checked", String(doc.useSeq));
+  $("bgSwatch").style.backgroundColor = doc.bg; $("bgHex").textContent = doc.bg; $("bgInput").value = doc.bg;
+  if (active >= doc.seqs.length) active = 0;
+  renderSlots(); updateChip(); renderSym(); renderEdges();
+  if (mode === "edit") { drawEdit(); drawMini(); } else drawPreview();
+  $("zoomLabel").textContent = Math.round(zoom*100) + " %";
+  $("undoBtn").disabled = !undoStack.length; $("redoBtn").disabled = !future.length;
+}
+window.addEventListener("resize", () => { renderAll(); renderEdgePop(); });
+
+// URL hash hooks for screenshots: #loading #preview #dialog #edge #nonsquare #en #it #dark #light
+const H = location.hash.slice(1).split(",");
+if (H.includes("dark")) setTheme("dark"); if (H.includes("light")) setTheme("light");
+setLang(H.includes("en") ? "en" : H.includes("it") ? "it" : "nb");
+if (H.includes("nonsquare")) { doc.h = 9; enforceSquare(); syncFields(); }
+if (H.includes("preview")) setMode("preview"); else renderAll();
+if (H.includes("edge")) openEdge("col", 5);
+if (H.includes("dialog")) openSeq(0);
+if (H.includes("loading")) showLoading(0); else if (!H.filter(Boolean).length) showLoading(1600);
+if (document.fonts) document.fonts.ready.then(() => { renderAll(); renderEdgePop(); });
+</script>
+</body>
+</html>

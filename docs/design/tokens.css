@@ -1,0 +1,130 @@
+/* Kvale design tokens.
+ * Light values on :root; dark values apply when the OS prefers dark (unless the user
+ * picked light) and whenever <html data-theme="dark">. data-theme="light" forces light.
+ * The pattern itself (cloth, stitches) always uses the document's own colours.
+ * Generated from docs/design/mockup.html - keep the two in sync. */
+:root {
+  /* Light theme: unbleached linen, walnut ink, madder-red thread */
+  --bg: #f4efe6;
+  --bg-weave: rgba(120, 95, 60, 0.045);
+  --surface: #fbf8f2;
+  --surface-2: #efe8dc;
+  --surface-sunken: #e9e1d3;
+  --border: #d8ccb8;
+  --border-strong: #a8998a;
+  --text: #2a2420;
+  --text-muted: #635a50;
+  --accent: #9e1b2c;
+  --accent-hover: #841523;
+  --accent-text: #ffffff;
+  --accent-soft: #f4dfdc;
+  --accent-soft-text: #7a1220;
+  --focus: #2f5d9e;
+  --notice-bg: #fbf0d6;
+  --notice-border: #e0c27a;
+  --notice-text: #5a4210;
+  --stage: #e8e0d2;
+  --swatch-ring: rgba(0, 0, 0, 0.25);
+  --shadow: 0 1px 2px rgba(60, 40, 20, 0.08), 0 6px 18px rgba(60, 40, 20, 0.08);
+  --cloth-line: rgba(70, 50, 30, 0.16);
+  --cloth-line-strong: rgba(70, 50, 30, 0.38);
+  --axis: rgba(158, 27, 44, 0.55);
+  --edge-tint: rgba(47, 93, 158, 0.16);
+
+  /* Type */
+  --font-ui: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.625rem;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Radii and sizes */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --hit: 44px;
+  --panel-width: 368px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1815;
+    --bg-weave: rgba(255, 240, 220, 0.025);
+    --surface: #25211d;
+    --surface-2: #2f2a25;
+    --surface-sunken: #171411;
+    --border: #463e36;
+    --border-strong: #7a6e62;
+    --text: #f2ece3;
+    --text-muted: #b8ad9f;
+    --accent: #e8838b;
+    --accent-hover: #f09aa1;
+    --accent-text: #1b1815;
+    --accent-soft: #4a262a;
+    --accent-soft-text: #ffd4d7;
+    --focus: #8fb4ec;
+    --notice-bg: #3a3020;
+    --notice-border: #7d6630;
+    --notice-text: #f3dfae;
+    --stage: #13110f;
+    --swatch-ring: rgba(255, 255, 255, 0.5);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1815;
+  --bg-weave: rgba(255, 240, 220, 0.025);
+  --surface: #25211d;
+  --surface-2: #2f2a25;
+  --surface-sunken: #171411;
+  --border: #463e36;
+  --border-strong: #7a6e62;
+  --text: #f2ece3;
+  --text-muted: #b8ad9f;
+  --accent: #e8838b;
+  --accent-hover: #f09aa1;
+  --accent-text: #1b1815;
+  --accent-soft: #4a262a;
+  --accent-soft-text: #ffd4d7;
+  --focus: #8fb4ec;
+  --notice-bg: #3a3020;
+  --notice-border: #7d6630;
+  --notice-text: #f3dfae;
+  --stage: #13110f;
+  --swatch-ring: rgba(255, 255, 255, 0.5);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+:root[data-theme="light"] {
+  --bg: #f4efe6;
+  --bg-weave: rgba(120, 95, 60, 0.045);
+  --surface: #fbf8f2;
+  --surface-2: #efe8dc;
+  --surface-sunken: #e9e1d3;
+  --border: #d8ccb8;
+  --border-strong: #a8998a;
+  --text: #2a2420;
+  --text-muted: #635a50;
+  --accent: #9e1b2c;
+  --accent-hover: #841523;
+  --accent-text: #ffffff;
+  --accent-soft: #f4dfdc;
+  --accent-soft-text: #7a1220;
+  --focus: #2f5d9e;
+  --notice-bg: #fbf0d6;
+  --notice-border: #e0c27a;
+  --notice-text: #5a4210;
+  --stage: #e8e0d2;
+  --swatch-ring: rgba(0, 0, 0, 0.25);
+  --shadow: 0 1px 2px rgba(60, 40, 20, 0.08), 0 6px 18px rgba(60, 40, 20, 0.08);
+}
