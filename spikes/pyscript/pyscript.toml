@@ -1,0 +1,12 @@
+# PyScript configuration. Keys are URLs relative to index.html, values are
+# where the files land in Pyodide's virtual filesystem (cwd is on sys.path).
+# The real kvale.core is loaded unchanged from ../../src, so serve the repo root.
+packages = ["pillow"]
+
+[files]
+"../../src/kvale/__init__.py" = "./kvale/__init__.py"
+"../../src/kvale/core/__init__.py" = "./kvale/core/__init__.py"
+"../../src/kvale/core/model.py" = "./kvale/core/model.py"
+"../../src/kvale/core/symmetry.py" = "./kvale/core/symmetry.py"
+"../../src/kvale/core/renderer.py" = "./kvale/core/renderer.py"
+"../../src/kvale/core/serialization.py" = "./kvale/core/serialization.py"

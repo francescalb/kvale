@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kvale (PyScript spike)</title>
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css">
+  <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="booting">
+  <header class="topbar">
+    <h1>Kvale</h1>
+    <label class="lang">
+      <span data-i18n="language">Språk</span>
+      <select id="lang">
+        <option value="nb">Norsk bokmål</option>
+        <option value="en">English</option>
+        <option value="it">Italiano</option>
+      </select>
+    </label>
+  </header>
+
+  <main class="layout">
+    <aside class="panel">
+      <section>
+        <h2 data-i18n="palette">Farger</h2>
+        <div id="palette" class="swatches"></div>
+        <label class="toggle"><input type="checkbox" id="erase"> <span data-i18n="erase">Viskelær</span></label>
+      </section>
+
+      <section>
+        <h2 data-i18n="symmetry">Symmetri</h2>
+        <label class="toggle"><input type="checkbox" class="sym" value="mirror_x"> <span data-i18n="mirror_x">Speil vannrett</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="mirror_y"> <span data-i18n="mirror_y">Speil loddrett</span></label>
+        <label class="toggle"><input type="checkbox" class="sym" value="rotate_180"> <span data-i18n="rotate_180">Roter 180°</span></label>
+      </section>
+
+      <section>
+        <h2 data-i18n="view">Visning</h2>
+        <div class="segmented">
+          <button id="mode-edit" class="active" data-i18n="edit">Rediger</button>
+          <button id="mode-preview" data-i18n="preview">Forhåndsvis gjentak</button>
+        </div>
+      </section>
+
+      <section>
+        <h2 data-i18n="file">Fil</h2>
+        <div class="buttons">
+          <button id="export-png" data-i18n="export_png">Eksporter PNG</button>
+          <button id="save-json" data-i18n="save_json">Lagre JSON</button>
+          <button id="open-json" data-i18n="open_json">Åpne JSON</button>
+          <button id="clear" class="ghost" data-i18n="clear">Tøm</button>
+        </div>
+        <input type="file" id="file-input" accept=".json,application/json" hidden>
+      </section>
+    </aside>
+
+    <section class="stage">
+      <div class="canvas-wrap">
+        <canvas id="grid"></canvas>
+        <div id="loading" class="loading"><div class="spinner"></div><span data-i18n="loading">Laster Python …</span></div>
+      </div>
+      <p class="hint" data-i18n="hint">Venstreklikk maler, høyreklikk visker.</p>
+      <p id="status" class="status"></p>
+    </section>
+  </main>
+
+  <script type="py" src="main.py" config="pyscript.toml"></script>
+</body>
+</html>

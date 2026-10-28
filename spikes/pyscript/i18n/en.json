@@ -1,0 +1,22 @@
+{
+  "loading": "Loading Python …",
+  "palette": "Colours",
+  "erase": "Eraser",
+  "symmetry": "Symmetry",
+  "mirror_x": "Mirror horizontally",
+  "mirror_y": "Mirror vertically",
+  "rotate_180": "Rotate 180°",
+  "view": "View",
+  "edit": "Edit",
+  "preview": "Preview repeats",
+  "file": "File",
+  "export_png": "Export PNG",
+  "save_json": "Save JSON",
+  "open_json": "Open JSON",
+  "clear": "Clear",
+  "hint": "Left-click paints, right-click erases. Drag to paint several cells.",
+  "language": "Language",
+  "redraw": "Redrawn in {ms} ms",
+  "loaded": "Opened {name}",
+  "load_error": "Could not open the file: {error}"
+}

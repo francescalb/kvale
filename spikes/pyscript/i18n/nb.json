@@ -1,0 +1,22 @@
+{
+  "loading": "Laster Python …",
+  "palette": "Farger",
+  "erase": "Viskelær",
+  "symmetry": "Symmetri",
+  "mirror_x": "Speil vannrett",
+  "mirror_y": "Speil loddrett",
+  "rotate_180": "Roter 180°",
+  "view": "Visning",
+  "edit": "Rediger",
+  "preview": "Forhåndsvis gjentak",
+  "file": "Fil",
+  "export_png": "Eksporter PNG",
+  "save_json": "Lagre JSON",
+  "open_json": "Åpne JSON",
+  "clear": "Tøm",
+  "hint": "Venstreklikk maler, høyreklikk visker. Dra for å male flere ruter.",
+  "language": "Språk",
+  "redraw": "Tegnet på {ms} ms",
+  "loaded": "Åpnet {name}",
+  "load_error": "Kunne ikke åpne fila: {error}"
+}

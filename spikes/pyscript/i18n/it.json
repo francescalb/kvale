@@ -1,0 +1,22 @@
+{
+  "loading": "Caricamento di Python …",
+  "palette": "Colori",
+  "erase": "Gomma",
+  "symmetry": "Simmetria",
+  "mirror_x": "Specchia orizzontalmente",
+  "mirror_y": "Specchia verticalmente",
+  "rotate_180": "Ruota di 180°",
+  "view": "Vista",
+  "edit": "Modifica",
+  "preview": "Anteprima ripetizioni",
+  "file": "File",
+  "export_png": "Esporta PNG",
+  "save_json": "Salva JSON",
+  "open_json": "Apri JSON",
+  "clear": "Svuota",
+  "hint": "Clic sinistro dipinge, clic destro cancella. Trascina per dipingere più celle.",
+  "language": "Lingua",
+  "redraw": "Ridisegnato in {ms} ms",
+  "loaded": "Aperto {name}",
+  "load_error": "Impossibile aprire il file: {error}"
+}
