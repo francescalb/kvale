@@ -1,56 +1,11 @@
 from __future__ import annotations
 
-import json
 import tkinter as tk
-from dataclasses import dataclass
-from functools import lru_cache
-from pathlib import Path
 from tkinter import ttk
 
+from kvale.core.dmc import DmcColour, filter_dmc_colours
 
-@dataclass(frozen=True)
-class DmcColour:
-    number: str
-    name: str
-    red: int
-    green: int
-    blue: int
-
-    @property
-    def hex_colour(self) -> str:
-        return f"#{self.red:02x}{self.green:02x}{self.blue:02x}"
-
-
-@lru_cache(maxsize=1)
-def load_dmc_colours() -> tuple[DmcColour, ...]:
-    """Load the bundled DMC screen-colour approximations."""
-    path = Path(__file__).with_name("dmc_palette.json")
-    with path.open(encoding="utf-8") as source:
-        records = json.load(source)
-    return tuple(
-        DmcColour(
-            number=str(record["floss"]),
-            name=str(record["description"]),
-            red=int(record["r"]),
-            green=int(record["g"]),
-            blue=int(record["b"]),
-        )
-        for record in records
-    )
-
-
-def filter_dmc_colours(query: str) -> tuple[DmcColour, ...]:
-    words = query.casefold().split()
-    if not words:
-        return load_dmc_colours()
-    return tuple(
-        colour
-        for colour in load_dmc_colours()
-        if all(
-            word in colour.number.casefold() or word in colour.name.casefold()
-            for word in words
-        )
-    )
+__all__ = ["ask_dmc_colour"]
 
 
 def _contrasting_text_colour(colour: str) -> str:

@@ -253,7 +253,7 @@ def test_editor_end_piece_and_backstitch_steps_undo() -> None:
 
 
 def test_importing_core_does_not_import_pillow() -> None:
-    code = "import sys, kvale.core, kvale.core.editing; print('PIL' in sys.modules)"
+    code = "import sys, kvale.core, kvale.core.editing, kvale.core.dmc; print('PIL' in sys.modules)"
     result = subprocess.run(
         [sys.executable, "-c", code], capture_output=True, text=True, check=True
     )
