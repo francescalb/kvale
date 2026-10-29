@@ -29,9 +29,9 @@ Every item must work in the new app before the Tkinter interface is removed.
 - [ ] End pieces for the top, bottom, left and right repeats: hide/add/recolour cells and backstitches, extension with extra rows/columns beyond the unit, reset
 - [ ] Colour slots: select, edit, add; per-slot sequences (1–24 colours); "use sequence" toggle; split legend swatch
 - [ ] Colour dialog with RGB/hex entry, and a searchable DMC floss colour picker
-- [ ] Open/save JSON in the current format (format_version 4; older files still open); PNG export
-- [ ] Open a pattern given at start (`kvale path.json` today; a file link or URL parameter in the browser)
-- [ ] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app)
+- [x] Open/save JSON in the current format (format_version 4; older files still open); PNG export
+- [x] Open a pattern given at start (`kvale path.json` today; in the browser `?file=<url>`, `?example=<name>` or `#data=<compressed JSON>`)
+- [x] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app)
 - [ ] Undo/redo (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z), Edit menu entries disabled when there is nothing to undo/redo
 - [ ] New: control for the background colour (already stored in the file)
 
@@ -43,6 +43,7 @@ Added by the approved design (`docs/design/strings.md`, "Owner-approved design d
 - [ ] Backstitch chaining: the next line starts where the last one ended, until Esc, a tap on the last point, or another tool
 - [ ] Thread list under the whole band (and in the saved image)
 - [x] Web: light/dark theme, nb/en/it switch, layout of the design (chunk 3)
+- [x] Web: autosave in the browser, restored on the next visit; the file name with an unsaved-changes marker; a warning before leaving with unsaved changes (chunk 6)
 
 ## Chunks
 
