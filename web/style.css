@@ -1,0 +1,194 @@
+/* Kvale web app styles.
+   Sections: 1 tokens, 2 base, 3 layout, 4 controls, 5 panels, 6 canvas, 7 loading screen.
+   Colours, spacing and sizes are tokens in section 1, so a design can be
+   dropped in by changing them (chunk 3). */
+
+/* 1. Tokens ---------------------------------------------------------- */
+:root {
+  --color-bg: #f6f4ef;
+  --color-surface: #ffffff;
+  --color-text: #1f1d1a;
+  --color-muted: #6b665e;
+  --color-border: #e3dfd6;
+  --color-accent: #b1172b;
+  --color-accent-soft: #f6dfe2;
+
+  --font-body: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-small: 13px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+
+  --radius: 12px;
+  --radius-control: 8px;
+  --sidebar-width: 260px;
+  --swatch-size: 40px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 16px rgb(0 0 0 / 0.05);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #18171a;
+    --color-surface: #232226;
+    --color-text: #ece9e3;
+    --color-muted: #a19c93;
+    --color-border: #36343a;
+    --color-accent: #e0566a;
+    --color-accent-soft: #3a2328;
+    color-scheme: dark;
+  }
+}
+
+/* 2. Base ------------------------------------------------------------ */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* 3. Layout ---------------------------------------------------------- */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.topbar h1 { margin: 0; font-size: 20px; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  gap: var(--space-5);
+  padding: var(--space-5);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; padding: var(--space-3); }
+}
+
+/* 4. Controls -------------------------------------------------------- */
+select, button {
+  font: inherit;
+  color: inherit;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  padding: 6px var(--space-3);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) { border-color: var(--color-muted); }
+button:disabled { opacity: 0.45; cursor: default; }
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.segmented { display: flex; gap: var(--space-1); }
+.segmented button.active { background: var(--color-accent-soft); border-color: var(--color-accent); }
+
+.lang { display: flex; gap: var(--space-2); align-items: center; color: var(--color-muted); font-size: 14px; }
+
+.toggle { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) 0; cursor: pointer; }
+.toggle input { accent-color: var(--color-accent); width: 16px; height: 16px; }
+.toggle:has(input:disabled) { color: var(--color-muted); cursor: default; }
+
+/* 5. Panels ---------------------------------------------------------- */
+.panel { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.panel section, .stage {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-3) var(--space-4);
+}
+
+.panel h2 {
+  margin: 0 0 var(--space-2);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.swatches { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-2); }
+
+.swatch {
+  width: var(--swatch-size);
+  height: var(--swatch-size);
+  padding: 0;
+  border-radius: 10px;
+  background: var(--swatch); /* set per button from Python */
+  border: 2px solid transparent;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+
+.swatch.active { border-color: var(--color-text); box-shadow: 0 0 0 3px var(--color-surface) inset; }
+
+/* 6. Canvas ---------------------------------------------------------- */
+.canvas-wrap { position: relative; min-height: 300px; }
+
+#grid {
+  display: block;
+  touch-action: none; /* pointer events drive painting on touch screens */
+  cursor: crosshair;
+  user-select: none;
+}
+
+.hint, .status { margin: var(--space-2) 0 0; font-size: var(--font-small); color: var(--color-muted); }
+.status { min-height: 1.4em; }
+
+/* 7. Loading screen (plain HTML/CSS while Pyodide starts) ------------ */
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.booting .boot { display: flex; }
+
+.boot-card { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-5); }
+.boot-card p { margin: 0; font-size: var(--font-small); }
+.boot-title { font-size: 28px; font-weight: 600; color: var(--color-text); margin-bottom: var(--space-2); }
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  margin-bottom: var(--space-2);
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 3s; }
+}

@@ -3,7 +3,7 @@
 [![CI](https://github.com/francescalb/kvale/actions/workflows/ci.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/ci.yml)
 [![PR Validate](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml)
 
-`Kvale` is a modular Python desktop application for designing repeating,
+`Kvale` is a modular Python application for designing repeating,
 grid-based textile and embroidery patterns. Geometry, symmetry and colouring are
 kept separate so that colour sequencing can evolve independently of the geometric repeat.
 
@@ -47,11 +47,21 @@ src/kvale/
 │   ├── serialization.py  # JSON persistence
 │   ├── dmc.py            # DMC floss colours (data in dmc_palette.json)
 │   └── dmc_palette.json
-└── gui/
+└── gui/                  # Tkinter interface (removed in chunk 8)
     ├── app.py            # menus, controls, dialogs and document lifecycle
     ├── canvas.py         # interactive editor and preview canvas
     ├── palette_button.py # colour slot buttons and the RGB/hex colour dialog
     └── dmc_palette.py    # DMC colour picker dialog
+
+web/                      # browser app (PyScript), published to GitHub Pages
+├── index.html            # static markup and the loading screen
+├── style.css             # styles; colours and spacing are tokens at the top
+├── pyscript.toml         # PyScript config ([files] is added by the build)
+├── main.py               # entry point: runs kvale_web.app.start()
+├── i18n/{nb,en,it}.json  # interface strings
+└── kvale_web/            # UI package: app, state, i18n, dom, shortcuts,
+                          # toolbar, canvas, panels, files
+tools/build_site.py       # builds _site/ from web/ and kvale.core
 ```
 
 The GUI depends on interfaces from `core`, but `core` does not depend on the GUI.
@@ -93,6 +103,27 @@ kvale                            # or: kvale examples/flower-band.json
 On Linux, Tkinter may need to be installed through the operating system package
 manager, for example `sudo apt install python3-tk` on Ubuntu or Debian.
 You might need to specify python version when installing Tkinter: `sudo apt install python3.14-tk`
+
+## Run the web app locally
+
+The new browser version runs Python in the page with
+[PyScript](https://pyscript.net). No Node or npm is needed:
+
+```bash
+python tools/build_site.py --serve
+```
+
+Then open <http://localhost:8000/>. The command copies `web/` and `src/kvale/core`
+into `_site/` and serves it (`--serve 8765` picks another port). Start-up takes a
+few seconds while Python loads. The Tkinter app above still works and stays until
+the web app has every feature (chunk 8 of the modernisation plan).
+
+### Publishing
+
+`.github/workflows/pages.yml` builds `_site/` and deploys it to GitHub Pages on
+every push to `main`. One-time setup in the repository: **Settings → Pages →
+Build and deployment → Source: GitHub Actions**. The site is then at
+`https://<owner>.github.io/kvale/`; all paths are relative, so the sub-path works.
 
 ## Using the editor
 
@@ -165,7 +196,16 @@ Pattern files use `palette_sequences` as canonical colour storage.
 ```bash
 pytest
 ruff check .
-mypy src tests
+mypy src tests web/kvale_web tools
+```
+
+Browser smoke tests drive the web app in headless Chromium. They need network
+access (PyScript loads from a CDN) and are left out of the default run:
+
+```bash
+pip install -e .[dev,browser]
+python -m playwright install chromium
+pytest -m browser
 ```
 
 ## Pre-commit

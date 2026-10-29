@@ -1,0 +1,11 @@
+# PyScript configuration for the Kvale web app.
+#
+# tools/build_site.py copies this file to _site/ and appends a generated
+# [files] table listing every .py file of kvale.core and kvale_web, plus the
+# package data of kvale (dmc_palette.json), so new modules are picked up
+# without editing this file.
+#
+# No `packages` here on purpose: Pillow is loaded only when a PNG is exported
+# (see kvale_web/files.py), so start-up stays fast.
+
+name = "Kvale"

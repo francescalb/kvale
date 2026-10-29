@@ -1,5 +1,22 @@
+import os
+import subprocess
+import sys
+
 from kvale.core.model import Mark, PatternDocument
-from kvale.core.renderer import build_colour_grid
+from kvale.core.renderer import build_colour_grid, render_image
+
+
+def test_core_import_does_not_load_pillow() -> None:
+    # The browser app imports kvale.core before Pillow is downloaded.
+    code = "import sys, kvale.core; assert 'PIL' not in sys.modules"
+    env = {**os.environ, "PYTHONPATH": os.pathsep.join(sys.path)}
+    subprocess.run([sys.executable, "-c", code], check=True, env=env)
+
+
+def test_render_image_size() -> None:
+    document = PatternDocument(unit_width=2, unit_height=3, repeats_x=2, repeats_y=1)
+    image = render_image(document, cell_size=4)
+    assert image.size == (2 * 2 * 4, 3 * 4)
 
 
 def test_disable_horizontal_edge_repetition() -> None:
