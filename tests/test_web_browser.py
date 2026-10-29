@@ -30,8 +30,8 @@ BOOT_TIMEOUT_MS = 120_000
 RED = (0xB1, 0x17, 0x2B)  # colour slot 1 in the default palette
 GREEN = (0x2D, 0x7D, 0x32)  # colour slot 2
 WHITE = (0xFF, 0xFF, 0xFF)  # default background
-GREY = (0x6B, 0x66, 0x5E)  # --color-muted (light), laid over cells outside the minimal cell
-DIM_ALPHA = 0.2  # kvale_web.canvas.DIM_ALPHA
+GREY = (0x63, 0x5A, 0x50)  # --text-muted (light), laid over cells outside the minimal cell
+DIM_ALPHA = 0.2  # kvale_web.grid.canvas.DIM_ALPHA
 
 
 def dimmed(colour: tuple[int, int, int]) -> tuple[int, int, int]:
@@ -151,7 +151,7 @@ def app(context: Any, site_url: str) -> Iterator[App]:
 
 def test_boots_without_errors_or_pillow(app: App) -> None:
     assert app.page.is_hidden("#boot")
-    assert app.page.text_content("#mode-edit") == "Rediger"
+    assert app.page.text_content("#mode-edit") == "Tegn"
     assert app.page.is_disabled("#undo")
     assert not [url for url in app.requests if "pillow" in url.lower()]
 
@@ -233,11 +233,15 @@ def test_drag_stroke_is_one_undo_step(app: App) -> None:
 
 def test_eraser_toggle(app: App) -> None:
     app.click_cell(3, 3)
-    app.page.check("#erase")
+    app.page.click("#tool-unpick")
+    assert app.page.get_attribute("#tool-unpick", "aria-pressed") == "true"
     app.click_cell(3, 3)
     assert app.colour(3, 3) == WHITE
     app.page.click(".swatch:nth-child(1)")  # choosing a colour leaves the eraser
-    assert not app.page.is_checked("#erase")
+    assert app.page.get_attribute("#tool-cross", "aria-pressed") == "true"
+    assert app.page.get_attribute("#tool-unpick", "aria-pressed") == "false"
+    app.page.keyboard.press("e")  # shortcut for unpick
+    assert app.page.get_attribute("#tool-unpick", "aria-pressed") == "true"
 
 
 def test_preview_mode(app: App) -> None:
@@ -255,23 +259,25 @@ def test_preview_mode(app: App) -> None:
 
 def test_language_switch_and_memory(app: App) -> None:
     page = app.page
-    page.select_option("#lang", "it")
+    page.click("#lang-seg [data-lang=it]")
     page.wait_for_function("document.documentElement.lang === 'it'")
-    assert page.text_content("#mode-edit") == "Modifica"
+    assert page.text_content("#mode-edit") == "Disegna"
+    assert page.text_content("#canvas-hint").startswith("Tocca o trascina")
     assert page.get_attribute(".swatch:nth-child(1)", "aria-label") == "Colore 1"
-    page.select_option("#lang", "en")
+    page.click("#lang-seg [data-lang=en]")
     page.wait_for_function("document.documentElement.lang === 'en'")
-    assert page.text_content("#mode-edit") == "Edit"
+    assert page.text_content("#mode-edit") == "Draw"
     app.load()  # reload: the choice is remembered
-    assert page.text_content("#mode-edit") == "Edit"
-    assert page.input_value("#lang") == "en"
+    assert page.text_content("#mode-edit") == "Draw"
+    assert page.get_attribute("#lang-seg [data-lang=en]", "aria-pressed") == "true"
+    assert page.get_attribute("#lang-seg [data-lang=nb]", "aria-pressed") == "false"
 
 
 def test_language_from_browser(browser: Any, site_url: str) -> None:
     ctx = browser.new_context(locale="it-IT")
     try:
         app = App(ctx.new_page(), site_url).load()
-        assert app.page.text_content("#mode-edit") == "Modifica"
+        assert app.page.text_content("#mode-edit") == "Disegna"
         assert app.errors == []
     finally:
         ctx.close()
@@ -321,3 +327,87 @@ window.kvaleDone = len(load_dmc_colours())
     for x, y in [(0, 0), (5, 3), (17, 9), (40, 20), (83, 23)]:
         expected = tuple(bytes.fromhex(grid[y][x].lstrip("#")))
         assert app.colour(x, y) == expected, (x, y)
+
+
+def test_theme_switch_and_memory(app: App) -> None:
+    page = app.page
+    light_bg = page.evaluate("getComputedStyle(document.body).backgroundColor")
+    page.click("#theme-seg [data-theme-set=dark]")
+    assert page.get_attribute("html", "data-theme") == "dark"
+    assert page.get_attribute("#theme-seg [data-theme-set=dark]", "aria-pressed") == "true"
+    assert page.evaluate("getComputedStyle(document.body).backgroundColor") == "rgb(27, 24, 21)"
+    assert light_bg == "rgb(244, 239, 230)"
+    app.load()  # reload: the choice is remembered (applied before Python starts)
+    assert page.get_attribute("html", "data-theme") == "dark"
+    page.click("#theme-seg [data-theme-set=light]")
+    assert page.evaluate("getComputedStyle(document.body).backgroundColor") == light_bg
+
+
+def test_tool_hint_and_backstitch_placeholder(app: App) -> None:
+    page = app.page
+    assert page.text_content("#canvas-hint").startswith("Trykk eller dra")
+    assert page.is_disabled("#tool-back")  # switched on by chunk 4
+    page.click("#tool-unpick")
+    assert page.text_content("#canvas-hint").startswith("Trykk på et sting")
+
+
+def test_mode_hides_edit_only_parts(app: App) -> None:
+    page = app.page
+    assert page.is_visible("#edit-side")
+    assert page.is_hidden("#preview-side")
+    page.click("#mode-preview")
+    assert page.get_attribute("#stage", "data-mode") == "preview"
+    assert page.is_hidden("#edit-side")
+    assert page.is_visible("#preview-side")
+
+
+def test_toast_shows_status_with_undo(app: App) -> None:
+    page = app.page
+    assert page.is_hidden("#toast")
+    app.click_cell(0, 0)
+    run_python(
+        app,
+        """
+from pyscript import window
+from kvale_web import app as kvale_app
+
+kvale_app.app.state.set_status("symmetry.switchedOff")
+window.kvaleDone = True
+""",
+    )
+    assert page.is_visible("#toast")
+    assert page.text_content("#toast-message").startswith("Rapporten er ikke kvadratisk")
+    page.click("#toast-undo")
+    assert app.colour(0, 0) == WHITE
+    assert page.text_content("#toast-message") == "Angret."
+    assert page.is_hidden("#toast-undo")
+
+
+# Every region a later chunk fills in (see web/README.md).
+OWNED_CONTAINERS = [
+    "doc-info", "file-actions",  # chunk 6
+    "tool-seg", "zoom-controls", "target-bar", "target-seg", "corner-seg", "end-panel",
+    "ruler-top", "ruler-left", "grid", "edge-popover", "legend", "canvas-hint",
+    "mini-band", "preview-caption", "reset-dialog",  # chunk 4
+    "colours-card", "colour-slots", "colour-actions", "colour-sequence-toggle",
+    "background-row", "symmetry-card", "symmetry-options", "grid-card", "grid-settings",
+    "edge-toggles", "thread-key", "colour-dialog", "thread-dialog", "lines-dialog",  # chunk 5
+]
+
+
+@pytest.mark.parametrize("width", [1280, 390])
+def test_layout_regions_and_no_sideways_scroll(context: Any, site_url: str, width: int) -> None:
+    page = context.new_page()
+    try:
+        page.set_viewport_size({"width": width, "height": 860})
+        app = App(page, site_url).load()
+        for element_id in OWNED_CONTAINERS:
+            assert page.locator(f"#{element_id}").count() == 1, element_id
+        assert page.evaluate("document.documentElement.scrollWidth") <= width
+        grid_box = page.locator("#grid").bounding_box()
+        assert grid_box["x"] >= 0 and grid_box["x"] + grid_box["width"] <= width
+        app.click_cell(0, 0)  # still usable at this width
+        assert app.colour(0, 0) == RED
+        assert app.errors == []
+    finally:
+        page.close()

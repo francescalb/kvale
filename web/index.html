@@ -4,77 +4,236 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kvale</title>
+  <!-- Before anything is drawn: the saved theme and language, so the loading
+       screen has the right colours and words. Python takes over afterwards
+       (kvale_web/shell.py and kvale_web/i18n.py use the same storage keys). -->
+  <script>
+    (function () {
+      var root = document.documentElement, theme = null, lang = null;
+      try { theme = localStorage.getItem("kvale-theme"); lang = localStorage.getItem("kvale-lang"); } catch (e) {}
+      if (theme === "light" || theme === "dark") root.dataset.theme = theme;
+      lang = (lang || (navigator.languages || [])[0] || navigator.language || "nb").toLowerCase().split("-")[0];
+      lang = { no: "nb", nn: "nb" }[lang] || lang;
+      root.lang = ["nb", "en", "it"].indexOf(lang) >= 0 ? lang : "nb";
+    })();
+  </script>
   <!-- All paths are relative so the site works under a sub-path such as /kvale/. -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
   <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css">
+  <!-- tokens.css is a copy of docs/design/tokens.css. style.css is the shared
+       shell; each chunk owns one more style sheet. -->
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="grid.css">
+  <link rel="stylesheet" href="panels.css">
+  <link rel="stylesheet" href="files.css">
   <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
 </head>
 <body class="booting">
-  <!-- Loading screen: plain HTML/CSS, shown until Python has started (3-7 s).
-       app.start() removes the "booting" class from <body>. -->
-  <div id="boot" class="boot" role="status" aria-live="polite">
-    <div class="boot-card">
-      <div class="boot-title">Kvale</div>
-      <div class="spinner" aria-hidden="true"></div>
-      <p lang="nb">Starter … Første gang kan det ta noen sekunder.</p>
-      <p lang="en">Starting … The first time can take a few seconds.</p>
-      <p lang="it">Avvio … La prima volta può richiedere alcuni secondi.</p>
+  <!-- Ownership of each region: "shell" = kvale_web/shell.py (chunk 3, shared),
+       "chunk 4" = kvale_web/grid/, "chunk 5" = kvale_web/panels/,
+       "chunk 6" = kvale_web/files.py. See web/README.md. -->
+
+  <!-- Icon sprite (shell). Add icons here; use them as <svg class="icon"><use href="#i-name"/></svg>. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-new" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M12 11v6M9 14h6"/></symbol>
+    <symbol id="i-open" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h10a6 6 0 0 1 0 12h-2" transform="translate(0 -5)"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 7l5 5-5 5"/><path d="M20 12H10a6 6 0 0 0 0 12h2" transform="translate(0 -5)"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M16.5 16.5L21 21"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M11 8v6M16.5 16.5L21 21"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-cross" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5" stroke-opacity=".35"/><path d="M7 7l10 10M17 7L7 17" stroke-width="2.6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><circle cx="4" cy="20" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="20" cy="4" r="1.6"/><path d="M5.2 18.8l5.6-5.6M13.2 10.8l5.6-5.6" stroke-width="2.6"/></symbol>
+    <symbol id="i-unpick" viewBox="0 0 24 24"><path d="M3 21l8.5-8.5"/><path d="M11.5 12.5c.3-3.8 3.4-7.6 8.5-8.5-.9 5.1-4.7 8.2-8.5 8.5z"/><circle cx="16.3" cy="7.7" r="1.1"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></symbol>
+    <symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></symbol>
+    <symbol id="i-band" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="1"/><path d="M7 7v10M12 7v10M17 7v10"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></symbol>
+    <symbol id="i-rows" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12h16"/><path d="M12 4v16" stroke-dasharray="2 2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 34 34"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l16 16M25 9L9 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <!-- Loading screen (shell): plain HTML/CSS, shown until Python has started
+       (3-7 s). The inline script above picks the language; app.start() removes
+       the "booting" class from <body>. Chunk 6 may show #boot-restore when an
+       autosaved pattern is about to open. -->
+  <div id="boot" class="loading" role="status" aria-live="polite">
+    <div class="loading-inner">
+      <div class="row">
+        <svg class="logo logo-lg" aria-hidden="true"><use href="#i-logo"/></svg>
+        <span class="wordmark">Kvale</span>
+      </div>
+      <svg class="stitch-row" viewBox="0 0 260 30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+        <path d="M10 5l20 20M30 5L10 25"/><path d="M60 5l20 20M80 5L60 25"/><path d="M110 5l20 20M130 5l-20 20"/><path d="M160 5l20 20M180 5l-20 20"/><path d="M210 5l20 20M230 5l-20 20"/>
+      </svg>
+      <h1><span lang="nb">Gjør klar Kvale …</span><span lang="en">Getting Kvale ready …</span><span lang="it">Preparo Kvale …</span></h1>
+      <div class="thread-bar" aria-hidden="true"></div>
+      <p><span lang="nb">Første gang kan det ta litt tid. Etterpå går det fortere.</span><span lang="en">The first time can take a moment. After that it is quicker.</span><span lang="it">La prima volta ci vuole qualche secondo. Poi sarà più veloce.</span></p>
+      <p id="boot-restore" hidden><span lang="nb">Mønsteret du jobbet med sist, åpnes straks.</span><span lang="en">The pattern you were working on will open in a moment.</span><span lang="it">Lo schema a cui stavi lavorando si riaprirà tra poco.</span></p>
     </div>
   </div>
 
-  <header class="topbar">
-    <h1>Kvale</h1>
-    <div class="toolbar">
-      <button type="button" id="undo" data-i18n="undo" data-i18n-title="undo_hint" disabled>Angre</button>
-      <button type="button" id="redo" data-i18n="redo" data-i18n-title="redo_hint" disabled>Gjør om</button>
-      <div class="segmented" role="group" data-i18n-aria-label="view">
-        <button type="button" id="mode-edit" class="active" data-i18n="edit">Rediger</button>
-        <button type="button" id="mode-preview" data-i18n="preview">Forhåndsvis gjentak</button>
+  <div class="app" id="app">
+    <header class="topbar" id="topbar">
+      <div class="brand">
+        <svg class="logo" aria-hidden="true"><use href="#i-logo"/></svg>
+        <span class="wordmark">Kvale</span>
+        <!-- chunk 6: file name and "Saved in this browser at …" (autosave.saved / autosave.hint). -->
+        <div class="docinfo" id="doc-info" hidden></div>
       </div>
-      <label class="lang">
-        <span data-i18n="language">Språk</span>
-        <select id="lang">
-          <option value="nb">Norsk bokmål</option>
-          <option value="en">English</option>
-          <option value="it">Italiano</option>
-        </select>
-      </label>
-    </div>
-  </header>
 
-  <main class="layout">
-    <aside class="panel">
-      <!-- Chunk 5: grid settings, colour slots, sequence editor, background. -->
-      <section id="palette-panel">
-        <h2 data-i18n="palette">Farger</h2>
-        <div id="palette" class="swatches"></div>
-        <label class="toggle"><input type="checkbox" id="erase"> <span data-i18n="erase">Viskelær</span></label>
+      <!-- chunk 6: New / Open / Save / Save image buttons (file.*), hidden file input. -->
+      <nav class="file-actions" id="file-actions" data-i18n-aria-label="file.label"></nav>
+
+      <!-- shell: language and light/dark. -->
+      <div class="prefs">
+        <div class="seg" role="group" id="lang-seg" data-i18n-aria-label="lang.label">
+          <button type="button" data-lang="nb" aria-pressed="false" title="Norsk bokmål" lang="nb"><span class="lang-long">Norsk</span><span class="lang-short">NB</span></button>
+          <button type="button" data-lang="en" aria-pressed="false" title="English" lang="en"><span class="lang-long">English</span><span class="lang-short">EN</span></button>
+          <button type="button" data-lang="it" aria-pressed="false" title="Italiano" lang="it"><span class="lang-long">Italiano</span><span class="lang-short">IT</span></button>
+        </div>
+        <div class="seg" role="group" id="theme-seg" data-i18n-aria-label="theme.label">
+          <button type="button" data-theme-set="light" aria-pressed="false" data-i18n-title="theme.light" data-i18n-aria-label="theme.light"><svg class="icon"><use href="#i-sun"/></svg></button>
+          <button type="button" data-theme-set="dark" aria-pressed="false" data-i18n-title="theme.dark" data-i18n-aria-label="theme.dark"><svg class="icon"><use href="#i-moon"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <!-- Stage: the pattern. data-mode ("edit"/"preview") and data-target are
+           set by the shell from AppState, so CSS can show the right parts. -->
+      <section class="stage" id="stage" data-mode="edit" data-target="unit" aria-label="Kvale">
+        <div class="stage-toolbar" id="stage-toolbar">
+          <!-- shell: Draw / Whole band. -->
+          <div class="seg accent" role="group" id="mode-seg" data-i18n-aria-label="mode.label">
+            <button type="button" id="mode-edit" data-mode="edit" aria-pressed="true"><svg class="icon"><use href="#i-grid"/></svg><span data-i18n="mode.edit">Tegn</span></button>
+            <button type="button" id="mode-preview" data-mode="preview" aria-pressed="false"><svg class="icon"><use href="#i-band"/></svg><span data-i18n="mode.preview">Hele borden</span></button>
+          </div>
+          <!-- chunk 4: stitch tools (grid/tools.py). Backstitch is switched on by chunk 4. -->
+          <div class="seg" role="group" id="tool-seg" data-i18n-aria-label="tool.label">
+            <button type="button" id="tool-cross" data-tool="cross" aria-pressed="true" data-i18n-title="tool.cross.hint"><svg class="icon"><use href="#i-cross"/></svg><span data-i18n="tool.cross">Korssting</span><i class="chip" id="tool-chip"></i></button>
+            <button type="button" id="tool-back" data-tool="back" aria-pressed="false" data-i18n-title="tool.back.hint" disabled><svg class="icon"><use href="#i-back"/></svg><span data-i18n="tool.back">Attersting</span></button>
+            <button type="button" id="tool-unpick" data-tool="unpick" aria-pressed="false" data-i18n-title="tool.unpick.hint"><svg class="icon"><use href="#i-unpick"/></svg><span data-i18n="tool.unpick">Sprett opp</span></button>
+          </div>
+          <!-- shell: undo / redo. -->
+          <div class="toolgroup" id="history">
+            <button type="button" class="btn ghost icon-only" id="undo" data-i18n-title="history.undo" data-i18n-aria-label="history.undo" disabled><svg class="icon"><use href="#i-undo"/></svg></button>
+            <button type="button" class="btn ghost icon-only" id="redo" data-i18n-title="history.redo" data-i18n-aria-label="history.redo" disabled><svg class="icon"><use href="#i-redo"/></svg></button>
+          </div>
+          <span class="spacer"></span>
+          <!-- chunk 4: zoom out / level / zoom in / fit (zoom.*). -->
+          <div class="toolgroup" id="zoom-controls"></div>
+        </div>
+
+        <div class="stage-body" id="stage-body">
+          <!-- chunk 4: "Drawing in" bar: #target-seg (unit + four ends) and
+               #corner-seg (four corners), labels target.*. -->
+          <div class="targetbar edit-only" id="target-bar" hidden>
+            <span class="tlabel" id="target-label" data-i18n="target.label">Du tegner i</span>
+            <div class="seg targetseg" role="group" id="target-seg" aria-labelledby="target-label"></div>
+            <span class="tlabel" id="corner-label" data-i18n="target.corners">Hjørner</span>
+            <div class="seg targetseg cornerseg" role="group" id="corner-seg" aria-labelledby="corner-label"></div>
+          </div>
+
+          <!-- chunk 4: shown while an end piece or a corner is edited (end.*, corner.*). -->
+          <section class="endpanel edit-only" id="end-panel" hidden aria-live="polite"></section>
+
+          <div class="edit-layout" id="edit-layout">
+            <!-- chunk 4: the grid with rulers (#ruler-top, #ruler-left) and the
+                 row/column popover (#edge-popover, edge.*). -->
+            <div class="editor" id="editor">
+              <div class="ruler-corner"></div>
+              <div class="ruler ruler-top" id="ruler-top"></div>
+              <div class="ruler ruler-left" id="ruler-left"></div>
+              <div class="cloth-wrap" id="cloth-wrap">
+                <canvas class="cloth" id="grid"></canvas>
+              </div>
+              <div class="popover" id="edge-popover" hidden role="dialog"></div>
+            </div>
+
+            <div class="edit-side edit-only" id="edit-side">
+              <!-- chunk 4: legend keys (legend.*). -->
+              <div class="legend" id="legend"></div>
+              <!-- chunk 4: hint for the chosen tool (canvas.hint.*). -->
+              <p class="hint" id="canvas-hint" data-i18n="canvas.hint.cross">Trykk eller dra over rutene for å sy. Høyreklikk spretter opp.</p>
+              <p class="hint" id="minimal-cell-hint" data-i18n="canvas.hint.minimal" hidden>Du syr bare i den markerte delen – resten speiles av seg selv.</p>
+              <!-- chunk 4: the small whole-band view (band.mini.*). -->
+              <section class="miniband" id="mini-band" hidden></section>
+            </div>
+          </div>
+
+          <div class="preview-side preview-only" id="preview-side">
+            <!-- chunk 4: "{rx} × {ry} repeats · {w} × {h} stitches" (preview.caption). -->
+            <p class="caption" id="preview-caption"></p>
+            <!-- chunk 5: threads used in the band, as "DMC 321" (threads.title, thread.code). -->
+            <section class="threadkey" id="thread-key" hidden></section>
+            <p class="hint" data-i18n="preview.hint">Her ser du hele borden. Gå til «Tegn» for å endre den.</p>
+          </div>
+        </div>
       </section>
 
-      <section id="symmetry-panel">
-        <h2 data-i18n="symmetry">Symmetri</h2>
-        <label class="toggle"><input type="checkbox" class="sym" value="mirror_x"> <span data-i18n="mirror_x">Speil vertikalt</span></label>
-        <label class="toggle"><input type="checkbox" class="sym" value="mirror_y"> <span data-i18n="mirror_y">Speil horisontalt</span></label>
-        <label class="toggle"><input type="checkbox" class="sym" value="rotate_180"> <span data-i18n="rotate_180">Roter 180°</span></label>
-        <label class="toggle"><input type="checkbox" class="sym" value="rotate_90"> <span data-i18n="rotate_90">Roter 90°</span></label>
-        <label class="toggle"><input type="checkbox" class="sym" value="rotate_270"> <span data-i18n="rotate_270">Roter 270°</span></label>
-        <label class="toggle"><input type="checkbox" class="sym" value="diag_main"> <span data-i18n="diag_main">Hoveddiagonal</span></label>
-        <label class="toggle"><input type="checkbox" class="sym" value="diag_anti"> <span data-i18n="diag_anti">Motdiagonal</span></label>
-      </section>
+      <!-- Side panel: chunk 5 (kvale_web/panels/). -->
+      <aside class="panel" id="side-panel">
+        <!-- chunk 5: colour slots, add colour, colour change toggle, fabric (colours.*). -->
+        <section class="card" id="colours-card" aria-labelledby="colours-title">
+          <h2 id="colours-title" data-i18n="panel.colours">Farger</h2>
+          <div class="slots" id="colour-slots"></div>
+          <div id="colour-actions"></div>
+          <div id="colour-sequence-toggle"></div>
+          <div id="background-row"></div>
+        </section>
 
-      <!-- Chunk 6: file buttons (open/save JSON, export PNG, new). -->
-      <section id="file-panel" hidden></section>
-    </aside>
+        <!-- chunk 5: symmetry buttons and the square notice (symmetry.*, sym.*). -->
+        <section class="card" id="symmetry-card" aria-labelledby="symmetry-title">
+          <h2 id="symmetry-title" data-i18n="panel.symmetry">Symmetri</h2>
+          <p class="intro" data-i18n="symmetry.intro">Velg hvordan stingene dine speiles i rapporten.</p>
+          <div id="symmetry-options">
+            <label class="check"><input type="checkbox" class="sym" value="mirror_x"> <span data-i18n="sym.mirror_x">Speil venstre–høyre</span></label>
+            <label class="check"><input type="checkbox" class="sym" value="mirror_y"> <span data-i18n="sym.mirror_y">Speil opp–ned</span></label>
+            <label class="check"><input type="checkbox" class="sym" value="rotate_180"> <span data-i18n="sym.rotate_180">Drei 180°</span></label>
+            <label class="check"><input type="checkbox" class="sym" value="rotate_90"> <span data-i18n="sym.rotate_90">Drei 90°</span></label>
+            <label class="check"><input type="checkbox" class="sym" value="rotate_270"> <span data-i18n="sym.rotate_270">Drei 270°</span></label>
+            <label class="check"><input type="checkbox" class="sym" value="diag_main"> <span data-i18n="sym.diag_main">Speil på skrå ╲</span></label>
+            <label class="check"><input type="checkbox" class="sym" value="diag_anti"> <span data-i18n="sym.diag_anti">Speil på skrå ╱</span></label>
+          </div>
+        </section>
 
-    <section class="stage">
-      <div class="canvas-wrap">
-        <canvas id="grid"></canvas>
-      </div>
-      <p class="hint" data-i18n="hint">Venstreklikk maler, høyreklikk visker.</p>
-      <p id="minimal-cell-hint" class="hint" data-i18n="minimal_cell_hint" hidden>Du tegner i den minste ruten; resten speiles automatisk.</p>
-      <p id="status" class="status" aria-live="polite"></p>
-    </section>
-  </main>
+        <!-- chunk 5: unit size, repeats, "add or remove a row/column", edge toggles (grid.*, edges.*). -->
+        <section class="card" id="grid-card" aria-labelledby="grid-title" hidden>
+          <h2 id="grid-title" data-i18n="panel.grid">Rapport og størrelse</h2>
+          <div id="grid-settings"></div>
+          <div class="edges" id="edge-toggles"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <!-- shell: short messages with an Undo button (toast.undo). Any view sets
+       one with state.set_status(key, **values). -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toast-message"></span><button type="button" class="btn" id="toast-undo" data-i18n="toast.undo">Angre</button></div>
+
+  <!-- Dialogs: empty until their owner fills them. -->
+  <!-- chunk 5: colour slot and its sequence (dialog.*). -->
+  <dialog id="colour-dialog"></dialog>
+  <!-- chunk 5: thread picker with brand selector (thread.*). -->
+  <dialog id="thread-dialog"></dialog>
+  <!-- chunk 5: rows and columns (lines.*). -->
+  <dialog id="lines-dialog"></dialog>
+  <!-- chunk 4: "Reset this end/corner?" confirm (end.confirm.*, corner.confirm.*). -->
+  <dialog id="reset-dialog"></dialog>
 
   <script type="py" src="main.py" config="pyscript.toml"></script>
 </body>

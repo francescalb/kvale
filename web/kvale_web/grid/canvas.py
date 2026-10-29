@@ -1,13 +1,15 @@
-"""The drawing grid on the ``<canvas id="grid">`` element (chunk 4 extends this).
+"""The drawing grid on ``<canvas id="grid">`` (chunk 4 owns and extends this).
 
-Belongs here: drawing the editable unit and the repeat preview, pointer input
-(paint, erase, drag, touch), hover effects, row/column insert/remove at the
-grid edge, and zoom.
+Belongs here: drawing the editable unit, end pieces and corners, and the
+repeat preview; pointer input (stitch, unpick, drag, touch, backstitch).
+Rulers, zoom, the "Drawing in" bar and the mini band have their own modules
+in this package.
 
 ``GridView`` re-renders on the ``DOCUMENT`` and ``VIEW`` topics. All edits go
 through ``AppState`` so they get undo/redo. Only the minimal cell
 (``AppState.editable_cells``) can be painted: the rest of the unit is drawn
 dimmed, the minimal cell gets an outline and ``#minimal-cell-hint`` is shown.
+The canvas takes the width of its wrapper ``#cloth-wrap``.
 After each render the canvas carries ``data-redraw-ms``, ``data-cell-size``, ``data-origin-x`` and
 ``data-origin-y`` (CSS pixels) so tests can find cells.
 
@@ -29,15 +31,16 @@ from kvale.core.symmetry import expand_marks
 from kvale_web.dom import Bindings, Element, by_id
 from kvale_web.state import DOCUMENT, VIEW, AppState
 
-GRID_LINE = "#d6d3cc"
+# Colours come from design tokens (tokens.css) where the design has one.
+GRID_LINE_TOKEN, GRID_LINE_FALLBACK = "--cloth-line", "rgba(70, 50, 30, 0.16)"
 SEED_BORDER = "#1f1d1a"
 HOVER_TINT = "rgba(60, 90, 160, 0.10)"
 # Cells outside the minimal cell are greyed with the muted text colour
-# (``--color-muted``) at this opacity: dimmed but still readable. The minimal
-# cell is outlined in ``--color-accent``.
+# (``--text-muted``) at this opacity: dimmed but still readable. The minimal
+# cell is outlined in ``--accent``.
 DIM_ALPHA = 0.2
-DIM_TOKEN, DIM_FALLBACK = "--color-muted", "#6b665e"
-OUTLINE_TOKEN, OUTLINE_FALLBACK = "--color-accent", "#b1172b"
+DIM_TOKEN, DIM_FALLBACK = "--text-muted", "#635a50"
+OUTLINE_TOKEN, OUTLINE_FALLBACK = "--accent", "#9e1b2c"
 EDIT_MAX_CELL = 44
 PREVIEW_MAX_CELL = 18
 MIN_CELL = 4
@@ -125,7 +128,7 @@ class GridView:
             py = self.origin_y + y * size + 0.5
             ctx.moveTo(self.origin_x, py)
             ctx.lineTo(self.origin_x + columns * size, py)
-        ctx.strokeStyle = GRID_LINE
+        ctx.strokeStyle = self._token(GRID_LINE_TOKEN, GRID_LINE_FALLBACK)
         ctx.lineWidth = 1
         ctx.stroke()
 
@@ -259,8 +262,8 @@ class GridView:
             self.state.paint_cell(*cell)
 
     def on_pointer_down(self, event: Any) -> None:
-        if self.state.mode != "edit":
-            return
+        if self.state.mode != "edit" or self.state.tool == "back":
+            return  # backstitch: chunk 4
         event.preventDefault()
         cell = self.cell_at(event)
         if cell is None:
