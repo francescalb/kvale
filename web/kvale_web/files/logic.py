@@ -281,4 +281,3 @@ def render_png(document: PatternDocument) -> bytes:
     buffer = io.BytesIO()
     image.save(buffer, format="PNG", optimize=True)
     return buffer.getvalue()
-
