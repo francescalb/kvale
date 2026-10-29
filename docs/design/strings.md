@@ -67,6 +67,13 @@ tables below follow them.
    beside it, and has «Tilbakestill» (with the same confirm dialog) and «Ferdig».
    In the band, the end pieces are applied first and the corners last.
 
+Decided after the feature check (chunk 8), not shown in the mockup:
+
+6. **"Save as" is a button** («Lagre som …»), next to «Lagre», with the same look as the
+   other file buttons; it also stays on Ctrl+Shift+S (`file.saveAs`, `file.saveAs.hint`).
+7. **The «Lagre bilde» tooltip says the image includes the list of threads**
+   (`file.export.hint`).
+
 ## loading
 
 | Key | nb | en | it |
@@ -94,7 +101,7 @@ tables below follow them.
 | `file.save` | Lagre | Save | Salva |
 | `file.save.hint` | Last ned mønsteret som fil, så du kan åpne det igjen – Ctrl+S | Download the pattern as a file so you can open it again – Ctrl+S | Scarica lo schema come file, per riaprirlo in seguito – Ctrl+S |
 | `file.export` | Lagre bilde | Save image | Salva immagine |
-| `file.export.hint` | Last ned hele borden som bilde (PNG), med attersting og endestykker | Download the whole band as a picture (PNG), with backstitch and ends | Scarica tutta la bordura come immagine (PNG), con punto scritto ed estremità |
+| `file.export.hint` | Last ned hele borden som bilde (PNG), med attersting, endestykker og en liste over garnet som er brukt | Download the whole band as a picture (PNG), with backstitch, ends and a list of the threads used | Scarica tutta la bordura come immagine (PNG), con punto scritto, estremità e l’elenco dei filati usati |
 
 ## lang
 
@@ -473,7 +480,8 @@ Keys the app needs that the mockup does not show. They are not in the mockup's `
 | `canvas.hint.minimal` | Du syr bare i den markerte delen – resten speiles av seg selv. | You only stitch in the outlined part – the rest is mirrored automatically. | Ricami solo nella parte evidenziata – il resto si specchia da solo. |
 | `file.untitled` | Nytt mønster | New pattern | Nuovo schema |
 | `file.unsaved` | Endringer som ikke er lagret i en fil | Changes not saved to a file | Modifiche non salvate in un file |
-| `file.saveAs.hint` | Ctrl+Shift+S: lagre en kopi under et nytt navn | Ctrl+Shift+S: save a copy under a new name | Ctrl+Shift+S: salva una copia con un nuovo nome |
+| `file.saveAs` | Lagre som … (no-break space before …) | Save as… | Salva con nome… |
+| `file.saveAs.hint` | Lagre en kopi under et nytt navn – Ctrl+Shift+S | Save a copy under a new name – Ctrl+Shift+S | Salva una copia con un nuovo nome – Ctrl+Shift+S |
 | `file.confirmDiscard` | Endringene som ikke er lagret i en fil, blir borte. Vil du fortsette? | Changes that are not saved to a file will be lost. Continue? | Le modifiche non salvate in un file andranno perse. Vuoi continuare? |
 | `file.export.preparing` | Gjør klar bildet … | Preparing the image … | Preparo l’immagine … |
 | `file.error.notPattern` | Denne filen er ikke et Kvale-mønster. | This file is not a Kvale pattern. | Questo file non è uno schema di Kvale. |
