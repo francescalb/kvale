@@ -464,6 +464,14 @@ tables below follow them.
 | `lines.apply.add` | Legg til | Add | Aggiungi |
 | `lines.apply.remove` | Fjern | Remove | Togli |
 
+## app only
+
+Keys the app needs that the mockup does not show. They are not in the mockup's `STR` object.
+
+| Key | nb | en | it |
+|---|---|---|---|
+| `canvas.hint.minimal` | Du syr bare i den markerte delen – resten speiles av seg selv. | You only stitch in the outlined part – the rest is mirrored automatically. | Ricami solo nella parte evidenziata – il resto si specchia da solo. |
+
 ## mock
 
 | Key | nb | en | it |
