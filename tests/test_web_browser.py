@@ -411,3 +411,194 @@ def test_layout_regions_and_no_sideways_scroll(context: Any, site_url: str, widt
         assert app.errors == []
     finally:
         page.close()
+
+
+# Files (chunk 6): open, save, PNG export, autosave and ?example= -------------
+
+EXAMPLE = ROOT / "examples" / "flower-band.json"
+
+
+@pytest.fixture
+def file_page(context: Any, site_url: str) -> Iterator[Any]:
+    page = context.new_page()
+    page.goto(site_url + "i18n/nb.json")
+    page.evaluate("localStorage.clear()")
+    # Accept "unsaved changes" questions (confirm and beforeunload).
+    page.on("dialog", lambda dialog: dialog.accept())
+    yield page
+    page.close()
+
+
+def start(page: Any, url: str) -> App:
+    app = App(page, url)
+    page.goto(url)
+    page.wait_for_function("window.kvaleReady === true", timeout=BOOT_TIMEOUT_MS)
+    return app
+
+
+def wait_dirty(page: Any, dirty: bool) -> None:
+    value = "true" if dirty else "false"
+    page.wait_for_function(f"document.getElementById('doc-info').dataset.dirty === '{value}'")
+
+
+def wait_name(page: Any, name: str) -> None:
+    page.wait_for_function(f"document.getElementById('doc-name').textContent === {name!r}")
+
+
+def preview_matches(app: App, document_path: Path) -> None:
+    from kvale.core import build_colour_grid
+    from kvale.core.serialization import load_document
+
+    grid = build_colour_grid(load_document(document_path))
+    app.page.click("#mode-preview")
+    for x, y in [(0, 0), (5, 3), (17, 9), (40, 20)]:
+        assert app.colour(x, y) == tuple(bytes.fromhex(grid[y][x].lstrip("#"))), (x, y)
+    app.page.click("#mode-edit")
+
+
+def test_file_buttons_and_doc_info(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url)
+    labels = page.locator("#file-actions .btn").all_text_contents()
+    assert labels == ["Ny", "Åpne", "Lagre", "Lagre bilde"]
+    assert page.is_visible("#doc-info")
+    assert page.text_content("#doc-name") == "Nytt mønster"
+    assert page.is_hidden("#doc-unsaved")
+    app.click_cell(0, 0)
+    wait_dirty(page, True)
+    assert page.is_visible("#doc-unsaved")
+    assert page.text_content("#autosave-note").startswith("Lagret i nettleseren kl.")
+    page.keyboard.press("Control+z")  # back to the saved state
+    wait_dirty(page, False)
+    page.click("#lang-seg [data-lang=en]")
+    wait_name(page, "New pattern")
+    assert app.errors == []
+
+
+def test_open_via_file_input_and_save_round_trip(file_page: Any, site_url: str) -> None:
+    from kvale.core.serialization import load_document
+    from kvale_web.files.logic import parse_document
+
+    page = file_page
+    app = start(page, site_url)
+    page.set_input_files("#file-input", str(EXAMPLE))
+    wait_name(page, "flower-band.json")
+    assert page.is_disabled("#undo")
+    preview_matches(app, EXAMPLE)
+
+    app.click_cell(0, 0, button="right")
+    app.click_cell(0, 0)
+    wait_dirty(page, True)
+    with page.expect_download() as info:
+        page.keyboard.press("Control+s")
+    download = info.value
+    assert download.suggested_filename == "flower-band.json"
+    saved = parse_document(Path(download.path()).read_text("utf-8"))
+    expected = load_document(EXAMPLE)
+    expected.erase_mark(0, 0)
+    expected.set_mark(0, 0, 0)
+    assert saved.to_dict() == expected.to_dict()
+    wait_dirty(page, False)
+    assert app.errors == []
+
+
+def test_open_bad_file_shows_a_message(file_page: Any, site_url: str) -> None:
+    import json
+
+    page = file_page
+    app = start(page, site_url)
+    bad = {"name": "bad.json", "mimeType": "application/json", "buffer": b"nope"}
+    page.set_input_files("#file-input", files=[bad])
+    page.wait_for_selector("#toast:not([hidden])")
+    assert page.text_content("#toast-message") == "Denne filen er ikke et Kvale-mønster."
+    newer = json.dumps({"palette_sequences": [["#fff"]], "format_version": 99}).encode()
+    page.set_input_files(
+        "#file-input", files=[{"name": "new.json", "mimeType": "application/json", "buffer": newer}]
+    )
+    page.wait_for_function(
+        "document.getElementById('toast-message').textContent.startsWith('Mønsteret er laget')"
+    )
+    assert page.text_content("#doc-name") == "Nytt mønster"
+    assert app.errors == []
+
+
+def test_new_asks_first_then_clears(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url)
+    asked: list[str] = []
+    page.on("dialog", lambda dialog: asked.append(dialog.type))
+    page.click("#file-new")  # nothing to lose: no question
+    assert asked == []
+    app.click_cell(2, 2)
+    wait_dirty(page, True)
+    page.click("#file-new")
+    wait_dirty(page, False)
+    assert asked == ["confirm"]
+    assert app.colour(2, 2) == WHITE
+    assert page.is_disabled("#undo")
+    assert app.errors == []
+
+
+def test_png_export(file_page: Any, site_url: str) -> None:
+    import io
+
+    from PIL import Image
+
+    from kvale.core import build_colour_grid
+    from kvale.core.serialization import load_document
+
+    page = file_page
+    app = start(page, site_url)
+    page.set_input_files("#file-input", str(EXAMPLE))
+    wait_name(page, "flower-band.json")
+    with page.expect_download(timeout=BOOT_TIMEOUT_MS) as info:
+        page.click("#file-export")
+    download = info.value
+    assert download.suggested_filename == "flower-band.png"
+    data = Path(download.path()).read_bytes()
+    assert data.startswith(b"\x89PNG\r\n\x1a\n")
+    image = Image.open(io.BytesIO(data)).convert("RGB")
+    grid = build_colour_grid(load_document(EXAMPLE))
+    assert image.size == (len(grid[0]) * 16, len(grid) * 16)
+    assert image.getpixel((5 * 16 + 8, 3 * 16 + 8)) == tuple(bytes.fromhex(grid[3][5].lstrip("#")))
+    page.wait_for_function("!document.getElementById('file-export').disabled")
+    assert page.text_content("#file-export") == "Lagre bilde"
+    assert app.errors == []
+
+
+def test_autosave_restores_after_reload(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url)
+    app.click_cell(3, 4)
+    page.wait_for_function("(localStorage.getItem('kvale-autosave') || '').includes('\"x\":3')")
+    app = start(page, site_url)  # reload
+    assert app.colour(3, 4) == RED
+    assert page.is_disabled("#undo")  # a fresh history
+    assert page.get_attribute("#doc-info", "data-dirty") == "true"  # still not in a file
+    assert page.is_visible("#autosave-note")
+    assert app.errors == []
+
+
+def test_example_from_url(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url + "?example=flower-band")
+    assert page.text_content("#doc-name") == "flower-band.json"
+    assert page.get_attribute("#doc-info", "data-dirty") == "false"
+    assert "example" not in page.url  # a reload restores the autosave instead
+    preview_matches(app, EXAMPLE)
+    assert app.errors == []
+
+
+def test_data_link_and_missing_example(file_page: Any, site_url: str) -> None:
+    from kvale_web.files.logic import encode_data_hash
+
+    page = file_page
+    app = start(page, site_url + "#" + encode_data_hash(EXAMPLE.read_text("utf-8")))
+    preview_matches(app, EXAMPLE)
+    assert page.text_content("#doc-name") == "Nytt mønster"
+
+    page.evaluate("localStorage.clear()")
+    app = start(page, site_url + "?example=no-such-example")
+    assert page.text_content("#toast-message") == "Fant ikke mønsteret i lenken."
+    # The failed fetch is the one console error expected.
+    assert all("404" in error or "no-such-example" in error for error in app.errors)
