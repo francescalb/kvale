@@ -1216,6 +1216,18 @@ def test_thread_picker_arrow_keys_and_enter(app: App) -> None:
     assert page.text_content("#colour-slots .slot:nth-child(5) .slot-meta").startswith(f"DMC {first}")
 
 
+def test_choosing_a_tool_in_the_whole_band_goes_back_to_drawing(app: App) -> None:
+    page = app.page
+    page.click("#mode-preview")
+    page.click("#tool-back")
+    assert page.get_attribute("#stage", "data-mode") == "edit"
+    assert page.get_attribute("#tool-back", "aria-pressed") == "true"
+    page.keyboard.press("p")
+    page.keyboard.press("x")  # the shortcut does the same
+    assert page.get_attribute("#stage", "data-mode") == "edit"
+    assert page.get_attribute("#tool-cross", "aria-pressed") == "true"
+
+
 def app_document(app: App) -> Any:
     """The pattern open in the page, read through its autosave."""
     from kvale_web.files.logic import read_autosave
