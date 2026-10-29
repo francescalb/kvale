@@ -1021,7 +1021,9 @@ def test_png_export(file_page: Any, site_url: str) -> None:
     assert data.startswith(b"\x89PNG\r\n\x1a\n")
     image = Image.open(io.BytesIO(data)).convert("RGB")
     grid = build_colour_grid(load_document(EXAMPLE))
-    assert image.size == (len(grid[0]) * 16, len(grid) * 16)
+    # The band on top, and the thread list under it (checked in test_png_lists_the_threads).
+    assert image.width == len(grid[0]) * 16
+    assert image.height > len(grid) * 16
     assert image.getpixel((5 * 16 + 8, 3 * 16 + 8)) == tuple(bytes.fromhex(grid[3][5].lstrip("#")))
     page.wait_for_function("!document.getElementById('file-export').disabled")
     assert page.text_content("#file-export") == "Lagre bilde"
@@ -1220,3 +1222,179 @@ def test_new_version_shows_a_toast_and_reloads(
     finally:
         server.shutdown()
         server.server_close()
+
+
+# Feature check against the Tkinter app (chunk 8, docs/FEATURE_CHECK.md) ----
+
+
+def test_undo_redo_keys_buttons_and_messages(app: App) -> None:
+    page = app.page
+    assert page.is_disabled("#undo") and page.is_disabled("#redo")
+    app.click_cell(0, 0)
+    app.click_cell(1, 0)
+    assert page.is_enabled("#undo") and page.is_disabled("#redo")
+
+    page.keyboard.press("Meta+z")  # Cmd+Z on a Mac
+    assert app.colour(1, 0) == WHITE
+    assert page.text_content("#toast-message") == "Angret."
+    assert page.is_enabled("#redo")
+    page.keyboard.press("Control+z")
+    assert app.colour(0, 0) == WHITE
+    assert page.is_disabled("#undo") and page.is_enabled("#redo")
+    page.keyboard.press("Control+z")  # nothing left to undo: no change, no error
+    assert page.is_disabled("#undo")
+
+    page.keyboard.press("Control+Shift+Z")
+    assert app.colour(0, 0) == RED
+    assert page.text_content("#toast-message") == "Gjort om."
+    assert page.is_visible("#toast-undo")  # "Undo" is offered after a redo
+    page.keyboard.press("Meta+Shift+z")  # Cmd+Shift+Z
+    assert app.colour(1, 0) == RED
+    assert page.is_disabled("#redo")
+    page.keyboard.press("Control+z")
+    page.keyboard.press("Control+y")
+    assert app.colour(1, 0) == RED
+    page.click("#undo")
+    assert page.text_content("#toast-message") == "Angret."
+    page.click("#redo")
+    assert page.text_content("#toast-message") == "Gjort om."
+    assert page.is_disabled("#redo")
+
+
+def test_shortcuts_wait_while_a_dialog_is_open(app: App) -> None:
+    page = app.page
+    app.click_cell(0, 0)
+    page.click("#colour-slots .slot:nth-child(1) .slot-edit")
+    assert page.is_visible("#colour-dialog")
+    page.keyboard.press("Control+z")  # acts on the dialog, not the pattern behind it
+    page.keyboard.press("p")
+    page.keyboard.press("2")
+    page.keyboard.press("Escape")
+    assert page.is_hidden("#colour-dialog")
+    assert page.get_attribute("#mode-edit", "aria-pressed") == "true"
+    assert (
+        page.get_attribute("#colour-slots .slot:nth-child(1) .slot-select", "aria-pressed")
+        == "true"
+    )
+    assert app.colour(0, 0) == RED
+    page.keyboard.press("Control+z")  # and work again once it is closed
+    assert app.colour(0, 0) == WHITE
+
+
+def test_png_lists_the_threads(file_page: Any, site_url: str) -> None:
+    from PIL import Image
+
+    from kvale.core import build_colour_grid
+    from kvale.core.serialization import load_document
+    from kvale_web.panels.colour_model import thread_rows
+
+    page = file_page
+    start(page, site_url)
+    page.set_input_files("#file-input", str(EXAMPLE))
+    wait_name(page, "flower-band.json")
+    with page.expect_download(timeout=BOOT_TIMEOUT_MS) as info:
+        page.click("#file-export")
+    image = Image.open(info.value.path()).convert("RGB")
+    document = load_document(EXAMPLE)
+    band_height = len(build_colour_grid(document)) * 16
+    key = image.crop((0, band_height, image.width, image.height))
+    colours: list[tuple[int, Any]] = key.getcolors(1 << 20) or []
+    counts = {colour: count for count, colour in colours}
+    rows = thread_rows(document)
+    assert rows
+    for info_row in rows:
+        chip = tuple(bytes.fromhex(info_row.hex_colour.lstrip("#")))
+        assert counts.get(chip, 0) >= 16 * 16, info_row  # one chip per thread
+    assert counts[(0xFF, 0xFF, 0xFF)] > key.width * key.height // 2  # on white
+    assert len(counts) > len(rows) + 2  # and text beside the chips
+
+
+def test_save_as_asks_for_a_new_file(file_page: Any, site_url: str) -> None:
+    from kvale_web.files.logic import parse_document
+
+    page = file_page
+    app = start(page, site_url)
+    # A stand-in for the browser's "save as" window (Chrome, Edge).
+    page.evaluate(
+        """() => {
+            window.saved = [];
+            window.showSaveFilePicker = async options => {
+                window.suggested = options.suggestedName;
+                return {
+                    name: 'copy.json',
+                    queryPermission: async () => 'granted',
+                    requestPermission: async () => 'granted',
+                    createWritable: async () => ({
+                        write: async text => { window.saved.push(text); },
+                        close: async () => {},
+                    }),
+                };
+            };
+        }"""
+    )
+    app.click_cell(2, 3)
+    wait_dirty(page, True)
+    page.keyboard.press("Control+Shift+S")
+    wait_name(page, "copy.json")
+    wait_dirty(page, False)
+    assert page.evaluate("window.suggested") == "Nytt mønster.json"
+    saved = parse_document(page.evaluate("window.saved[0]"))
+    assert saved.to_dict() == app_document(app).to_dict()
+    app.click_cell(4, 4)
+    wait_dirty(page, True)
+    page.keyboard.press("Control+s")  # later saves go to the same file
+    page.wait_for_function("window.saved.length === 2")
+    wait_dirty(page, False)
+
+    # Without the picker (Firefox, Safari) "save as" downloads the file.
+    page.evaluate("delete window.showSaveFilePicker")
+    app.click_cell(5, 5)
+    with page.expect_download() as info:
+        page.keyboard.press("Control+Shift+S")
+    assert info.value.suggested_filename == "copy.json"
+    wait_dirty(page, False)
+    tooltip = page.get_attribute("#file-save", "title")
+    assert tooltip is not None and "Ctrl+Shift+S" in tooltip
+    assert app.errors == []
+
+
+def test_thread_picker_arrow_keys_and_enter(app: App) -> None:
+    page = app.page
+    page.click("#add-colour")
+    page.fill("#thread-search", "DMC 31")
+    page.keyboard.press("ArrowDown")  # the search box keeps the focus
+    first = page.get_attribute("#thread-list .dmc-row[aria-selected=true]", "data-code")
+    page.keyboard.press("ArrowDown")
+    second = page.get_attribute("#thread-list .dmc-row[aria-selected=true]", "data-code")
+    assert first and second and first != second
+    page.keyboard.press("ArrowUp")
+    assert page.get_attribute("#thread-list .dmc-row[aria-selected=true]", "data-code") == first
+    assert page.evaluate("document.activeElement.id") == "thread-search"
+    page.keyboard.press("Enter")
+    assert page.is_hidden("#thread-dialog")
+    assert page.text_content("#colour-slots .slot:nth-child(5) .slot-meta").startswith(
+        f"DMC {first}"
+    )
+
+
+def test_choosing_a_tool_in_the_whole_band_goes_back_to_drawing(app: App) -> None:
+    page = app.page
+    page.click("#mode-preview")
+    page.click("#tool-back")
+    assert page.get_attribute("#stage", "data-mode") == "edit"
+    assert page.get_attribute("#tool-back", "aria-pressed") == "true"
+    page.keyboard.press("p")
+    page.keyboard.press("x")  # the shortcut does the same
+    assert page.get_attribute("#stage", "data-mode") == "edit"
+    assert page.get_attribute("#tool-cross", "aria-pressed") == "true"
+
+
+def app_document(app: App) -> Any:
+    """The pattern open in the page, read through its autosave."""
+    from kvale_web.files.logic import read_autosave
+
+    app.page.wait_for_function("!!localStorage.getItem('kvale-autosave')")
+    app.page.wait_for_timeout(600)  # the autosave waits for the last change
+    saved = read_autosave(app.page.evaluate("localStorage.getItem('kvale-autosave')"))
+    assert saved is not None
+    return saved.document

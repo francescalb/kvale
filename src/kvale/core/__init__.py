@@ -7,7 +7,12 @@ from kvale.core.model import (
     PatternDocument,
     RepeatOverride,
 )
-from kvale.core.renderer import build_backstitch_segments, build_colour_grid, render_image
+from kvale.core.renderer import (
+    build_backstitch_segments,
+    build_colour_grid,
+    render_image,
+    render_image_with_key,
+)
 
 __all__ = [
     "Backstitch",
@@ -21,4 +26,5 @@ __all__ = [
     "build_backstitch_segments",
     "build_colour_grid",
     "render_image",
+    "render_image_with_key",
 ]

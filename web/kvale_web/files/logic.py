@@ -15,6 +15,7 @@ import io
 import json
 import re
 import zlib
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
 from urllib.parse import parse_qs, unquote, urlsplit
@@ -267,17 +268,26 @@ def png_cell_size(width: int, height: int) -> int:
     return max(PNG_MIN_CELL_SIZE, min(PNG_CELL_SIZE, PNG_MAX_SIDE // longest))
 
 
-def render_png(document: PatternDocument) -> bytes:
+def render_png(
+    document: PatternDocument,
+    key_rows: Sequence[tuple[str, str]] = (),
+    key_title: str = "",
+) -> bytes:
     """The whole band (ends, corners and backstitch included) as PNG bytes.
 
+    ``key_rows`` are the threads the pattern uses, as ``(screen colour, text)``
+    pairs such as ``("#c72b3b", "DMC 321 – Red")``; they are listed under the
+    band with ``key_title`` above them (see ``kvale.core.render_image_with_key``).
     Needs Pillow; in the browser call ``ensure_pillow()`` first.
     """
-    from kvale.core import build_colour_grid, render_image
+    from kvale.core import build_colour_grid, render_image_with_key
 
     grid = build_colour_grid(document)
     height = len(grid)
     width = len(grid[0]) if height else 0
-    image = render_image(document, cell_size=png_cell_size(width, height))
+    image = render_image_with_key(
+        document, key_rows, title=key_title, cell_size=png_cell_size(width, height)
+    )
     buffer = io.BytesIO()
     image.save(buffer, format="PNG", optimize=True)
     return buffer.getvalue()

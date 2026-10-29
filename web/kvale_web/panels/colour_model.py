@@ -227,6 +227,30 @@ class PickerState:
     def search(self) -> None:
         self.results = search_threads(self.brand, self.query, self.family)
 
+    def move(self, step: int) -> None:
+        """Choose the next (``step`` 1) or previous (-1) thread in the results.
+
+        From no choice (or one not in the results), down starts at the first
+        and up at the last. It stops at either end.
+        """
+        refs = [thread.ref for thread in self.results]
+        if not refs:
+            return
+        if self.selected in refs:
+            index = max(0, min(len(refs) - 1, refs.index(self.selected) + step))
+        else:
+            index = 0 if step > 0 else len(refs) - 1
+        self.selected = refs[index]
+
+    @property
+    def enter_choice(self) -> str | None:
+        """What Enter in the search box chooses: the chosen thread if it is in
+        the results, else the only result, else nothing."""
+        refs = [thread.ref for thread in self.results]
+        if self.selected in refs:
+            return self.selected
+        return refs[0] if len(refs) == 1 else None
+
     @property
     def chosen(self) -> Thread | None:
         return find_thread(self.selected)

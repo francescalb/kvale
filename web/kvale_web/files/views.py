@@ -35,6 +35,8 @@ from kvale_web.files.logic import (
     url_source,
 )
 from kvale_web.i18n import t
+from kvale_web.panels.colour_model import thread_rows
+from kvale_web.panels.labels import full_text
 from kvale_web.state import DOCUMENT, LANGUAGE, AppState
 
 # Wait this long after the last change before writing the autosave, so a
@@ -72,6 +74,7 @@ class FileViews:
         # Async handlers are passed as they are (not wrapped in a lambda), so
         # the browser glue sees the coroutine function and runs it.
         shortcuts.register("ctrl+s", self.save)
+        shortcuts.register("ctrl+shift+s", self.save_as)
         self.bindings.on(window, "beforeunload", self._on_before_unload)
         self.bindings.on(window, "pagehide", lambda _event: self.flush())
         state.subscribe(self._on_document, DOCUMENT)
@@ -92,6 +95,8 @@ class FileViews:
             button.innerHTML = f'<svg class="icon" aria-hidden="true"><use href="#{icon}"/></svg>'
             create("span", text=t(label), attrs={"data-i18n": label}, parent=button)
             self.buttons[element_id] = button
+        # Save's tooltip also names "save as" (Ctrl+Shift+S); set in render().
+        self.buttons["file-save"].removeAttribute("data-i18n-title")
         self.input = create(
             "input",
             attrs={"type": "file", "id": "file-input", "accept": ".json,application/json", "hidden": ""},
@@ -134,6 +139,7 @@ class FileViews:
         self.unsaved_mark.title = t("file.unsaved")
         self.unsaved_mark.setAttribute("aria-label", t("file.unsaved"))
         self.doc_info.dataset.dirty = "true" if dirty else "false"
+        self.buttons["file-save"].title = f"{t('file.save.hint')}\n{t('file.saveAs.hint')}"
         self.autosave_note.title = t("autosave.hint")
         if self.saved_at is not None:
             time = browser.clock_time(self.saved_at, i18n.current_language())
@@ -291,6 +297,32 @@ class FileViews:
             self.session.mark_saved(document)
         self.flush()
 
+    async def save_as(self, _event: Any = None) -> None:
+        """Save under a new name (Ctrl+Shift+S); later saves go to that file.
+
+        Where the browser can ask for a place (Chrome, Edge), it does; elsewhere
+        the file is downloaded, which most browsers let you name.
+        """
+        document = self.state.document
+        text = serialize(document)
+        name = file_name(self.session.name, JSON_EXTENSION, t("file.untitled"))
+        if browser.has_save_picker():
+            try:
+                handle = await browser.pick_save_file(name)
+            except JsException:
+                handle = False  # the picker failed: download instead
+            if handle is None:
+                return  # cancelled
+            if handle and await browser.write_handle(handle, text):
+                self.handle = handle
+                self.session.mark_saved(document, stem_of(str(handle.name)))
+                self.flush()
+                return
+        browser.download(text, name, "application/json")
+        self.handle = None
+        self.session.mark_saved(document, stem_of(name))
+        self.flush()
+
     async def export_png(self, _event: Any = None) -> None:
         if self.exporting:
             return
@@ -302,7 +334,10 @@ class FileViews:
         try:
             await asyncio.sleep(0.05)  # let "Preparing the image …" show first
             await browser.ensure_pillow()
-            data = render_png(self.state.document)
+            document = self.state.document
+            # The thread list under the whole band, also in the image.
+            key = [(info.hex_colour, full_text(info)) for info in thread_rows(document)]
+            data = render_png(document, key, t("threads.title"))
             name = file_name(self.session.name, PNG_EXTENSION, t("file.untitled"))
             browser.download(data, name, "image/png")
         except Exception:  # noqa: BLE001 - any failure becomes a message, not a crash

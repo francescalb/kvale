@@ -46,7 +46,7 @@ notifies listeners (`state.subscribe(listener, *topics)`) by topic:
   `state.paint_cell` / `erase_cell` edit the current `edit_target`.
 - `state.load(document)` (chunk 6) replaces the pattern, clears the history and
   goes back to the unit.
-- `set_tool`, `set_edit_target` (also switches to edit mode), `set_mode`,
+- `set_tool`, `set_edit_target` (both also switch to edit mode), `set_mode`,
   `select_slot` and `set_status` change UI state. The labels of edit targets
   are in `state.TARGET_LABEL_KEYS`.
 - Calls across chunks that are not state:

@@ -227,12 +227,16 @@ class AppState:
             self.notify(VIEW)
 
     def set_tool(self, tool: Tool) -> None:
-        """Choose the stitch tool: cross stitch, backstitch or unpick."""
+        """Choose the stitch tool: cross stitch, backstitch or unpick.
+
+        Also switches to edit mode, as the tools draw (the whole band only shows).
+        """
         if tool not in TOOLS:
             raise ValueError(f"Unknown tool: {tool!r}")
-        if tool != self.tool:
+        if tool != self.tool or self.mode != "edit":
             self.end_stroke()
             self.tool = tool
+            self.mode = "edit"
             self.notify(VIEW)
 
     @property

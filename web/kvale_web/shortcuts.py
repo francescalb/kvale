@@ -10,6 +10,8 @@ Key names are ``KeyboardEvent.key`` in lower case, with ``ctrl+``, ``shift+``
 and ``alt+`` modifiers in that order. ``ctrl`` also matches the Cmd key. The
 handler gets the event; the default browser action is prevented. Plain keys
 (without ``ctrl``/``alt``) are ignored while the user types in a text field.
+No shortcut runs while a modal dialog is open: they act on the pattern behind
+it, and the dialog's own fields keep their keys (Ctrl+Z undoes typing there).
 Handlers may be ``async def``.
 """
 
@@ -66,10 +68,14 @@ def _is_typing(event: Any) -> bool:
     return tag == "INPUT" and str(target.type) in _TEXT_INPUTS
 
 
+def dialog_open() -> bool:
+    """True while a modal dialog (a ``<dialog>`` opened with ``showModal``) is open."""
+    return any(bool(dialog.matches(":modal")) for dialog in document.querySelectorAll("dialog[open]"))
+
+
 def _on_keydown(event: Any) -> None:
-    combo = combo_of(event)
-    handler = _handlers.get(combo)
-    if handler is None:
+    handler = _handlers.get(combo_of(event))
+    if handler is None or dialog_open():
         return
     if not (event.ctrlKey or event.metaKey or event.altKey) and _is_typing(event):
         return

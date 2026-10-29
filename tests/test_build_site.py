@@ -29,6 +29,8 @@ def test_files_table_lists_core_modules_and_package_data(tmp_path: Path) -> None
     for module in core.glob("*.py"):
         assert f"kvale/core/{module.name}" in files
     assert files["kvale/core/dmc_palette.json"] == "./kvale/core/dmc_palette.json"
+    # The font of the thread list in the saved image.
+    assert "kvale/core/fonts/AtkinsonHyperlegible-Regular.ttf" in files
     assert "kvale_web/state.py" in files
     assert "main.py" not in files
     # Every listed file exists in the build, and nothing from the Tkinter GUI is shipped.
