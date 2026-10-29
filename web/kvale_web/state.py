@@ -1,11 +1,20 @@
 """Application state: the single source of truth for the browser UI.
 
 ``AppState`` wraps a core ``Editor`` (the document and its undo/redo history)
-and adds the UI-only state (active colour slot, edit/preview mode, eraser,
-status message). Views never change the document directly: they call
-``state.edit(...)``, ``state.undo()`` and so on, and re-render when notified.
-Pointer input on the unit goes through ``paint_cell``/``erase_cell``, which
-only accept cells in the minimal cell (``editable_cells``).
+and adds the UI-only state shared by every view:
+
+- ``active_slot``: the colour slot new cross stitches and backstitches use;
+- ``tool``: the stitch tool, ``"cross"``, ``"back"`` (backstitch) or ``"unpick"``;
+- ``edit_target``: what the grid edits, ``"unit"`` (the repeat), an end piece
+  (``"top"``, ``"bottom"``, ``"left"``, ``"right"``) or a corner
+  (``"top_left"``, ``"top_right"``, ``"bottom_left"``, ``"bottom_right"``);
+- ``mode``: ``"edit"`` (draw) or ``"preview"`` (the whole band);
+- ``status``: the latest message for the user.
+
+Views never change the document directly: they call ``state.edit(...)``,
+``state.undo()`` and so on, and re-render when notified. Pointer input goes
+through ``paint_cell``/``erase_cell``, which edit the current ``edit_target``;
+on the unit they only accept cells in the minimal cell (``editable_cells``).
 
 This module does not import ``js`` or ``pyscript``, so it runs and is tested in
 normal CPython (see ``tests/test_web_state.py``).
@@ -14,7 +23,7 @@ Topics passed to listeners:
 
 - ``DOCUMENT``: the pattern changed (edit, undo, redo, load, new). Undo/redo
   availability may also have changed.
-- ``VIEW``: UI state changed (active slot, mode, eraser).
+- ``VIEW``: UI state changed (``active_slot``, ``tool``, ``edit_target``, ``mode``).
 - ``STATUS``: the status message changed.
 - ``LANGUAGE``: the interface language changed; re-render any text.
 """
@@ -25,6 +34,7 @@ from collections.abc import Callable
 from typing import Literal
 
 from kvale.core import Editor, EditResult, PatternDocument
+from kvale.core.editing import CORNERS, EDGES, EditTarget
 from kvale.core.symmetry import minimal_cell
 
 DOCUMENT = "document"
@@ -34,6 +44,23 @@ LANGUAGE = "language"
 TOPICS = (DOCUMENT, VIEW, STATUS, LANGUAGE)
 
 Mode = Literal["edit", "preview"]
+MODES: tuple[Mode, ...] = ("edit", "preview")
+Tool = Literal["cross", "back", "unpick"]
+TOOLS: tuple[Tool, ...] = ("cross", "back", "unpick")
+# Everything the grid can edit, in the order of the "Drawing in" bar.
+EDIT_TARGETS: tuple[EditTarget, ...] = ("unit", *EDGES, *CORNERS)
+# i18n key naming each edit target (the bar's buttons).
+TARGET_LABEL_KEYS: dict[EditTarget, str] = {
+    "unit": "target.unit",
+    "top": "target.top",
+    "bottom": "target.bottom",
+    "left": "target.left",
+    "right": "target.right",
+    "top_left": "target.tl",
+    "top_right": "target.tr",
+    "bottom_left": "target.bl",
+    "bottom_right": "target.br",
+}
 Listener = Callable[[str], None]
 
 # Undo steps kept, the same as the Tkinter app.
@@ -45,7 +72,8 @@ class AppState:
         self.editor = Editor(document, history_limit=HISTORY_LIMIT)
         self.active_slot = 0
         self.mode: Mode = "edit"
-        self.erase_tool = False
+        self.tool: Tool = "cross"
+        self.edit_target: EditTarget = "unit"
         # Status message as an i18n key plus format values, so it can be
         # re-translated when the language changes. None means no message.
         self.status: tuple[str, dict[str, object]] | None = None
@@ -92,7 +120,7 @@ class AppState:
         """
         result = action(self.editor)
         if result.removed_symmetry:
-            self.set_status("symmetry_removed", operations=result.removed_symmetry)
+            self.set_status("symmetry.switchedOff")
         if result.changed:
             self._after_document_change()
         return result
@@ -108,17 +136,23 @@ class AppState:
         return minimal_cell(doc.unit_width, doc.unit_height, doc.symmetry)
 
     def paint_cell(self, x: int, y: int) -> EditResult:
-        """Paint unit cell (x, y) with the active slot; cells outside the minimal cell do nothing."""
-        if (x, y) not in self.editable_cells:
+        """Cross-stitch cell (x, y) of ``edit_target`` in the active slot.
+
+        On the unit, cells outside the minimal cell do nothing. On an end piece
+        or a corner, core ignores cells outside it (see ``editing.editor_bounds``).
+        """
+        target = self.edit_target
+        if target == "unit" and (x, y) not in self.editable_cells:
             return EditResult(False)
         slot = self.active_slot
-        return self.edit(lambda editor: editor.paint(x, y, slot))
+        return self.edit(lambda editor: editor.paint(x, y, slot, target))
 
     def erase_cell(self, x: int, y: int) -> EditResult:
-        """Erase unit cell (x, y); cells outside the minimal cell do nothing."""
-        if (x, y) not in self.editable_cells:
+        """Unpick cell (x, y) of ``edit_target``; on the unit only inside the minimal cell."""
+        target = self.edit_target
+        if target == "unit" and (x, y) not in self.editable_cells:
             return EditResult(False)
-        return self.edit(lambda editor: editor.erase(x, y))
+        return self.edit(lambda editor: editor.erase(x, y, target))
 
     def begin_stroke(self) -> None:
         """Start a group of edits that undo as one step (e.g. a drag-paint stroke)."""
@@ -149,9 +183,15 @@ class AppState:
         return True
 
     def load(self, document: PatternDocument) -> None:
-        """Replace the document (open file, new pattern) and clear the history."""
+        """Replace the document (open file, new pattern) and clear the history.
+
+        The grid goes back to drawing in the unit.
+        """
         self.end_stroke()
         self.editor.load(document)
+        if self.edit_target != "unit":
+            self.edit_target = "unit"
+            self.notify(VIEW)
         self._after_document_change()
 
     def _after_document_change(self) -> None:
@@ -165,26 +205,54 @@ class AppState:
     # UI state ----------------------------------------------------------
 
     def select_slot(self, index: int) -> None:
-        """Make ``index`` the active colour slot and switch the eraser off."""
+        """Make ``index`` the active colour slot.
+
+        Choosing a colour while unpicking goes back to cross stitch; the
+        backstitch tool stays on, so the next line gets the new colour.
+        """
         if not 0 <= index < len(self.document.palette_sequences):
             return
         self.active_slot = index
-        self.erase_tool = False
+        if self.tool == "unpick":
+            self.tool = "cross"
         self.notify(VIEW)
 
     def set_mode(self, mode: Mode) -> None:
+        """Switch between drawing (``"edit"``) and the whole band (``"preview"``)."""
+        if mode not in MODES:
+            raise ValueError(f"Unknown mode: {mode!r}")
         if mode != self.mode:
             self.end_stroke()
             self.mode = mode
             self.notify(VIEW)
 
-    def set_erase_tool(self, enabled: bool) -> None:
-        if enabled != self.erase_tool:
-            self.erase_tool = enabled
+    def set_tool(self, tool: Tool) -> None:
+        """Choose the stitch tool: cross stitch, backstitch or unpick."""
+        if tool not in TOOLS:
+            raise ValueError(f"Unknown tool: {tool!r}")
+        if tool != self.tool:
+            self.end_stroke()
+            self.tool = tool
             self.notify(VIEW)
 
+    @property
+    def erase_tool(self) -> bool:
+        """True when a plain click unpicks (the unpick tool is chosen)."""
+        return self.tool == "unpick"
+
+    def set_edit_target(self, target: EditTarget) -> None:
+        """Draw in the unit, an end piece or a corner. Also switches to edit mode."""
+        if target not in EDIT_TARGETS:
+            raise ValueError(f"Unknown edit target: {target!r}")
+        if target == self.edit_target and self.mode == "edit":
+            return
+        self.end_stroke()
+        self.edit_target = target
+        self.mode = "edit"
+        self.notify(VIEW)
+
     def set_status(self, key: str | None, **values: object) -> None:
-        """Show an i18n message in the status line, or clear it with ``None``.
+        """Show an i18n message to the user, or clear it with ``None``.
 
         Tuple or list values are taken as i18n keys: they are translated and
         joined with ", " when the message is shown.
