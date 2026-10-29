@@ -34,7 +34,8 @@ CLI, SVG exporter or embroidery-format plugin.
 - Colours from an RGB/hex dialog or a searchable DMC floss colour picker
 - Undo/redo (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z)
 - JSON save/load; `kvale path/to/pattern.json` opens a file at start
-- PNG export (including backstitches and end pieces)
+- PNG export (including backstitches and end pieces; the web app lists the
+  threads under the band)
 - Unit tests and GitHub Actions
 - `src/` package layout suitable for publishing
 
