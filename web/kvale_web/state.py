@@ -63,7 +63,7 @@ TARGET_LABEL_KEYS: dict[EditTarget, str] = {
 }
 Listener = Callable[[str], None]
 
-# Undo steps kept, the same as the Tkinter app.
+# Undo steps kept, the same as the old Tkinter app had.
 HISTORY_LIMIT = 100
 
 

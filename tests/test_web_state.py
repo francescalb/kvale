@@ -124,7 +124,7 @@ def test_tool_changes_notify_view_and_close_the_stroke() -> None:
 
 
 def test_choosing_a_tool_goes_back_to_drawing() -> None:
-    # As in the Tkinter app: a stitch tool chosen while viewing the whole band
+    # As in the old Tkinter app: a stitch tool chosen while viewing the whole band
     # switches back to edit mode, even when it is the tool already chosen.
     state = AppState()
     state.set_mode("preview")

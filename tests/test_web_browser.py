@@ -1224,7 +1224,7 @@ def test_new_version_shows_a_toast_and_reloads(
         server.server_close()
 
 
-# Feature check against the Tkinter app (chunk 8, docs/FEATURE_CHECK.md) ----
+# Feature check against the old Tkinter app (chunk 8, docs/FEATURE_CHECK.md)
 
 
 def test_undo_redo_keys_buttons_and_messages(app: App) -> None:
