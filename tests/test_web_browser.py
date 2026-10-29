@@ -25,6 +25,7 @@ import pytest
 pytestmark = pytest.mark.browser
 
 sync_api = pytest.importorskip("playwright.sync_api")
+expect = sync_api.expect  # waits, unlike a plain read: dialogs apply on their "close" event
 
 ROOT = Path(__file__).resolve().parent.parent
 BOOT_TIMEOUT_MS = 120_000
@@ -558,7 +559,8 @@ def test_end_piece_edit_extend_reset_and_undo(app: App) -> None:
     page.click("#end-reset")
     page.click("#reset-ok")
     assert page.is_hidden("#reset-dialog")
-    assert page.input_value("#end-ext") == "0"
+    # The reset is applied on the dialog's "close" event, which can come a moment later.
+    expect(page.locator("#end-ext")).to_have_value("0")
     assert page.locator("#target-seg [data-target=right] .changed").count() == 0
     assert page.text_content("#toast-message") == "Høyre endestykke er tilbakestilt."
     assert page.is_disabled("#end-reset")
@@ -651,8 +653,6 @@ def test_whole_band_preview_with_ends_and_backstitch(app: App) -> None:
 
 
 # Side panels and their dialogs (chunk 5) ---------------------------------
-
-expect = sync_api.expect  # waits, unlike a plain read: dialogs apply on their "close" event
 
 
 def document(app: App) -> dict[str, Any]:
