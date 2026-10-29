@@ -19,7 +19,8 @@ Every item must work in the new app before the Tkinter interface is removed.
 
 - [ ] Unit width/height and repeats across/down (1–100)
 - [ ] Toggles for whether the outer left/right column and top/bottom row repeat
-- [ ] Left-click paints, right-click erases; clicking a generated copy edits the source mark
+- [ ] Left-click paints, right-click erases; clicking a generated copy edits the source mark (Tkinter only)
+- [x] Web: with symmetry on, only the minimal cell (one cell per symmetry orbit, `core.symmetry.minimal_cell`) can be edited; the rest is greyed out and the minimal cell is outlined, with a hint
 - [ ] Seed marks have an inset border; generated marks do not
 - [ ] Row/column dialog: add or remove the top/bottom row, first/last column or a numbered row/column; symmetry adds/removes the matching ones; the last row/column cannot be removed
 - [ ] 8 symmetry operations; square-only ones are switched off with a message on non-square units
