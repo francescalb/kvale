@@ -116,6 +116,35 @@ def test_picker_state() -> None:
     assert picker.brand == "dmc" and picker.selected is None and picker.query == ""
 
 
+def test_picker_keys_move_through_the_results() -> None:
+    # Like the desktop picker: arrow keys from the search box walk the list.
+    picker = PickerState()
+    picker.reset(None)
+    picker.set_query("red")
+    refs = [thread.ref for thread in picker.results]
+    assert len(refs) > 2 and picker.enter_choice is None
+    picker.move(1)
+    assert picker.selected == refs[0] and picker.enter_choice == refs[0]
+    picker.move(1)
+    assert picker.selected == refs[1]
+    picker.move(-1)
+    picker.move(-1)  # stops at the top
+    assert picker.selected == refs[0]
+    picker.selected = None
+    picker.move(-1)  # up from nothing starts at the bottom
+    assert picker.selected == refs[-1]
+    for _ in range(3):
+        picker.move(1)
+    assert picker.selected == refs[-1]
+
+    picker.reset("dmc:321")
+    picker.set_query("3865")  # the chosen thread is no longer listed
+    assert picker.enter_choice == "dmc:3865"  # Enter takes the only match
+    picker.set_query("zzz")
+    picker.move(1)  # nothing to move to
+    assert picker.selected == "dmc:321" and picker.enter_choice is None
+
+
 def test_lines_effect_with_and_without_symmetry() -> None:
     document = PatternDocument(unit_width=12, unit_height=10)
     add_bottom = lines_effect(document, LinesChoice())

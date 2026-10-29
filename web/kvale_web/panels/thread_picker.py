@@ -79,11 +79,18 @@ class ThreadPicker:
         self.render()
 
     def on_search_key(self, event: Any) -> None:
-        # Enter in the search box chooses the only match, and never submits the form.
-        if event.key == "Enter":
+        # Up and down move through the list (the search box keeps the focus);
+        # Enter chooses the marked thread, or the only match, and never submits the form.
+        key = str(event.key)
+        if key in ("ArrowDown", "ArrowUp"):
             event.preventDefault()
-            if len(self.picker.results) == 1:
-                self.picker.selected = self.picker.results[0].ref
+            self.picker.move(1 if key == "ArrowDown" else -1)
+            self.render(scroll=True)
+        elif key == "Enter":
+            event.preventDefault()
+            choice = self.picker.enter_choice
+            if choice is not None:
+                self.picker.selected = choice
                 self.dialog.close("ok")
 
     def on_family(self, event: Any) -> None:

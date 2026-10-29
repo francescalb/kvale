@@ -49,16 +49,16 @@ class Shell:
             self.bindings.on(button, "click", functools.partial(self.on_theme, str(button.dataset.themeSet)))
         for button in self.mode_buttons:
             self.bindings.on(button, "click", functools.partial(self.on_mode, str(button.dataset.mode)))
-        self.bindings.on(self.undo_button, "click", lambda _event: state.undo())
-        self.bindings.on(self.redo_button, "click", lambda _event: state.redo())
+        self.bindings.on(self.undo_button, "click", lambda _event: self.undo())
+        self.bindings.on(self.redo_button, "click", lambda _event: self.redo())
         self.bindings.on(self.toast_undo, "click", self.on_toast_undo)
         # Follow the system theme while the user has not chosen one.
         self.dark_query = window.matchMedia("(prefers-color-scheme: dark)")
         self.bindings.on(self.dark_query, "change", lambda _event: self.render_theme())
 
-        shortcuts.register("ctrl+z", lambda _event: state.undo())
-        shortcuts.register("ctrl+y", lambda _event: state.redo())
-        shortcuts.register("ctrl+shift+z", lambda _event: state.redo())
+        shortcuts.register("ctrl+z", lambda _event: self.undo())
+        shortcuts.register("ctrl+y", lambda _event: self.redo())
+        shortcuts.register("ctrl+shift+z", lambda _event: self.redo())
         shortcuts.register("p", lambda _event: self.toggle_mode())
         for number in range(1, 10):
             shortcuts.register(str(number), functools.partial(self.select_slot, number - 1))
@@ -94,9 +94,17 @@ class Shell:
             # Canvases read colour tokens when they draw.
             self.state.notify(VIEW)
 
+    def undo(self) -> None:
+        """Undo the last change and say so ("Undone."), as the buttons and Ctrl+Z do."""
+        if self.state.undo():
+            self.state.set_status("history.undone")
+
+    def redo(self) -> None:
+        if self.state.redo():
+            self.state.set_status("history.redone")
+
     def on_toast_undo(self, _event: Any) -> None:
-        self.state.undo()
-        self.state.set_status("history.undone")
+        self.undo()
 
     # Rendering ---------------------------------------------------------
 
