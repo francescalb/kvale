@@ -46,9 +46,53 @@ class Backstitch:
         return BackstitchKey.between(self.start_x, self.start_y, self.end_x, self.end_y)
 
 
+# The four corners of the band and the two edges that meet at each one, as
+# (row edge, column edge).
+CORNER_EDGES: dict[str, tuple[str, str]] = {
+    "top_left": ("top", "left"),
+    "top_right": ("top", "right"),
+    "bottom_left": ("bottom", "left"),
+    "bottom_right": ("bottom", "right"),
+}
+# Format version written when a document has corner overrides (see to_dict).
+CORNER_FORMAT_VERSION = 5
+
+
+def edge_cell_bounds(width: int, height: int, edge: str, extension: int) -> tuple[int, int, int, int]:
+    """Cell range ``(min_x, max_x, min_y, max_y)`` (inclusive) of an edge end piece.
+
+    That is the unit plus ``extension`` cells beyond it on ``edge``'s side.
+    """
+    minimum_x = -extension if edge == "left" else 0
+    maximum_x = width + extension - 1 if edge == "right" else width - 1
+    minimum_y = -extension if edge == "top" else 0
+    maximum_y = height + extension - 1 if edge == "bottom" else height - 1
+    return minimum_x, maximum_x, minimum_y, maximum_y
+
+
+def corner_cell_bounds(
+    width: int, height: int, corner: str, row_extension: int, column_extension: int
+) -> tuple[int, int, int, int]:
+    """Cell range ``(min_x, max_x, min_y, max_y)`` (inclusive) of a corner end piece.
+
+    A corner covers the unit, the extensions of both edges that meet there
+    (``row_extension`` of the top/bottom edge, ``column_extension`` of the
+    left/right edge) and the square where those extensions cross.
+    """
+    row_edge, column_edge = CORNER_EDGES[corner]
+    minimum_x, maximum_x, _, _ = edge_cell_bounds(width, height, column_edge, column_extension)
+    _, _, minimum_y, maximum_y = edge_cell_bounds(width, height, row_edge, row_extension)
+    return minimum_x, maximum_x, minimum_y, maximum_y
+
+
 @dataclass
 class RepeatOverride:
-    """Changes applied to every unit along one outer repeat row or column."""
+    """Changes applied to every unit along one outer repeat row or column.
+
+    The same class describes a corner end piece, which changes only the one
+    corner unit. A corner has no extension of its own: it follows the
+    extensions of its two edges, and its ``extension`` must stay 0.
+    """
 
     removed_cells: list[Cell] = field(default_factory=list)
     added_marks: list[Mark] = field(default_factory=list)
@@ -119,6 +163,11 @@ class PatternDocument:
     bottom_repeat_override: RepeatOverride | None = None
     left_repeat_override: RepeatOverride | None = None
     right_repeat_override: RepeatOverride | None = None
+    # Corner end pieces, applied after the edge end pieces to the corner unit only.
+    top_left_repeat_override: RepeatOverride | None = None
+    top_right_repeat_override: RepeatOverride | None = None
+    bottom_left_repeat_override: RepeatOverride | None = None
+    bottom_right_repeat_override: RepeatOverride | None = None
 
     @property
     def palette(self) -> list[str]:
@@ -141,6 +190,44 @@ class PatternDocument:
             self._validate_backstitch(backstitch, 0, self.unit_width, 0, self.unit_height)
         for edge in ("top", "bottom", "left", "right"):
             self._validate_repeat_override(getattr(self, f"{edge}_repeat_override"), edge)
+        for corner in CORNER_EDGES:
+            self._validate_corner_override(getattr(self, f"{corner}_repeat_override"), corner)
+
+    def extension_of(self, edge: str) -> int:
+        """Extra rows/columns the end piece on ``edge`` adds (0 when it has none)."""
+        override: RepeatOverride | None = getattr(self, f"{edge}_repeat_override")
+        return override.extension if override else 0
+
+    def corner_bounds(self, corner: str) -> tuple[int, int, int, int]:
+        """Cell range ``(min_x, max_x, min_y, max_y)`` (inclusive) of a corner end piece."""
+        row_edge, column_edge = CORNER_EDGES[corner]
+        return corner_cell_bounds(
+            self.unit_width,
+            self.unit_height,
+            corner,
+            self.extension_of(row_edge),
+            self.extension_of(column_edge),
+        )
+
+    def has_corner_overrides(self) -> bool:
+        return any(getattr(self, f"{corner}_repeat_override") is not None for corner in CORNER_EDGES)
+
+    def _validate_corner_override(self, override: RepeatOverride | None, corner: str) -> None:
+        if override is None:
+            return
+        if override.extension != 0:
+            raise ValueError(f"Corner {corner} cannot have its own extension")
+        minimum_x, maximum_x, minimum_y, maximum_y = self.corner_bounds(corner)
+        cells: list[Cell | Mark] = [*override.removed_cells, *override.added_marks]
+        for item in cells:
+            if not (minimum_x <= item.x <= maximum_x and minimum_y <= item.y <= maximum_y):
+                raise ValueError(f"Cell outside {corner} corner editor: {item}")
+        stitches: list[Backstitch | BackstitchKey] = [
+            *override.removed_backstitches,
+            *override.added_backstitches,
+        ]
+        for backstitch in stitches:
+            self._validate_backstitch(backstitch, minimum_x, maximum_x + 1, minimum_y, maximum_y + 1)
 
     def _validate_repeat_override(self, override: RepeatOverride | None, edge: str) -> None:
         if override is None:
@@ -150,10 +237,9 @@ class PatternDocument:
         for cell in override.removed_cells:
             if not (0 <= cell.x < self.unit_width and 0 <= cell.y < self.unit_height):
                 raise ValueError(f"Removed cell outside recurring unit: {cell}")
-        minimum_x = -override.extension if edge == "left" else 0
-        maximum_x = self.unit_width + override.extension - 1 if edge == "right" else self.unit_width - 1
-        minimum_y = -override.extension if edge == "top" else 0
-        maximum_y = self.unit_height + override.extension - 1 if edge == "bottom" else self.unit_height - 1
+        minimum_x, maximum_x, minimum_y, maximum_y = edge_cell_bounds(
+            self.unit_width, self.unit_height, edge, override.extension
+        )
         for mark in override.added_marks:
             if not (minimum_x <= mark.x <= maximum_x and minimum_y <= mark.y <= maximum_y):
                 raise ValueError(f"Added mark outside {edge} repeat editor: {mark}")
@@ -208,7 +294,17 @@ class PatternDocument:
 
     def to_dict(self) -> dict[str, Any]:
         # palette is derived from palette_sequences, so it is not stored.
-        return asdict(self)
+        data = asdict(self)
+        # Corner fields are only written when set, and only then is the file
+        # marked as format_version 5, so documents without corners are saved
+        # exactly as before. format_version on the document itself stays the
+        # base version (4); it is not raised by loading a version 5 file.
+        for corner in CORNER_EDGES:
+            if data[f"{corner}_repeat_override"] is None:
+                del data[f"{corner}_repeat_override"]
+        if self.has_corner_overrides():
+            data["format_version"] = max(self.format_version, CORNER_FORMAT_VERSION)
+        return data
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> PatternDocument:
@@ -224,6 +320,13 @@ class PatternDocument:
             if not row:
                 raise ValueError("Palette sequence entries must contain colours")
             palette_sequences.append(row)
+
+        version = data.get("format_version")
+        if version is not None and int(version) > CORNER_FORMAT_VERSION:
+            raise ValueError(
+                f"Pattern file has format_version {version}; this version of Kvale reads up to "
+                f"{CORNER_FORMAT_VERSION}"
+            )
 
         def parse_override(value: object) -> RepeatOverride | None:
             if value is None:
@@ -294,6 +397,10 @@ class PatternDocument:
             bottom_repeat_override=parse_override(data.get("bottom_repeat_override")),
             left_repeat_override=parse_override(data.get("left_repeat_override")),
             right_repeat_override=parse_override(data.get("right_repeat_override")),
+            top_left_repeat_override=parse_override(data.get("top_left_repeat_override")),
+            top_right_repeat_override=parse_override(data.get("top_right_repeat_override")),
+            bottom_left_repeat_override=parse_override(data.get("bottom_left_repeat_override")),
+            bottom_right_repeat_override=parse_override(data.get("bottom_right_repeat_override")),
         )
         document.validate()
         return document
