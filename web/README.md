@@ -13,7 +13,7 @@ they should rarely touch the same file.
 
 | | Chunk 4: grid and tools | Chunk 5: side panels | Chunk 6: files |
 |---|---|---|---|
-| Python | `kvale_web/grid/` (`canvas`, `tools`, `target`, `zoom`, `rulers`, `overview`) | `kvale_web/panels/` (`colours`, `symmetry`, `grid_settings`, `colour_dialog`, `thread_picker`, `lines`, `thread_key`) | `kvale_web/files.py` (may become `files/`) |
+| Python | `kvale_web/grid/` (`canvas`, `tools`, `target`, `zoom`, `rulers`, `overview`) | `kvale_web/panels/` (`colours`, `symmetry`, `grid_settings`, `colour_dialog`, `thread_picker`, `lines`, `thread_key`) | `kvale_web/files/` (`logic`, `browser`, `views`) |
 | CSS | `grid.css` | `panels.css` | `files.css` |
 | Containers | `#tool-seg`, `#zoom-controls`, `#target-bar` (`#target-seg`, `#corner-seg`), `#end-panel`, `#editor` (`#ruler-top`, `#ruler-left`, `#grid`, `#edge-popover`), `#legend`, `#canvas-hint`, `#minimal-cell-hint`, `#mini-band`, `#preview-caption`, `<dialog id="reset-dialog">` | `#colours-card` (`#colour-slots`, `#colour-actions`, `#colour-sequence-toggle`, `#background-row`), `#symmetry-card` (`#symmetry-options`), `#grid-card` (`#grid-settings`, `#edge-toggles`), `#thread-key`, `<dialog>`s `#colour-dialog`, `#thread-dialog`, `#lines-dialog` | `#file-actions`, `#doc-info`, `#boot-restore` |
 | Strings | `tool.*`, `zoom.*`, `target.*`, `end.*`, `corner.*`, `legend.*`, `canvas.*`, `band.*`, `preview.*`, `edge.*`, `grid.colN`/`rowN`/`newColN`/`newRowN`, `list.and` | `panel.*`, `colours.*`, `symmetry.*`, `sym.*`, `grid.*`, `edges.*`, `step.*`, `dialog.*`, `thread.*`, `threads.*`, `lines.*` | `file.*`, `autosave.*`, `loading.restore` |

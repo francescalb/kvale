@@ -246,5 +246,13 @@
   "lines.cancel": "Cancel",
   "lines.apply.add": "Add",
   "lines.apply.remove": "Remove",
-  "canvas.hint.minimal": "You only stitch in the outlined part – the rest is mirrored automatically."
+  "canvas.hint.minimal": "You only stitch in the outlined part – the rest is mirrored automatically.",
+  "file.untitled": "New pattern",
+  "file.unsaved": "Changes not saved to a file",
+  "file.confirmDiscard": "Changes that are not saved to a file will be lost. Continue?",
+  "file.export.preparing": "Preparing the image …",
+  "file.error.notPattern": "This file is not a Kvale pattern.",
+  "file.error.tooNew": "This pattern was made with a newer version of Kvale. Reload the page and try again.",
+  "file.error.fetch": "Could not find the pattern in the link.",
+  "file.error.export": "Could not make the image. Please try again."
 }

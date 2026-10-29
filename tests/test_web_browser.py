@@ -37,7 +37,9 @@ DIM_ALPHA = 0.2  # kvale_web.grid.canvas.DIM_ALPHA
 
 def dimmed(colour: tuple[int, int, int]) -> tuple[int, int, int]:
     """How a cell colour looks outside the minimal cell."""
-    r, g, b = (round(c * (1 - DIM_ALPHA) + bg * DIM_ALPHA) for c, bg in zip(colour, GREY, strict=True))
+    r, g, b = (
+        round(c * (1 - DIM_ALPHA) + bg * DIM_ALPHA) for c, bg in zip(colour, GREY, strict=True)
+    )
     return r, g, b
 
 
@@ -238,7 +240,9 @@ def test_eraser_toggle(app: App) -> None:
     assert app.page.get_attribute("#tool-unpick", "aria-pressed") == "true"
     app.click_cell(3, 3)
     assert app.colour(3, 3) == WHITE
-    app.page.click("#colour-slots .slot:nth-child(1) .slot-select")  # choosing a colour leaves the eraser
+    app.page.click(
+        "#colour-slots .slot:nth-child(1) .slot-select"
+    )  # choosing a colour leaves the eraser
     assert app.page.get_attribute("#tool-cross", "aria-pressed") == "true"
     assert app.page.get_attribute("#tool-unpick", "aria-pressed") == "false"
     app.page.keyboard.press("e")  # shortcut for unpick
@@ -264,7 +268,9 @@ def test_language_switch_and_memory(app: App) -> None:
     page.wait_for_function("document.documentElement.lang === 'it'")
     assert page.text_content("#mode-edit") == "Disegna"
     assert page.text_content("#canvas-hint").startswith("Tocca o trascina")
-    assert page.get_attribute(".slot:nth-child(1) .slot-edit", "aria-label") == "Modifica il colore 1"
+    assert (
+        page.get_attribute(".slot:nth-child(1) .slot-edit", "aria-label") == "Modifica il colore 1"
+    )
     page.click("#lang-seg [data-lang=en]")
     page.wait_for_function("document.documentElement.lang === 'en'")
     assert page.text_content("#mode-edit") == "Draw"
@@ -386,13 +392,37 @@ window.kvaleDone = True
 
 # Every region a later chunk fills in (see web/README.md).
 OWNED_CONTAINERS = [
-    "doc-info", "file-actions",  # chunk 6
-    "tool-seg", "zoom-controls", "target-bar", "target-seg", "corner-seg", "end-panel",
-    "ruler-top", "ruler-left", "grid", "edge-popover", "legend", "canvas-hint",
-    "mini-band", "preview-caption", "reset-dialog",  # chunk 4
-    "colours-card", "colour-slots", "colour-actions", "colour-sequence-toggle",
-    "background-row", "symmetry-card", "symmetry-options", "grid-card", "grid-settings",
-    "edge-toggles", "thread-key", "colour-dialog", "thread-dialog", "lines-dialog",  # chunk 5
+    "doc-info",
+    "file-actions",  # chunk 6
+    "tool-seg",
+    "zoom-controls",
+    "target-bar",
+    "target-seg",
+    "corner-seg",
+    "end-panel",
+    "ruler-top",
+    "ruler-left",
+    "grid",
+    "edge-popover",
+    "legend",
+    "canvas-hint",
+    "mini-band",
+    "preview-caption",
+    "reset-dialog",  # chunk 4
+    "colours-card",
+    "colour-slots",
+    "colour-actions",
+    "colour-sequence-toggle",
+    "background-row",
+    "symmetry-card",
+    "symmetry-options",
+    "grid-card",
+    "grid-settings",
+    "edge-toggles",
+    "thread-key",
+    "colour-dialog",
+    "thread-dialog",
+    "lines-dialog",  # chunk 5
 ]
 
 
@@ -448,7 +478,12 @@ def test_size_and_repeats(app: App) -> None:
     page.press("#grid-repeats_y", "Tab")
     assert page.input_value("#grid-repeats_y") == "1"
     data = document(app)
-    assert (data["unit_width"], data["unit_height"], data["repeats_x"], data["repeats_y"]) == (13, 12, 100, 1)
+    assert (data["unit_width"], data["unit_height"], data["repeats_x"], data["repeats_y"]) == (
+        13,
+        12,
+        100,
+        1,
+    )
 
     # The outer columns and rows: a switch each.
     page.click("#edge-list [data-edge=left]")
@@ -632,3 +667,194 @@ def test_background_colour_and_thread_list(app: App) -> None:
     assert page.is_visible("#thread-key")
     assert page.locator("#thread-key li").count() == 1
     assert page.text_content("#thread-key li") == "Egen farge#b1172b"
+
+
+# Files (chunk 6): open, save, PNG export, autosave and ?example= -------------
+
+EXAMPLE = ROOT / "examples" / "flower-band.json"
+
+
+@pytest.fixture
+def file_page(context: Any, site_url: str) -> Iterator[Any]:
+    page = context.new_page()
+    page.goto(site_url + "i18n/nb.json")
+    page.evaluate("localStorage.clear()")
+    # Accept "unsaved changes" questions (confirm and beforeunload).
+    page.on("dialog", lambda dialog: dialog.accept())
+    yield page
+    page.close()
+
+
+def start(page: Any, url: str) -> App:
+    app = App(page, url)
+    page.goto(url)
+    page.wait_for_function("window.kvaleReady === true", timeout=BOOT_TIMEOUT_MS)
+    return app
+
+
+def wait_dirty(page: Any, dirty: bool) -> None:
+    value = "true" if dirty else "false"
+    page.wait_for_function(f"document.getElementById('doc-info').dataset.dirty === '{value}'")
+
+
+def wait_name(page: Any, name: str) -> None:
+    page.wait_for_function(f"document.getElementById('doc-name').textContent === {name!r}")
+
+
+def preview_matches(app: App, document_path: Path) -> None:
+    from kvale.core import build_colour_grid
+    from kvale.core.serialization import load_document
+
+    grid = build_colour_grid(load_document(document_path))
+    app.page.click("#mode-preview")
+    for x, y in [(0, 0), (5, 3), (17, 9), (40, 20)]:
+        assert app.colour(x, y) == tuple(bytes.fromhex(grid[y][x].lstrip("#"))), (x, y)
+    app.page.click("#mode-edit")
+
+
+def test_file_buttons_and_doc_info(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url)
+    labels = page.locator("#file-actions .btn").all_text_contents()
+    assert labels == ["Ny", "Åpne", "Lagre", "Lagre bilde"]
+    assert page.is_visible("#doc-info")
+    assert page.text_content("#doc-name") == "Nytt mønster"
+    assert page.is_hidden("#doc-unsaved")
+    app.click_cell(0, 0)
+    wait_dirty(page, True)
+    assert page.is_visible("#doc-unsaved")
+    assert page.text_content("#autosave-note").startswith("Lagret i nettleseren kl.")
+    page.keyboard.press("Control+z")  # back to the saved state
+    wait_dirty(page, False)
+    page.click("#lang-seg [data-lang=en]")
+    wait_name(page, "New pattern")
+    assert app.errors == []
+
+
+def test_open_via_file_input_and_save_round_trip(file_page: Any, site_url: str) -> None:
+    from kvale.core.serialization import load_document
+    from kvale_web.files.logic import parse_document
+
+    page = file_page
+    app = start(page, site_url)
+    page.set_input_files("#file-input", str(EXAMPLE))
+    wait_name(page, "flower-band.json")
+    assert page.is_disabled("#undo")
+    preview_matches(app, EXAMPLE)
+
+    app.click_cell(0, 0, button="right")
+    app.click_cell(0, 0)
+    wait_dirty(page, True)
+    with page.expect_download() as info:
+        page.keyboard.press("Control+s")
+    download = info.value
+    assert download.suggested_filename == "flower-band.json"
+    saved = parse_document(Path(download.path()).read_text("utf-8"))
+    expected = load_document(EXAMPLE)
+    expected.erase_mark(0, 0)
+    expected.set_mark(0, 0, 0)
+    assert saved.to_dict() == expected.to_dict()
+    wait_dirty(page, False)
+    assert app.errors == []
+
+
+def test_open_bad_file_shows_a_message(file_page: Any, site_url: str) -> None:
+    import json
+
+    page = file_page
+    app = start(page, site_url)
+    bad = {"name": "bad.json", "mimeType": "application/json", "buffer": b"nope"}
+    page.set_input_files("#file-input", files=[bad])
+    page.wait_for_selector("#toast:not([hidden])")
+    assert page.text_content("#toast-message") == "Denne filen er ikke et Kvale-mønster."
+    newer = json.dumps({"palette_sequences": [["#fff"]], "format_version": 99}).encode()
+    page.set_input_files(
+        "#file-input", files=[{"name": "new.json", "mimeType": "application/json", "buffer": newer}]
+    )
+    page.wait_for_function(
+        "document.getElementById('toast-message').textContent.startsWith('Mønsteret er laget')"
+    )
+    assert page.text_content("#doc-name") == "Nytt mønster"
+    assert app.errors == []
+
+
+def test_new_asks_first_then_clears(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url)
+    asked: list[str] = []
+    page.on("dialog", lambda dialog: asked.append(dialog.type))
+    page.click("#file-new")  # nothing to lose: no question
+    assert asked == []
+    app.click_cell(2, 2)
+    wait_dirty(page, True)
+    page.click("#file-new")
+    wait_dirty(page, False)
+    assert asked == ["confirm"]
+    assert app.colour(2, 2) == WHITE
+    assert page.is_disabled("#undo")
+    assert app.errors == []
+
+
+def test_png_export(file_page: Any, site_url: str) -> None:
+    import io
+
+    from PIL import Image
+
+    from kvale.core import build_colour_grid
+    from kvale.core.serialization import load_document
+
+    page = file_page
+    app = start(page, site_url)
+    page.set_input_files("#file-input", str(EXAMPLE))
+    wait_name(page, "flower-band.json")
+    with page.expect_download(timeout=BOOT_TIMEOUT_MS) as info:
+        page.click("#file-export")
+    download = info.value
+    assert download.suggested_filename == "flower-band.png"
+    data = Path(download.path()).read_bytes()
+    assert data.startswith(b"\x89PNG\r\n\x1a\n")
+    image = Image.open(io.BytesIO(data)).convert("RGB")
+    grid = build_colour_grid(load_document(EXAMPLE))
+    assert image.size == (len(grid[0]) * 16, len(grid) * 16)
+    assert image.getpixel((5 * 16 + 8, 3 * 16 + 8)) == tuple(bytes.fromhex(grid[3][5].lstrip("#")))
+    page.wait_for_function("!document.getElementById('file-export').disabled")
+    assert page.text_content("#file-export") == "Lagre bilde"
+    assert app.errors == []
+
+
+def test_autosave_restores_after_reload(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url)
+    app.click_cell(3, 4)
+    page.wait_for_function("(localStorage.getItem('kvale-autosave') || '').includes('\"x\":3')")
+    app = start(page, site_url)  # reload
+    assert app.colour(3, 4) == RED
+    assert page.is_disabled("#undo")  # a fresh history
+    assert page.get_attribute("#doc-info", "data-dirty") == "true"  # still not in a file
+    assert page.is_visible("#autosave-note")
+    assert app.errors == []
+
+
+def test_example_from_url(file_page: Any, site_url: str) -> None:
+    page = file_page
+    app = start(page, site_url + "?example=flower-band")
+    assert page.text_content("#doc-name") == "flower-band.json"
+    assert page.get_attribute("#doc-info", "data-dirty") == "false"
+    assert "example" not in page.url  # a reload restores the autosave instead
+    preview_matches(app, EXAMPLE)
+    assert app.errors == []
+
+
+def test_data_link_and_missing_example(file_page: Any, site_url: str) -> None:
+    from kvale_web.files.logic import encode_data_hash
+
+    page = file_page
+    app = start(page, site_url + "#" + encode_data_hash(EXAMPLE.read_text("utf-8")))
+    preview_matches(app, EXAMPLE)
+    assert page.text_content("#doc-name") == "Nytt mønster"
+
+    page.evaluate("localStorage.clear()")
+    app = start(page, site_url + "?example=no-such-example")
+    assert page.text_content("#toast-message") == "Fant ikke mønsteret i lenken."
+    # The failed fetch is the one console error expected.
+    assert all("404" in error or "no-such-example" in error for error in app.errors)
