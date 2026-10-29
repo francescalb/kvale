@@ -15,6 +15,10 @@ CLI, SVG exporter or embroidery-format plugin.
 
 - Click-to-paint editor for a recurring grid unit
 - Live expansion by mirror planes and rotations
+- Minimal cell (web app): with symmetry on, you draw only in the smallest part
+  of the unit that the symmetry copies onto the rest (for example the top-left
+  quarter for two mirrors, a triangle for a diagonal). The rest is greyed out,
+  and the minimal cell is outlined. The Tkinter app still lets you paint anywhere.
 - Repeated-band preview
 - Backstitch (`Attersting`): a second tool that draws lines between grid
   intersections, expanded by the same symmetry as the cross stitches
@@ -88,7 +92,12 @@ A UI holds one `Editor`, calls its methods for every change and draws
 
 `kvale.core.editing` has the helpers a UI needs to draw and validate input, such
 as `editor_bounds`, `visible_backstitches`, `hidden_backstitches`,
-`can_remove_grid_line`, `grid_line_for_place` and `max_line_number`. The editor
+`can_remove_grid_line`, `grid_line_for_place` and `max_line_number`.
+`kvale.core.symmetry.minimal_cell(width, height, operations)` returns the
+editable cells under a symmetry (one per orbit), and
+`backstitch_in_minimal_cell(start, end, cells)` tells whether a backstitch may
+be drawn there. A UI restricts input with them; the stored data is unchanged,
+so marks outside the minimal cell (from older files) still render. The editor
 keeps undo/redo history; wrap a drag-paint stroke in `with editor.batch():` to
 make it one undo step. Edits that switch off square-only symmetry return the
 removed operations in `EditResult.removed_symmetry`.

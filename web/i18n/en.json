@@ -19,5 +19,6 @@
   "diag_main": "Main diagonal",
   "diag_anti": "Anti-diagonal",
   "hint": "Left-click paints, right-click erases. Drag to paint several cells.",
-  "symmetry_removed": "Switched off because the unit is not square: {operations}"
+  "symmetry_removed": "Switched off because the unit is not square: {operations}",
+  "minimal_cell_hint": "You draw in the smallest cell; the rest is mirrored automatically."
 }

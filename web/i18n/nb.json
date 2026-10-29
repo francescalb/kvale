@@ -19,5 +19,6 @@
   "diag_main": "Hoveddiagonal",
   "diag_anti": "Motdiagonal",
   "hint": "Venstreklikk maler, høyreklikk visker. Dra for å male flere ruter.",
-  "symmetry_removed": "Slått av fordi enheten ikke er kvadratisk: {operations}"
+  "symmetry_removed": "Slått av fordi enheten ikke er kvadratisk: {operations}",
+  "minimal_cell_hint": "Du tegner i den minste ruten; resten speiles automatisk."
 }

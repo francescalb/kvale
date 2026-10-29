@@ -5,8 +5,10 @@ Belongs here: drawing the editable unit and the repeat preview, pointer input
 grid edge, and zoom.
 
 ``GridView`` re-renders on the ``DOCUMENT`` and ``VIEW`` topics. All edits go
-through ``AppState.edit`` so they get undo/redo. After each render the canvas
-carries ``data-redraw-ms``, ``data-cell-size``, ``data-origin-x`` and
+through ``AppState`` so they get undo/redo. Only the minimal cell
+(``AppState.editable_cells``) can be painted: the rest of the unit is drawn
+dimmed, the minimal cell gets an outline and ``#minimal-cell-hint`` is shown.
+After each render the canvas carries ``data-redraw-ms``, ``data-cell-size``, ``data-origin-x`` and
 ``data-origin-y`` (CSS pixels) so tests can find cells.
 
 Python->JS calls cost about a microsecond each, so avoid one call per cell for
@@ -24,12 +26,18 @@ from pyscript import document, window
 
 from kvale.core.renderer import build_colour_grid
 from kvale.core.symmetry import expand_marks
-from kvale_web.dom import Bindings, Element
+from kvale_web.dom import Bindings, Element, by_id
 from kvale_web.state import DOCUMENT, VIEW, AppState
 
 GRID_LINE = "#d6d3cc"
 SEED_BORDER = "#1f1d1a"
 HOVER_TINT = "rgba(60, 90, 160, 0.10)"
+# Cells outside the minimal cell are greyed with the muted text colour
+# (``--color-muted``) at this opacity: dimmed but still readable. The minimal
+# cell is outlined in ``--color-accent``.
+DIM_ALPHA = 0.2
+DIM_TOKEN, DIM_FALLBACK = "--color-muted", "#6b665e"
+OUTLINE_TOKEN, OUTLINE_FALLBACK = "--color-accent", "#b1172b"
 EDIT_MAX_CELL = 44
 PREVIEW_MAX_CELL = 18
 MIN_CELL = 4
@@ -59,6 +67,7 @@ class GridView:
         self.hover: Cell | None = None
         self._drag_action: str | None = None
         self._last_cell: Cell | None = None
+        self.hint = by_id("minimal-cell-hint")
 
         self.bindings = Bindings()
         self.bindings.on(canvas, "pointerdown", self.on_pointer_down)
@@ -79,10 +88,12 @@ class GridView:
 
     def render(self) -> None:
         start = time.perf_counter()
+        restricted = False
         if self.state.mode == "edit":
-            self._draw_editor()
+            restricted = self._draw_editor()
         else:
             self._draw_preview()
+        self.hint.hidden = not restricted
         dataset = self.canvas.dataset
         dataset.redrawMs = f"{(time.perf_counter() - start) * 1000:.2f}"
         dataset.cellSize = str(self.cell_size)
@@ -118,7 +129,13 @@ class GridView:
         ctx.lineWidth = 1
         ctx.stroke()
 
-    def _draw_editor(self) -> None:
+    def _token(self, name: str, fallback: str) -> str:
+        """The value of a CSS custom property (design token) on the page."""
+        value = str(window.getComputedStyle(document.documentElement).getPropertyValue(name))
+        return value.strip() or fallback
+
+    def _draw_editor(self) -> bool:
+        """Draw the unit. Returns True when only a part of it (the minimal cell) is editable."""
         doc = self.state.document
         width, height = doc.unit_width, doc.unit_height
         self._fit(width, height, EDIT_MAX_CELL)
@@ -145,7 +162,20 @@ class GridView:
             ctx.fillRect(ox, oy + hy * size, width * size, size)
             ctx.fillRect(ox + hx * size, oy, size, height * size)
 
+        editable = self.state.editable_cells
+        restricted = len(editable) < width * height
+        if restricted:
+            ctx.globalAlpha = DIM_ALPHA
+            ctx.fillStyle = self._token(DIM_TOKEN, DIM_FALLBACK)
+            for y in range(height):
+                for x in range(width):
+                    if (x, y) not in editable:
+                        ctx.fillRect(ox + x * size, oy + y * size, size, size)
+            ctx.globalAlpha = 1
+
         self._grid_lines(width, height)
+        if restricted:
+            self._outline(editable)
 
         # Seed marks get an inset border; generated copies do not.
         inset = max(3, size // 6)
@@ -158,6 +188,31 @@ class GridView:
                 size - 2 * inset,
                 size - 2 * inset,
             )
+        return restricted
+
+    def _outline(self, cells: frozenset[Cell]) -> None:
+        """Stroke the outline of a set of cells: every cell side with no cell beyond it."""
+        ctx, size = self.ctx, self.cell_size
+        ox, oy = self.origin_x, self.origin_y
+        ctx.beginPath()
+        for x, y in cells:
+            left, top = ox + x * size, oy + y * size
+            if (x, y - 1) not in cells:
+                ctx.moveTo(left, top)
+                ctx.lineTo(left + size, top)
+            if (x, y + 1) not in cells:
+                ctx.moveTo(left, top + size)
+                ctx.lineTo(left + size, top + size)
+            if (x - 1, y) not in cells:
+                ctx.moveTo(left, top)
+                ctx.lineTo(left, top + size)
+            if (x + 1, y) not in cells:
+                ctx.moveTo(left + size, top)
+                ctx.lineTo(left + size, top + size)
+        ctx.strokeStyle = self._token(OUTLINE_TOKEN, OUTLINE_FALLBACK)
+        ctx.lineWidth = 3
+        ctx.lineCap = "square"
+        ctx.stroke()
 
     def _draw_preview(self) -> None:
         grid = build_colour_grid(self.state.document)
@@ -197,12 +252,11 @@ class GridView:
         return x, y
 
     def _apply(self, cell: Cell, action: str) -> None:
-        x, y = cell
+        # Cells outside the minimal cell are ignored by the state.
         if action == "erase":
-            self.state.edit(lambda editor: editor.erase(x, y))
+            self.state.erase_cell(*cell)
         else:
-            slot = self.state.active_slot
-            self.state.edit(lambda editor: editor.paint(x, y, slot))
+            self.state.paint_cell(*cell)
 
     def on_pointer_down(self, event: Any) -> None:
         if self.state.mode != "edit":

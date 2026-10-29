@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+import functools
+from collections.abc import Collection, Iterable, Sequence
 from typing import Literal
 
 from kvale.core.model import Backstitch, Mark
@@ -201,3 +202,89 @@ def expand_backstitches(
                     result[transformed.key] = transformed
                     changed = True
     return list(result.values())
+
+
+# Minimal cell -----------------------------------------------------------
+
+
+def _orbit(x: int, y: int, width: int, height: int, operations: Sequence[str]) -> set[tuple[int, int]]:
+    """Every cell that the operations (applied repeatedly) map cell (x, y) to."""
+    orbit = {(x, y)}
+    pending = [(x, y)]
+    while pending:
+        point = pending.pop()
+        for operation in operations:
+            image = transform_point(*point, width, height, operation)
+            if image not in orbit:
+                orbit.add(image)
+                pending.append(image)
+    return orbit
+
+
+@functools.lru_cache(maxsize=64)
+def _minimal_cell(width: int, height: int, operations: tuple[str, ...]) -> frozenset[tuple[int, int]]:
+    def rank(cell: tuple[int, int]) -> tuple[bool, int, int]:
+        x, y = cell
+        # Prefer the top-left quarter (centre row/column included), then the
+        # top-most, then the left-most cell.
+        in_top_left = 2 * x <= width - 1 and 2 * y <= height - 1
+        return (not in_top_left, y, x)
+
+    cells: set[tuple[int, int]] = set()
+    seen: set[tuple[int, int]] = set()
+    for y in range(height):
+        for x in range(width):
+            if (x, y) in seen:
+                continue
+            orbit = _orbit(x, y, width, height, operations)
+            seen |= orbit
+            cells.add(min(orbit, key=rank))
+    return frozenset(cells)
+
+
+def minimal_cell(width: int, height: int, operations: Iterable[str]) -> frozenset[tuple[int, int]]:
+    """The cells of the unit the user edits: one cell for every symmetry orbit.
+
+    The operations, applied repeatedly, copy these cells onto the whole unit,
+    and no two of them are copies of each other. ``operations`` go through
+    ``normalise_symmetry`` first, so square-only ones are ignored on a
+    non-square unit. Each orbit is represented by its member in the top-left
+    quarter of the unit (the centre row and column of an odd size count as
+    part of it), and among those by the top-most, then left-most member. That
+    gives, for example:
+
+    - identity: the whole unit;
+    - mirror_x: the left half; mirror_y and rotate_180: the top half (plus the
+      left half of the centre row for rotate_180 with an odd height);
+    - mirror_x + mirror_y, or rotate_90: the top-left quarter;
+    - diag_main / diag_anti: the triangle above the diagonal;
+    - all eight operations: the top-left eighth (a triangle).
+    """
+    allowed, _removed = normalise_symmetry(operations, width, height)
+    if width <= 0 or height <= 0:
+        return frozenset()
+    return _minimal_cell(width, height, tuple(allowed))
+
+
+def backstitch_in_minimal_cell(
+    start: tuple[int, int],
+    end: tuple[int, int],
+    cells: Collection[tuple[int, int]],
+) -> bool:
+    """Whether a backstitch from ``start`` to ``end`` may be drawn in the minimal cell.
+
+    ``cells`` is the result of ``minimal_cell``. Backstitches join grid
+    intersections, so they run along grid lines or across cells. One is
+    editable when its midpoint lies in the closed area covered by ``cells``:
+    inside it, on its outline or on a mirror axis along its edge. Symmetry
+    maps cells onto cells and keeps midpoints, so every set of symmetric
+    copies of a backstitch has at least one editable member.
+    """
+    double_x = start[0] + end[0]
+    double_y = start[1] + end[1]
+
+    def touching(double: int) -> tuple[int, ...]:
+        # Cells whose closed interval [c, c + 1] holds the coordinate double / 2.
+        return (double // 2 - 1, double // 2) if double % 2 == 0 else (double // 2,)
+
+    return any((x, y) in cells for x in touching(double_x) for y in touching(double_y))
