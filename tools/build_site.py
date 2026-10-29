@@ -5,7 +5,8 @@
     python tools/build_site.py --serve 8765
 
 The site is ``web/`` plus the browser-safe part of ``src/kvale`` (the package
-``__init__`` and ``kvale.core``; not the Tkinter GUI). The ``[files]`` table of
+``__init__`` and ``kvale.core``; not the Tkinter GUI) and the example patterns
+``examples/*.json`` (opened with ``?example=<name>``). The ``[files]`` table of
 ``pyscript.toml`` is generated from the Python files found plus the package data
 of ``kvale`` (such as ``kvale/core/dmc_palette.json``), so it never needs editing
 by hand. Only the standard library is used.
@@ -23,6 +24,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 SRC = ROOT / "src"
+# Example patterns, served as examples/<name>.json (opened with ?example=<name>).
+EXAMPLES = ROOT / "examples"
 DEFAULT_OUT = ROOT / "_site"
 # Parts of src/ that run in the browser.
 CORE_SOURCES = ("kvale/__init__.py", "kvale/core")
@@ -65,6 +68,10 @@ def build(out: Path = DEFAULT_OUT) -> Path:
         else:
             (out / source).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src_path, out / source)
+
+    (out / "examples").mkdir()
+    for example in sorted(EXAMPLES.glob("*.json")):
+        shutil.copy2(example, out / "examples" / example.name)
 
     config = out / "pyscript.toml"
     config.write_text(

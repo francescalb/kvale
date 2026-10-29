@@ -1,9 +1,11 @@
-"""Stitch tools (chunk 4): the ``#tool-seg`` buttons and the ``#canvas-hint`` text.
+"""Stitch tools: the ``#tool-seg`` buttons and the ``#canvas-hint`` text.
 
-Cross stitch and unpick work. The backstitch button (``#tool-back``) is
-disabled in ``index.html`` until chunk 4 adds backstitch drawing; enabling it
-is all this module needs. The colour chip on the cross-stitch button shows
-the active colour slot. Shortcut E toggles unpick.
+Cross stitch, backstitch and unpick. The colour chip on the cross-stitch
+button shows the active colour slot. The hint under the grid explains the
+chosen tool and what the current target offers (rulers in the unit, the
+faded neighbours of an end or a corner).
+
+Shortcuts: X cross stitch, B backstitch, E toggles unpick.
 """
 
 from __future__ import annotations
@@ -13,6 +15,7 @@ from typing import Any
 
 from kvale_web import shortcuts
 from kvale_web.dom import Bindings, by_id, query_all
+from kvale_web.grid.scene import is_corner
 from kvale_web.i18n import t
 from kvale_web.state import DOCUMENT, LANGUAGE, TOOLS, VIEW, AppState, Tool
 
@@ -30,10 +33,15 @@ class ToolPicker:
         self.buttons = query_all("#tool-seg [data-tool]")
         self.chip = by_id("tool-chip")
         self.hint = by_id("canvas-hint")
+        # The hint is built here from two strings; keep apply_translations() off it.
+        self.hint.removeAttribute("data-i18n")
+        by_id("tool-back").disabled = False
         self.bindings = Bindings()
         for button in self.buttons:
             self.bindings.on(button, "click", functools.partial(self.on_tool, str(button.dataset.tool)))
         shortcuts.register("e", lambda _event: self.toggle_unpick())
+        shortcuts.register("b", lambda _event: state.set_tool("back"))
+        shortcuts.register("x", lambda _event: state.set_tool("cross"))
         state.subscribe(lambda _topic: self.render(), DOCUMENT, VIEW, LANGUAGE)
         self.render()
 
@@ -47,12 +55,13 @@ class ToolPicker:
         self.state.set_tool("cross" if self.state.tool == "unpick" else "unpick")
 
     def render(self) -> None:
-        tool = self.state.tool
+        state = self.state
+        tool = state.tool
         for button in self.buttons:
             pressed = str(button.dataset.tool) == tool
             button.setAttribute("aria-pressed", "true" if pressed else "false")
-        palette = self.state.document.palette
-        self.chip.style.background = palette[self.state.active_slot % len(palette)]
-        # Keep data-i18n in step so apply_translations() keeps the right text.
-        self.hint.dataset.i18n = HINT_KEYS[tool]
-        self.hint.textContent = t(HINT_KEYS[tool])
+        palette = state.document.palette
+        self.chip.style.background = palette[state.active_slot % len(palette)]
+        target = state.edit_target
+        place = "canvas.hint.edges" if target == "unit" else "canvas.hint.corner" if is_corner(target) else "canvas.hint.end"
+        self.hint.textContent = f"{t(HINT_KEYS[tool])} {t(place)}"
