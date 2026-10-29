@@ -439,6 +439,109 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   .switch::after { transition: none; }
 }
 
+/* ---------- Edit view: "drawing in" bar and end pieces ---------- */
+.edit-view { width: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+.targetbar { width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-2) var(--space-3); }
+.targetbar .tlabel { font-size: var(--text-sm); font-weight: 700; color: var(--text-muted); }
+.targetseg button { position: relative; gap: 6px; }
+.targetseg svg.ticon { width: 30px; height: 20px; flex: none; }
+.targetseg .changed { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+
+.endpanel {
+  width: 100%; max-width: 1000px; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-5);
+  padding: var(--space-3) var(--space-4); background: var(--surface);
+  border: 2px dashed var(--accent); border-radius: var(--radius-md);
+}
+.endpanel .who { flex: 1 1 320px; min-width: 0; display: flex; gap: var(--space-3); align-items: flex-start; }
+.endpanel .who svg { width: 46px; height: 30px; flex: none; margin-top: 4px; }
+.endpanel h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg); line-height: 1.2; }
+.endpanel p { margin: 2px 0 0; font-size: var(--text-sm); color: var(--text-muted); }
+.endpanel .endsummary { font-size: var(--text-xs); margin-top: 4px; color: var(--text); }
+.endpanel .ext { display: flex; flex-direction: column; gap: 2px; }
+.endpanel .ext label { font-size: var(--text-sm); font-weight: 700; }
+.endpanel .ext .stepper { width: 150px; }
+.endpanel .ext small { font-size: var(--text-xs); color: var(--text-muted); }
+.endpanel .actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.btn.danger-text { color: var(--accent); }
+
+/* legend keys */
+.legend .key { width: 22px; height: 22px; border-radius: 2px; background: #a7132b; position: relative; flex: none; }
+.legend .k-seed::after, .legend .k-added::after { content: ""; position: absolute; inset: 4px; border: 2px solid #fff; }
+.legend .k-back { background: transparent; }
+.legend .k-back::after { content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 3px; border-radius: 2px; background: var(--text); transform: rotate(-35deg); }
+.legend .k-removed { background: #f5f1e8; box-shadow: inset 0 0 0 1px var(--swatch-ring); }
+.legend .k-removed::before, .legend .k-removed::after { content: ""; position: absolute; left: 3px; right: 3px; top: 10px; height: 2px; background: #b3261e; transform: rotate(45deg); }
+.legend .k-removed::after { transform: rotate(-45deg); }
+.legend .k-extra { background: #e6e3e2; box-shadow: inset 0 0 0 2px rgba(47, 93, 158, .55); }
+.legend .k-nb { opacity: .35; }
+
+.miniband canvas { cursor: pointer; }
+.miniband .hint { text-align: left; font-size: var(--text-xs); }
+
+/* ruler in end-piece mode: labels only */
+.ruler button:disabled { cursor: default; }
+.ruler button:disabled:hover { background: transparent; color: var(--text-muted); }
+.ruler button:disabled:hover::after { content: none; }
+.ruler button.extra { color: var(--focus); }
+
+.popover .note { margin: var(--space-1) var(--space-2) var(--space-2); font-size: var(--text-xs); color: var(--text-muted); }
+.popover .btn.more { color: var(--text-muted); font-size: var(--text-sm); }
+.popover hr { border: 0; border-top: 1px solid var(--border); margin: var(--space-1) 0; }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 70;
+  display: flex; align-items: center; gap: var(--space-3); max-width: calc(100vw - 32px);
+  padding: 6px 6px 6px var(--space-4); border-radius: var(--radius-md);
+  background: var(--text); color: var(--bg); box-shadow: var(--shadow); font-size: var(--text-sm);
+}
+.toast .btn { min-height: 38px; background: transparent; color: inherit; border-color: transparent; text-decoration: underline; }
+.toast .btn:hover { background: rgba(127, 127, 127, .25); }
+
+/* ---------- Dialog extras ---------- */
+.dlg footer .left { margin-right: auto; }
+.dlg .content:focus { outline: none; }
+.dlg .row-btns { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.thread { position: relative; }
+.searchbox {
+  width: 100%; min-height: var(--hit); padding: 0 var(--space-3);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface);
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chipbtn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 var(--space-3);
+  border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface); font-size: var(--text-sm);
+}
+.chipbtn:hover { border-color: var(--border-strong); }
+.chipbtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.chipbtn i { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--swatch-ring); }
+.dmc-list { max-height: min(42vh, 360px); overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+.dmc-row {
+  display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: var(--hit);
+  padding: 4px var(--space-3); border: 0; border-bottom: 1px solid var(--surface-2); background: transparent; text-align: left; font-size: var(--text-sm);
+}
+.dmc-row:hover { background: var(--surface-2); }
+.dmc-row[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-soft-text); }
+.dmc-sw { width: 34px; height: 30px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--swatch-ring); flex: none; }
+.dmc-num { font-weight: 700; width: 4.2em; flex: none; font-variant-numeric: tabular-nums; }
+.dmc-empty { padding: var(--space-4); color: var(--text-muted); font-size: var(--text-sm); text-align: center; }
+.dmc-detail { display: flex; align-items: center; gap: var(--space-3); min-height: 48px; font-size: var(--text-sm); }
+.dmc-big { width: 72px; height: 48px; border-radius: var(--radius-sm); box-shadow: inset 0 0 0 1px var(--swatch-ring); flex: none; background: var(--surface-sunken); }
+.dmc-meta { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--text-xs); color: var(--text-muted); }
+
+.optgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.opt {
+  min-height: var(--hit); padding: var(--space-2) var(--space-3); text-align: left;
+  border: 2px solid var(--border); border-radius: var(--radius-md); background: var(--surface); font-size: var(--text-sm);
+}
+.opt:hover { border-color: var(--border-strong); }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-soft-text); font-weight: 700; }
+.lines-preview { display: flex; justify-content: center; padding: var(--space-3); background: var(--surface-sunken); border-radius: var(--radius-md); }
+.lines-preview svg { max-width: 100%; height: auto; }
+.effect { margin: 0; font-size: var(--text-sm); }
+.effect.warn { color: var(--notice-text); background: var(--notice-bg); border: 1px solid var(--notice-border); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); }
+.effect small { display: block; color: var(--text-muted); font-size: var(--text-xs); margin-top: 2px; }
+
 /* ---------- Mockup-only controls (not part of the design) ---------- */
 .mock {
   position: fixed; right: 12px; bottom: 12px; z-index: 60; font-size: var(--text-xs);
@@ -454,7 +557,6 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 @media (max-width: 1500px) { .fit-label { display: none; } }
 .lang-short { display: none; }
 @media (max-width: 1180px) {
-  /* keep file labels (plain words beat icons); shorten the language names instead */
   .lang-long { display: none; }
   .lang-short { display: inline; }
   .file-actions .btn { padding: 0 var(--space-3); }
@@ -472,13 +574,22 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   .topbar { padding: var(--space-3); gap: var(--space-3); }
   .brand { width: 100%; }
   .file-actions { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); }
-  .file-actions .btn { width: auto; flex-direction: column; gap: 0; min-height: 52px; font-size: var(--text-xs); }
-  .file-actions .btn span { display: inline; }
+  .file-actions .btn { width: auto; flex-direction: column; gap: 0; min-height: 52px; font-size: var(--text-xs); white-space: normal; text-align: center; line-height: 1.15; }
   .prefs { width: 100%; justify-content: space-between; }
   .stage-toolbar { gap: var(--space-2); }
   .stage-toolbar .spacer { display: none; }
-  .stage-toolbar > .seg:first-child { width: 100%; }
-  .stage-toolbar > .seg:first-child button { flex: 1; }
+  .stage-toolbar > .seg { width: 100%; }
+  .stage-toolbar > .seg button { flex: 1; padding: 0 var(--space-1); }
+  #toolSeg button { flex-direction: column; gap: 0; min-height: 52px; font-size: var(--text-xs); }
+  #toolSeg .chip { position: absolute; top: 6px; right: 6px; width: 12px; height: 12px; }
+  #toolSeg button { position: relative; }
+  .targetbar .tlabel { width: 100%; text-align: center; }
+  .targetseg { width: 100%; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .targetseg button { flex-direction: column; gap: 2px; padding: 4px 2px; min-height: 58px; font-size: 0.75rem; white-space: normal; line-height: 1.1; text-align: center; }
+  .targetseg .changed { position: absolute; top: 5px; right: 5px; }
+  .endpanel { padding: var(--space-3); }
+  .endpanel .actions { width: 100%; }
+  .endpanel .actions .btn { flex: 1; }
   .stage-body { padding: var(--space-3); }
   .editor { --ruler: 24px; }
   .panel { display: flex; }
@@ -487,6 +598,9 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   .sym-grid { grid-template-columns: 1fr 1fr; }
   .sym svg { width: 34px; height: 34px; }
   .dlg header, .dlg .content, .dlg footer { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .dlg footer { flex-wrap: wrap; }
+  .dlg footer .left { width: 100%; }
+  .toast { bottom: 64px; }
 }
 </style>
 </head>
@@ -503,7 +617,9 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   <symbol id="i-minus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M16.5 16.5L21 21"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M11 8v6M16.5 16.5L21 21"/></symbol>
   <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
-  <symbol id="i-needle" viewBox="0 0 24 24"><path d="M4 20L18 6"/><ellipse cx="19" cy="5" rx="1.6" ry="2.6" transform="rotate(45 19 5)"/><path d="M4 20c3-1 4 1 7 0s3-3 6-2"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5" stroke-opacity=".35"/><path d="M7 7l10 10M17 7L7 17" stroke-width="2.6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><circle cx="4" cy="20" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="20" cy="4" r="1.6"/><path d="M5.2 18.8l5.6-5.6M13.2 10.8l5.6-5.6" stroke-width="2.6"/></symbol>
+  <symbol id="i-unpick" viewBox="0 0 24 24"><path d="M3 21l8.5-8.5"/><path d="M11.5 12.5c.3-3.8 3.4-7.6 8.5-8.5-.9 5.1-4.7 8.2-8.5 8.5z"/><circle cx="16.3" cy="7.7" r="1.1"/></symbol>
   <symbol id="i-eraser" viewBox="0 0 24 24"><path d="M15 4l5 5-9 9H6l-3-3z"/><path d="M9 10l5 5M11 20h9"/></symbol>
   <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></symbol>
   <symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
@@ -515,6 +631,9 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></symbol>
   <symbol id="i-band" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="1"/><path d="M7 7v10M12 7v10M17 7v10"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></symbol>
+  <symbol id="i-rows" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12h16"/><path d="M12 4v16" stroke-dasharray="2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></symbol>
 </svg>
 
 <!-- ============ LOADING STATE ============ -->
@@ -525,10 +644,10 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
       <span class="wordmark">Kvale</span>
     </div>
     <svg class="stitch-row" viewBox="0 0 260 30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></svg>
-    <h1 data-i18n="loading.title">Gjør klar Kvale …</h1>
+    <h1 data-i18n="loading.title"></h1>
     <div class="thread-bar" aria-hidden="true"></div>
-    <p data-i18n="loading.body">Første gang kan det ta noen sekunder. Neste gang går det raskere.</p>
-    <p data-i18n="loading.restore">Mønsteret du jobbet med sist, åpnes når alt er klart.</p>
+    <p data-i18n="loading.body"></p>
+    <p data-i18n="loading.restore"></p>
   </div>
 </div>
 
@@ -540,15 +659,15 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
       <span class="wordmark">Kvale</span>
       <div class="docinfo">
         <span class="docname">flower-band.json</span>
-        <span class="autosave" data-i18n-title="autosave.hint" title=""><span class="dot" aria-hidden="true"></span><span data-i18n="autosave.saved">Lagret i nettleseren kl. 14:32</span></span>
+        <span class="autosave" data-i18n-title="autosave.hint" title=""><span class="dot" aria-hidden="true"></span><span data-i18n="autosave.saved"></span></span>
       </div>
     </div>
 
-    <nav class="file-actions" aria-label="File">
-      <button class="btn" data-i18n-title="file.new.hint"><svg class="icon"><use href="#i-new"/></svg><span data-i18n="file.new">Ny</span></button>
-      <button class="btn" data-i18n-title="file.open.hint"><svg class="icon"><use href="#i-open"/></svg><span data-i18n="file.open">Åpne</span></button>
-      <button class="btn" data-i18n-title="file.save.hint"><svg class="icon"><use href="#i-save"/></svg><span data-i18n="file.save">Lagre</span></button>
-      <button class="btn" data-i18n-title="file.export.hint"><svg class="icon"><use href="#i-image"/></svg><span data-i18n="file.export">Lagre bilde</span></button>
+    <nav class="file-actions" data-i18n-aria="file.label">
+      <button class="btn" data-i18n-title="file.new.hint"><svg class="icon"><use href="#i-new"/></svg><span data-i18n="file.new"></span></button>
+      <button class="btn" data-i18n-title="file.open.hint"><svg class="icon"><use href="#i-open"/></svg><span data-i18n="file.open"></span></button>
+      <button class="btn" data-i18n-title="file.save.hint"><svg class="icon"><use href="#i-save"/></svg><span data-i18n="file.save"></span></button>
+      <button class="btn" data-i18n-title="file.export.hint"><svg class="icon"><use href="#i-image"/></svg><span data-i18n="file.export"></span></button>
     </nav>
 
     <div class="prefs">
@@ -566,15 +685,16 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 
   <main class="workspace">
     <!-- ===== Stage: the pattern is the hero ===== -->
-    <section class="stage" aria-label="Pattern">
+    <section class="stage" aria-label="Kvale">
       <div class="stage-toolbar">
-        <div class="seg accent" role="group" id="modeSeg">
-          <button data-mode="edit" aria-pressed="true"><svg class="icon"><use href="#i-grid"/></svg><span data-i18n="mode.edit">Tegn</span></button>
-          <button data-mode="preview" aria-pressed="false"><svg class="icon"><use href="#i-band"/></svg><span data-i18n="mode.preview">Se gjentakelsene</span></button>
+        <div class="seg accent" role="group" id="modeSeg" data-i18n-aria="mode.label">
+          <button data-mode="edit" aria-pressed="true"><svg class="icon"><use href="#i-grid"/></svg><span data-i18n="mode.edit"></span></button>
+          <button data-mode="preview" aria-pressed="false"><svg class="icon"><use href="#i-band"/></svg><span data-i18n="mode.preview"></span></button>
         </div>
         <div class="seg" role="group" id="toolSeg" data-i18n-aria="tool.label">
-          <button data-tool="paint" aria-pressed="true" data-i18n-title="tool.paint.hint"><svg class="icon"><use href="#i-needle"/></svg><span data-i18n="tool.paint">Sy</span><i class="chip" id="activeChip"></i></button>
-          <button data-tool="erase" aria-pressed="false" data-i18n-title="tool.erase.hint"><svg class="icon"><use href="#i-eraser"/></svg><span data-i18n="tool.erase">Visk ut</span></button>
+          <button data-tool="cross" aria-pressed="true" data-i18n-title="tool.cross.hint"><svg class="icon"><use href="#i-cross"/></svg><span data-i18n="tool.cross"></span><i class="chip" data-chip></i></button>
+          <button data-tool="back" aria-pressed="false" data-i18n-title="tool.back.hint"><svg class="icon"><use href="#i-back"/></svg><span data-i18n="tool.back"></span></button>
+          <button data-tool="unpick" aria-pressed="false" data-i18n-title="tool.unpick.hint"><svg class="icon"><use href="#i-unpick"/></svg><span data-i18n="tool.unpick"></span></button>
         </div>
         <div class="toolgroup">
           <button class="btn ghost icon-only" id="undoBtn" data-i18n-title="history.undo" data-i18n-aria="history.undo"><svg class="icon"><use href="#i-undo"/></svg></button>
@@ -585,46 +705,76 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
           <button class="btn ghost icon-only" id="zoomOut" data-i18n-title="zoom.out" data-i18n-aria="zoom.out"><svg class="icon"><use href="#i-minus"/></svg></button>
           <span class="zoom-label" id="zoomLabel">100 %</span>
           <button class="btn ghost icon-only" id="zoomIn" data-i18n-title="zoom.in" data-i18n-aria="zoom.in"><svg class="icon"><use href="#i-plus"/></svg></button>
-          <button class="btn ghost" id="zoomFit" data-i18n-title="zoom.fit.hint"><svg class="icon"><use href="#i-fit"/></svg><span class="fit-label" data-i18n="zoom.fit">Tilpass</span></button>
+          <button class="btn ghost" id="zoomFit" data-i18n-title="zoom.fit.hint"><svg class="icon"><use href="#i-fit"/></svg><span class="fit-label" data-i18n="zoom.fit"></span></button>
         </div>
       </div>
 
       <div class="stage-body" id="stageBody">
         <!-- Edit view -->
-        <div id="editView" class="edit-layout">
-          <div class="editor" id="editor">
-            <div class="corner"></div>
-            <div class="ruler ruler-top" id="rulerTop"></div>
-            <div class="ruler ruler-left" id="rulerLeft"></div>
-            <canvas class="cloth" id="editCanvas"></canvas>
-            <div class="popover" id="edgePop" hidden role="dialog">
-              <h3><span id="edgePopTitle">Kolonne 6</span>
-                <button class="btn close" id="edgePopClose" data-i18n-aria="edge.close" data-i18n-title="edge.close"><svg class="icon"><use href="#i-x"/></svg></button></h3>
-              <button class="btn" id="edgeBefore"><svg class="icon"><use href="#i-add"/></svg><span></span></button>
-              <button class="btn" id="edgeAfter"><svg class="icon"><use href="#i-add"/></svg><span></span></button>
-              <button class="btn danger" id="edgeRemove"><svg class="icon"><use href="#i-trash"/></svg><span></span></button>
+        <div id="editView" class="edit-view">
+          <!-- What am I drawing in: the repeat, or one of the four end pieces -->
+          <div class="targetbar">
+            <span class="tlabel" id="targetLabel" data-i18n="target.label"></span>
+            <div class="seg targetseg" role="group" id="targetSeg" aria-labelledby="targetLabel"></div>
+          </div>
+
+          <!-- Shown only while an end piece is being edited -->
+          <section class="endpanel" id="endPanel" hidden aria-live="polite">
+            <div class="who">
+              <svg id="endIcon" aria-hidden="true"></svg>
+              <div>
+                <h3 id="endTitle"></h3>
+                <p><span id="endWhere"></span> <span data-i18n="end.explain"></span></p>
+                <p class="endsummary" id="endSummary"></p>
+              </div>
             </div>
-          </div>
-          <div class="edit-side">
-          <div class="legend">
-            <span><i class="key seed"></i><span data-i18n="legend.seed">Sting du har satt</span></span>
-            <span><i class="key"></i><span data-i18n="legend.copy">Kopier fra symmetrien</span></span>
-          </div>
-          <p class="hint" id="editHint"><span data-i18n="canvas.hint.edit">Trykk i rutene for å sy. Høyreklikk visker ut.</span> <span data-i18n="canvas.hint.edges">Trykk på et tall i kanten for å legge til eller fjerne rader og kolonner.</span></p>
-          <section class="miniband">
-            <header>
-              <h3 data-i18n="band.mini.title">Slik blir bordet</h3>
-              <button class="btn ghost" id="miniOpen"><span data-i18n="band.mini.open">Vis stort</span><svg class="icon"><use href="#i-band"/></svg></button>
-            </header>
-            <canvas id="miniCanvas"></canvas>
+            <div class="ext">
+              <label for="endExt" id="endExtLabel"></label>
+              <div class="stepper"><button data-estep="-1" data-i18n-aria="step.less">−</button><input id="endExt" type="number" min="0" max="50" value="0" inputmode="numeric"><button data-estep="1" data-i18n-aria="step.more">+</button></div>
+              <small data-i18n="end.extra.hint"></small>
+            </div>
+            <div class="actions">
+              <button class="btn danger-text" id="endReset" data-i18n-title="end.reset.hint"><svg class="icon"><use href="#i-reset"/></svg><span data-i18n="end.reset"></span></button>
+              <button class="btn primary" id="endDone" data-i18n-title="end.done.hint"><svg class="icon"><use href="#i-check"/></svg><span data-i18n="end.done"></span></button>
+            </div>
           </section>
+
+          <div class="edit-layout" id="editLayout">
+            <div class="editor" id="editor">
+              <div class="corner"></div>
+              <div class="ruler ruler-top" id="rulerTop"></div>
+              <div class="ruler ruler-left" id="rulerLeft"></div>
+              <canvas class="cloth" id="editCanvas"></canvas>
+              <div class="popover" id="edgePop" hidden role="dialog">
+                <h3><span id="edgePopTitle"></span>
+                  <button class="btn close" id="edgePopClose" data-i18n-aria="edge.close" data-i18n-title="edge.close"><svg class="icon"><use href="#i-x"/></svg></button></h3>
+                <button class="btn" id="edgeBefore"><svg class="icon"><use href="#i-add"/></svg><span></span></button>
+                <button class="btn" id="edgeAfter"><svg class="icon"><use href="#i-add"/></svg><span></span></button>
+                <button class="btn danger" id="edgeRemove"><svg class="icon"><use href="#i-trash"/></svg><span></span></button>
+                <p class="note" id="edgeNote" hidden></p>
+                <hr>
+                <button class="btn more" id="edgeMore"><svg class="icon"><use href="#i-rows"/></svg><span data-i18n="edge.more"></span></button>
+              </div>
+            </div>
+            <div class="edit-side">
+              <div class="legend" id="legend"></div>
+              <p class="hint" id="editHint"></p>
+              <section class="miniband">
+                <header>
+                  <h3 data-i18n="band.mini.title"></h3>
+                  <button class="btn ghost" id="miniOpen"><span data-i18n="band.mini.open"></span><svg class="icon"><use href="#i-band"/></svg></button>
+                </header>
+                <canvas id="miniCanvas"></canvas>
+                <p class="hint" data-i18n="band.mini.hint"></p>
+              </section>
+            </div>
           </div>
         </div>
         <!-- Preview view -->
         <div id="previewView" hidden style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
           <div class="preview-wrap"><canvas id="previewCanvas"></canvas></div>
           <p class="caption" id="previewCaption"></p>
-          <p class="hint" data-i18n="preview.hint">Her kan du bare se. Gå tilbake til «Tegn» for å endre mønsteret.</p>
+          <p class="hint" data-i18n="preview.hint"></p>
         </div>
       </div>
     </section>
@@ -633,20 +783,20 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
     <aside class="panel">
       <!-- Colours -->
       <section class="card" aria-labelledby="hColours">
-        <h2 id="hColours" data-i18n="panel.colours">Farger</h2>
+        <h2 id="hColours" data-i18n="panel.colours"></h2>
         <div class="slots" id="slots"></div>
         <div class="row" style="margin-top:8px">
-          <button class="btn" id="addColour" style="flex:1"><svg class="icon"><use href="#i-add"/></svg><span data-i18n="colours.add">Legg til farge</span></button>
+          <button class="btn" id="addColour" style="flex:1"><svg class="icon"><use href="#i-add"/></svg><span data-i18n="colours.add"></span></button>
         </div>
         <div class="toggle-row">
-          <div class="text"><strong data-i18n="colours.useSeq">Bruk fargesekvens</strong><span data-i18n="colours.useSeq.hint">På: fargene skifter for hver gjentakelse. Av: bare den første fargen brukes.</span></div>
+          <div class="text"><strong data-i18n="colours.useSeq"></strong><span data-i18n="colours.useSeq.hint"></span></div>
           <div class="switch-wrap"><button class="switch" role="switch" id="useSeq" aria-checked="true" data-i18n-aria="colours.useSeq"></button></div>
         </div>
         <div class="bg-row">
           <div class="bg-swatch" id="bgSwatch"></div>
-          <div class="text"><strong data-i18n="colours.background">Stoffet (bakgrunn)</strong><span id="bgHex">#f5f1e8</span></div>
+          <div class="text"><strong data-i18n="colours.background"></strong><span data-i18n="colours.background.hint"></span><span id="bgHex"></span></div>
           <label class="btn">
-            <svg class="icon"><use href="#i-pencil"/></svg><span data-i18n="colours.change">Endre</span>
+            <svg class="icon"><use href="#i-pencil"/></svg><span data-i18n="colours.change"></span>
             <input type="color" class="visually-hidden-input" id="bgInput" value="#f5f1e8">
           </label>
         </div>
@@ -654,10 +804,10 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 
       <!-- Symmetry -->
       <section class="card" aria-labelledby="hSym">
-        <h2 id="hSym" data-i18n="panel.symmetry">Symmetri</h2>
-        <p class="intro" data-i18n="symmetry.intro">Velg hvordan stingene dine kopieres inne i mønsterruten.</p>
+        <h2 id="hSym" data-i18n="panel.symmetry"></h2>
+        <p class="intro" data-i18n="symmetry.intro"></p>
         <div class="sym-grid" id="symA"></div>
-        <p class="subhead"><span data-i18n="symmetry.squareGroup">Bare for kvadratisk rute</span></p>
+        <p class="subhead"><span data-i18n="symmetry.squareGroup"></span></p>
         <div class="notice" id="squareNotice" hidden>
           <svg class="icon"><use href="#i-info"/></svg>
           <div><span id="squareNoticeText"></span><br><button class="btn" id="makeSquare"></button></div>
@@ -665,38 +815,39 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
         <div class="sym-grid" id="symB"></div>
       </section>
 
-      <!-- Grid -->
+      <!-- Repeat and size -->
       <section class="card" aria-labelledby="hGrid">
-        <h2 id="hGrid" data-i18n="panel.grid">Rute og gjentakelser</h2>
-        <p class="subhead"><span data-i18n="grid.unit">Mønsterruten</span><small data-i18n="grid.unit.hint">Den lille ruten du tegner i, som gjentas.</small></p>
+        <h2 id="hGrid" data-i18n="panel.grid"></h2>
+        <p class="subhead"><span data-i18n="grid.unit"></span><small data-i18n="grid.unit.hint"></small></p>
         <div class="fieldgrid">
-          <div class="field"><label for="fW" data-i18n="grid.width">Bredde</label>
+          <div class="field"><label for="fW" data-i18n="grid.width"></label>
             <div class="stepper"><button data-step="fW:-1" data-i18n-aria="step.less">−</button><input id="fW" type="number" min="1" max="100" value="12" inputmode="numeric"><button data-step="fW:1" data-i18n-aria="step.more">+</button></div>
-            <div class="unit" data-i18n="grid.cells">ruter</div></div>
-          <div class="field"><label for="fH" data-i18n="grid.height">Høyde</label>
+            <div class="unit" data-i18n="grid.cells"></div></div>
+          <div class="field"><label for="fH" data-i18n="grid.height"></label>
             <div class="stepper"><button data-step="fH:-1" data-i18n-aria="step.less">−</button><input id="fH" type="number" min="1" max="100" value="12" inputmode="numeric"><button data-step="fH:1" data-i18n-aria="step.more">+</button></div>
-            <div class="unit" data-i18n="grid.cells">ruter</div></div>
+            <div class="unit" data-i18n="grid.cells"></div></div>
         </div>
-        <p class="subhead"><span data-i18n="grid.repeats">Gjentakelser</span><small data-i18n="grid.repeats.hint">Hvor mange ganger ruten gjentas i bordet (1–100).</small></p>
+        <button class="btn" id="openLines" style="width:100%;margin-top:12px"><svg class="icon"><use href="#i-rows"/></svg><span data-i18n="grid.lines"></span></button>
+        <p class="subhead"><span data-i18n="grid.repeats"></span><small data-i18n="grid.repeats.hint"></small></p>
         <div class="fieldgrid">
-          <div class="field"><label for="fRX" data-i18n="grid.across">Bortover</label>
+          <div class="field"><label for="fRX" data-i18n="grid.across"></label>
             <div class="stepper"><button data-step="fRX:-1" data-i18n-aria="step.less">−</button><input id="fRX" type="number" min="1" max="100" value="7" inputmode="numeric"><button data-step="fRX:1" data-i18n-aria="step.more">+</button></div>
-            <div class="unit" data-i18n="grid.times">ganger</div></div>
-          <div class="field"><label for="fRY" data-i18n="grid.down">Nedover</label>
+            <div class="unit" data-i18n="grid.times"></div></div>
+          <div class="field"><label for="fRY" data-i18n="grid.down"></label>
             <div class="stepper"><button data-step="fRY:-1" data-i18n-aria="step.less">−</button><input id="fRY" type="number" min="1" max="100" value="2" inputmode="numeric"><button data-step="fRY:1" data-i18n-aria="step.more">+</button></div>
-            <div class="unit" data-i18n="grid.times">ganger</div></div>
+            <div class="unit" data-i18n="grid.times"></div></div>
         </div>
 
         <div class="edges">
-          <p class="subhead"><span data-i18n="edges.title">Der rutene møtes</span></p>
-          <p class="edges-explain" data-i18n="edges.explain">Ligger en speillinje helt i kanten av ruten, blir kanten dobbel der to ruter møtes. Slå av kanten for å la naboene dele den – da sys den bare ytterst i bordet.</p>
+          <p class="subhead"><span data-i18n="edges.title"></span></p>
+          <p class="edges-explain" data-i18n="edges.explain"></p>
           <div class="edges-diagram">
             <svg id="edgeSvg" aria-hidden="true"></svg>
             <div class="diagram-key">
-              <span><i style="background:#2f5d9e"></i><span data-i18n="edges.key.cols">Venstre/høyre kolonne</span></span>
-              <span><i style="background:#c08a1e"></i><span data-i18n="edges.key.rows">Øverste/nederste rad</span></span>
+              <span><i style="background:#2f5d9e"></i><span data-i18n="edges.key.cols"></span></span>
+              <span><i style="background:#c08a1e"></i><span data-i18n="edges.key.rows"></span></span>
             </div>
-            <span class="caption" data-i18n="edges.diagramCaption">Eksempel: 3 × 2 ruter</span>
+            <span class="caption" data-i18n="edges.diagramCaption"></span>
           </div>
           <div class="edge-list" id="edgeList"></div>
         </div>
@@ -705,321 +856,860 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   </main>
 </div>
 
-<!-- ============ SEQUENCE DIALOG ============ -->
+<!-- ============ TOAST (status + undo) ============ -->
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toastMsg"></span><button class="btn" id="toastUndo" data-i18n="toast.undo"></button></div>
+
+<!-- ============ COLOUR (SEQUENCE) DIALOG ============ -->
 <dialog id="seqDialog" aria-labelledby="dlgTitle">
   <form method="dialog" class="dlg">
     <header>
-      <h2 id="dlgTitle">Farge 1</h2>
-      <p data-i18n="dialog.intro">En farge kan være én tråd, eller en rekke farger som skifter for hver gjentakelse.</p>
+      <h2 id="dlgTitle"></h2>
+      <p data-i18n="dialog.intro"></p>
     </header>
     <div class="content">
       <div class="bigbar" id="dlgBar"></div>
       <div>
-        <p class="label"><label for="dlgCount" data-i18n="dialog.count">Antall farger</label> <span class="caption">(1–24)</span></p>
+        <p class="label"><label for="dlgCount" data-i18n="dialog.count"></label> <span class="caption">(1–24)</span></p>
         <div class="stepper"><button type="button" data-dstep="-1" data-i18n-aria="step.less">−</button><input id="dlgCount" type="number" min="1" max="24" value="3" inputmode="numeric"><button type="button" data-dstep="1" data-i18n-aria="step.more">+</button></div>
       </div>
       <div>
-        <p class="label" data-i18n="dialog.parts">Trykk på en del for å velge fargen</p>
+        <p class="label" data-i18n="dialog.parts"></p>
         <div class="parts" id="dlgParts"></div>
       </div>
       <div>
-        <p class="label" id="dlgPickLabel">Farge for del 1</p>
+        <p class="label" id="dlgPickLabel"></p>
         <div class="threads" id="dlgThreads"></div>
-        <label class="btn" style="margin-top:8px">
-          <span class="chip" id="dlgCustomChip"></span><span data-i18n="dialog.custom">Egen farge …</span>
-          <input type="color" class="visually-hidden-input" id="dlgCustom">
-        </label>
+        <div class="row-btns">
+          <button type="button" class="btn" id="dlgDmc"><svg class="icon"><use href="#i-search"/></svg><span data-i18n="dialog.dmc"></span></button>
+          <label class="btn">
+            <span class="chip" id="dlgCustomChip"></span><span data-i18n="dialog.custom"></span>
+            <input type="color" class="visually-hidden-input" id="dlgCustom">
+          </label>
+        </div>
       </div>
       <div>
-        <p class="label" data-i18n="dialog.howItRepeats">Slik skifter fargen bortover i bordet:</p>
+        <p class="label" data-i18n="dialog.howItRepeats"></p>
         <div class="repeats-row" id="dlgRepeats"></div>
-        <p class="caption" id="dlgOffNote" data-i18n="dialog.offNote" hidden>Fargesekvens er slått av – bare del 1 brukes nå.</p>
+        <p class="caption" id="dlgOffNote" data-i18n="dialog.offNote" hidden></p>
       </div>
     </div>
     <footer>
-      <button class="btn" value="cancel" data-i18n="dialog.cancel">Avbryt</button>
-      <button class="btn primary" value="ok" id="dlgOk" data-i18n="dialog.ok">Bruk</button>
+      <button class="btn" value="cancel" data-i18n="dialog.cancel"></button>
+      <button class="btn primary" value="ok" id="dlgOk" data-i18n="dialog.ok"></button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ DMC PICKER ============ -->
+<dialog id="dmcDialog" aria-labelledby="dmcTitle">
+  <form method="dialog" class="dlg">
+    <header>
+      <h2 id="dmcTitle" data-i18n="dmc.title"></h2>
+      <p data-i18n="dmc.namesNote"></p>
+    </header>
+    <div class="content">
+      <div>
+        <label class="sr-only" for="dmcSearch" data-i18n="dmc.search"></label>
+        <input class="searchbox" id="dmcSearch" type="search" autocomplete="off" data-i18n-placeholder="dmc.search.placeholder">
+      </div>
+      <div class="chips" id="dmcFamilies"></div>
+      <div>
+        <div class="dmc-meta"><span id="dmcCount"></span></div>
+        <div class="dmc-list" id="dmcList" role="listbox" aria-labelledby="dmcTitle"></div>
+      </div>
+      <div class="dmc-detail"><span class="dmc-big" id="dmcBig"></span><span id="dmcDetail"></span></div>
+      <p class="caption" data-i18n="dmc.approx" style="margin:0"></p>
+    </div>
+    <footer>
+      <label class="btn left">
+        <span class="chip" id="dmcOwnChip" style="background:#808080"></span><span data-i18n="dmc.own"></span>
+        <input type="color" class="visually-hidden-input" id="dmcOwn" value="#808080">
+      </label>
+      <button class="btn" value="cancel" data-i18n="dmc.cancel"></button>
+      <button class="btn primary" value="ok" id="dmcChoose" data-i18n="dmc.choose" disabled></button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ ROWS AND COLUMNS DIALOG ============ -->
+<dialog id="linesDialog" aria-labelledby="linesTitle">
+  <form method="dialog" class="dlg">
+    <header><h2 id="linesTitle" data-i18n="lines.title"></h2></header>
+    <div class="content">
+      <div>
+        <p class="label" data-i18n="lines.action"></p>
+        <div class="seg accent" role="group" id="linesAction">
+          <button type="button" data-act="add" aria-pressed="true"><svg class="icon"><use href="#i-add"/></svg><span data-i18n="lines.add"></span></button>
+          <button type="button" data-act="remove" aria-pressed="false"><svg class="icon"><use href="#i-trash"/></svg><span data-i18n="lines.remove"></span></button>
+        </div>
+      </div>
+      <div>
+        <p class="label" data-i18n="lines.where"></p>
+        <div class="optgrid" id="linesPlaces">
+          <button type="button" class="opt" data-place="top" data-i18n="lines.place.top"></button>
+          <button type="button" class="opt" data-place="bottom" data-i18n="lines.place.bottom"></button>
+          <button type="button" class="opt" data-place="first" data-i18n="lines.place.first"></button>
+          <button type="button" class="opt" data-place="last" data-i18n="lines.place.last"></button>
+          <button type="button" class="opt" data-place="row" data-i18n="lines.place.row"></button>
+          <button type="button" class="opt" data-place="col" data-i18n="lines.place.col"></button>
+        </div>
+      </div>
+      <div id="linesNumWrap">
+        <p class="label"><label for="linesNum" data-i18n="lines.number"></label> <span class="caption" id="linesNumRange"></span></p>
+        <div class="stepper" style="max-width:180px"><button type="button" data-lstep="-1" data-i18n-aria="step.less">−</button><input id="linesNum" type="number" min="1" value="1" inputmode="numeric"><button type="button" data-lstep="1" data-i18n-aria="step.more">+</button></div>
+      </div>
+      <div class="lines-preview"><svg id="linesSvg" aria-hidden="true"></svg></div>
+      <p class="effect" id="linesEffect"></p>
+    </div>
+    <footer>
+      <button class="btn" value="cancel" data-i18n="lines.cancel"></button>
+      <button class="btn primary" value="ok" id="linesApply"></button>
     </footer>
   </form>
 </dialog>
 
 <!-- ============ MOCKUP-ONLY CONTROLS ============ -->
 <details class="mock">
-  <summary data-i18n="mock.title">Mockup ▸</summary>
+  <summary data-i18n="mock.title"></summary>
   <div>
-    <button id="mLoading" data-i18n="mock.loading">Vis lastesiden</button>
-    <button id="mSquare" data-i18n="mock.square">Bytt kvadratisk / ikke kvadratisk</button>
-    <button id="mDialog" data-i18n="mock.dialog">Åpne fargesekvens for farge 1</button>
-    <button id="mEdge" data-i18n="mock.edge">Vis kantmenyen</button>
+    <button id="mLoading" data-i18n="mock.loading"></button>
+    <button id="mEnd" data-i18n="mock.end"></button>
+    <button id="mBack" data-i18n="mock.back"></button>
+    <button id="mDialog" data-i18n="mock.dialog"></button>
+    <button id="mDmc" data-i18n="mock.dmc"></button>
+    <button id="mEdge" data-i18n="mock.edge"></button>
+    <button id="mLines" data-i18n="mock.lines"></button>
+    <button id="mSquare" data-i18n="mock.square"></button>
   </div>
 </details>
 
 <script>
 "use strict";
-/* ---------------- Strings (nb / en / it) ---------------- */
+/* ---------------- Strings (nb / en / it) – same keys as docs/design/strings.md ---------------- */
 const STR = {
-  nb: {
-    "loading.title": "Gjør klar Kvale …",
-    "loading.body": "Første gang kan det ta noen sekunder. Neste gang går det raskere.",
-    "loading.restore": "Mønsteret du jobbet med sist, åpnes når alt er klart.",
-    "autosave.saved": "Lagret i nettleseren kl. {time}",
-    "autosave.hint": "Arbeidet lagres automatisk her i nettleseren. Bruk «Lagre» for å få en fil du kan ta vare på.",
-    "file.new": "Ny", "file.new.hint": "Start et nytt mønster",
-    "file.open": "Åpne", "file.open.hint": "Åpne en mønsterfil (.json) – Ctrl+O",
-    "file.save": "Lagre", "file.save.hint": "Lagre mønsteret som fil på maskinen – Ctrl+S",
-    "file.export": "Lagre bilde", "file.export.hint": "Last ned hele bordet som bilde (PNG)",
-    "lang.label": "Språk",
-    "theme.label": "Utseende", "theme.light": "Lys visning", "theme.dark": "Mørk visning",
-    "mode.edit": "Tegn", "mode.preview": "Se gjentakelsene",
-    "tool.label": "Verktøy",
-    "tool.paint": "Sy", "tool.paint.hint": "Sy sting med valgt farge",
-    "tool.erase": "Visk ut", "tool.erase.hint": "Fjern sting (med mus: høyreklikk)",
-    "history.undo": "Angre (Ctrl+Z)", "history.redo": "Gjør om (Ctrl+Y)",
-    "zoom.in": "Zoom inn", "zoom.out": "Zoom ut", "zoom.fit": "Tilpass", "zoom.fit.hint": "Tilpass mønsteret til skjermen",
-    "canvas.hint.edit": "Trykk i rutene for å sy. Høyreklikk visker ut.",
-    "canvas.hint.edges": "Trykk på et tall i kanten for å legge til eller fjerne rader og kolonner.",
-    "legend.seed": "Sting du har satt", "legend.copy": "Kopier fra symmetrien",
-    "band.mini.title": "Slik blir bordet", "band.mini.open": "Vis stort",
-    "preview.caption": "{rx} × {ry} gjentakelser · {w} × {h} sting",
-    "preview.hint": "Her kan du bare se. Gå tilbake til «Tegn» for å endre mønsteret.",
-    "edge.col.title": "Kolonne {n}", "edge.row.title": "Rad {n}",
-    "edge.col.insertBefore": "Ny kolonne til venstre", "edge.col.insertAfter": "Ny kolonne til høyre", "edge.col.remove": "Fjern denne kolonnen",
-    "edge.row.insertBefore": "Ny rad over", "edge.row.insertAfter": "Ny rad under", "edge.row.remove": "Fjern denne raden",
-    "edge.close": "Lukk",
-    "panel.colours": "Farger",
-    "colours.slot": "Farge {n}",
-    "colours.selected": "Valgt",
-    "colours.one": "Én farge", "colours.many": "{n} farger etter hverandre",
-    "colours.edit": "Endre farge {n}",
-    "colours.change": "Endre",
-    "colours.add": "Legg til farge",
-    "colours.useSeq": "Bruk fargesekvens",
-    "colours.useSeq.hint": "På: fargene skifter for hver gjentakelse. Av: bare den første fargen brukes.",
-    "colours.background": "Stoffet (bakgrunn)",
-    "panel.symmetry": "Symmetri",
-    "symmetry.intro": "Velg hvordan stingene dine kopieres inne i mønsterruten.",
-    "symmetry.squareGroup": "Bare for kvadratisk rute",
-    "symmetry.alwaysOn": "Alltid på",
-    "symmetry.needsSquare": "Krever kvadratisk rute",
-    "symmetry.squareNotice": "Disse virker bare når ruten er like bred som høy. Nå er den {w} × {h}.",
-    "symmetry.makeSquare": "Gjør ruten {n} × {n}",
-    "sym.identity": "Original",
-    "sym.mirror_x": "Speil venstre–høyre",
-    "sym.mirror_y": "Speil opp–ned",
-    "sym.rotate_180": "Roter 180°",
-    "sym.rotate_90": "Roter 90°",
-    "sym.rotate_270": "Roter 270°",
-    "sym.diag_main": "Speil på skrå\u00a0╲",
-    "sym.diag_anti": "Speil på skrå\u00a0╱",
-    "panel.grid": "Rute og gjentakelser",
-    "grid.unit": "Mønsterruten", "grid.unit.hint": "Den lille ruten du tegner i, som gjentas.",
-    "grid.width": "Bredde", "grid.height": "Høyde", "grid.cells": "ruter",
-    "grid.repeats": "Gjentakelser", "grid.repeats.hint": "Hvor mange ganger ruten gjentas i bordet (1–100).",
-    "grid.across": "Bortover", "grid.down": "Nedover", "grid.times": "ganger",
-    "step.less": "Mindre", "step.more": "Mer",
-    "edges.title": "Der rutene møtes",
-    "edges.explain": "Ligger en speillinje helt i kanten av ruten, blir kanten dobbel der to ruter møtes. Slå av kanten for å la naboene dele den – da sys den bare ytterst i bordet.",
-    "edges.key.cols": "Venstre/høyre kolonne", "edges.key.rows": "Øverste/nederste rad",
-    "edges.diagramCaption": "Eksempel: 3 × 2 ruter",
-    "edges.left": "Venstre kolonne", "edges.right": "Høyre kolonne", "edges.top": "Øverste rad", "edges.bottom": "Nederste rad",
-    "edges.on": "Med i hver gjentakelse", "edges.off.left": "Bare helt til venstre i bordet", "edges.off.right": "Bare helt til høyre i bordet",
-    "edges.off.top": "Bare helt øverst i bordet", "edges.off.bottom": "Bare helt nederst i bordet",
-    "dialog.title": "Farge {n}",
-    "dialog.intro": "En farge kan være én tråd, eller en rekke farger som skifter for hver gjentakelse.",
-    "dialog.count": "Antall farger",
-    "dialog.parts": "Trykk på en del for å velge fargen",
-    "dialog.part": "Del {n}",
-    "dialog.pick": "Farge for del {n}",
-    "dialog.custom": "Egen farge …",
-    "dialog.howItRepeats": "Slik skifter fargen bortover i bordet:",
-    "dialog.offNote": "Fargesekvens er slått av – bare del 1 brukes nå.",
-    "dialog.cancel": "Avbryt", "dialog.ok": "Bruk",
-    "mock.title": "Mockup ▸", "mock.loading": "Vis lastesiden", "mock.square": "Bytt kvadratisk / ikke kvadratisk",
-    "mock.dialog": "Åpne fargesekvens for farge 1", "mock.edge": "Vis kantmenyen"
-  },
-  en: {
-    "loading.title": "Getting Kvale ready …",
-    "loading.body": "The first time can take a few seconds. Next time it is quicker.",
-    "loading.restore": "The pattern you were working on will open when everything is ready.",
-    "autosave.saved": "Saved in this browser at {time}",
-    "autosave.hint": "Your work is saved automatically here in the browser. Use “Save” to get a file you can keep.",
-    "file.new": "New", "file.new.hint": "Start a new pattern",
-    "file.open": "Open", "file.open.hint": "Open a pattern file (.json) – Ctrl+O",
-    "file.save": "Save", "file.save.hint": "Save the pattern as a file on your computer – Ctrl+S",
-    "file.export": "Save image", "file.export.hint": "Download the whole band as a picture (PNG)",
-    "lang.label": "Language",
-    "theme.label": "Appearance", "theme.light": "Light mode", "theme.dark": "Dark mode",
-    "mode.edit": "Draw", "mode.preview": "See the repeats",
-    "tool.label": "Tool",
-    "tool.paint": "Stitch", "tool.paint.hint": "Place stitches in the selected colour",
-    "tool.erase": "Erase", "tool.erase.hint": "Remove stitches (with a mouse: right-click)",
-    "history.undo": "Undo (Ctrl+Z)", "history.redo": "Redo (Ctrl+Y)",
-    "zoom.in": "Zoom in", "zoom.out": "Zoom out", "zoom.fit": "Fit", "zoom.fit.hint": "Fit the pattern to the screen",
-    "canvas.hint.edit": "Tap the squares to stitch. Right-click erases.",
-    "canvas.hint.edges": "Tap a number along the edge to add or remove rows and columns.",
-    "legend.seed": "Stitches you placed", "legend.copy": "Copies made by symmetry",
-    "band.mini.title": "How the band will look", "band.mini.open": "Show large",
-    "preview.caption": "{rx} × {ry} repeats · {w} × {h} stitches",
-    "preview.hint": "This view is for looking only. Go back to “Draw” to change the pattern.",
-    "edge.col.title": "Column {n}", "edge.row.title": "Row {n}",
-    "edge.col.insertBefore": "New column to the left", "edge.col.insertAfter": "New column to the right", "edge.col.remove": "Remove this column",
-    "edge.row.insertBefore": "New row above", "edge.row.insertAfter": "New row below", "edge.row.remove": "Remove this row",
-    "edge.close": "Close",
-    "panel.colours": "Colours",
-    "colours.slot": "Colour {n}",
-    "colours.selected": "Selected",
-    "colours.one": "One colour", "colours.many": "{n} colours in turn",
-    "colours.edit": "Change colour {n}",
-    "colours.change": "Change",
-    "colours.add": "Add colour",
-    "colours.useSeq": "Use colour sequence",
-    "colours.useSeq.hint": "On: the colours change with each repeat. Off: only the first colour is used.",
-    "colours.background": "Fabric (background)",
-    "panel.symmetry": "Symmetry",
-    "symmetry.intro": "Choose how your stitches are copied inside the pattern unit.",
-    "symmetry.squareGroup": "Only for a square unit",
-    "symmetry.alwaysOn": "Always on",
-    "symmetry.needsSquare": "Needs a square unit",
-    "symmetry.squareNotice": "These only work when the unit is as wide as it is tall. It is now {w} × {h}.",
-    "symmetry.makeSquare": "Make the unit {n} × {n}",
-    "sym.identity": "Original",
-    "sym.mirror_x": "Mirror left–right",
-    "sym.mirror_y": "Mirror top–bottom",
-    "sym.rotate_180": "Rotate 180°",
-    "sym.rotate_90": "Rotate 90°",
-    "sym.rotate_270": "Rotate 270°",
-    "sym.diag_main": "Mirror diagonally\u00a0╲",
-    "sym.diag_anti": "Mirror diagonally\u00a0╱",
-    "panel.grid": "Unit and repeats",
-    "grid.unit": "Pattern unit", "grid.unit.hint": "The small square you draw in, which is repeated.",
-    "grid.width": "Width", "grid.height": "Height", "grid.cells": "squares",
-    "grid.repeats": "Repeats", "grid.repeats.hint": "How many times the unit is repeated in the band (1–100).",
-    "grid.across": "Across", "grid.down": "Down", "grid.times": "times",
-    "step.less": "Less", "step.more": "More",
-    "edges.title": "Where the units meet",
-    "edges.explain": "If a mirror line runs right along the edge of the unit, that edge is doubled where two units meet. Switch the edge off to let neighbours share it – it is then only stitched at the very outside of the band.",
-    "edges.key.cols": "Left/right column", "edges.key.rows": "Top/bottom row",
-    "edges.diagramCaption": "Example: 3 × 2 units",
-    "edges.left": "Left column", "edges.right": "Right column", "edges.top": "Top row", "edges.bottom": "Bottom row",
-    "edges.on": "Included in every repeat", "edges.off.left": "Only at the far left of the band", "edges.off.right": "Only at the far right of the band",
-    "edges.off.top": "Only at the very top of the band", "edges.off.bottom": "Only at the very bottom of the band",
-    "dialog.title": "Colour {n}",
-    "dialog.intro": "A colour can be a single thread, or a row of colours that changes with each repeat.",
-    "dialog.count": "Number of colours",
-    "dialog.parts": "Tap a part to choose its colour",
-    "dialog.part": "Part {n}",
-    "dialog.pick": "Colour for part {n}",
-    "dialog.custom": "Custom colour …",
-    "dialog.howItRepeats": "How the colour changes across the band:",
-    "dialog.offNote": "Colour sequence is switched off – only part 1 is used now.",
-    "dialog.cancel": "Cancel", "dialog.ok": "Apply",
-    "mock.title": "Mockup ▸", "mock.loading": "Show loading screen", "mock.square": "Toggle square / not square",
-    "mock.dialog": "Open colour sequence for colour 1", "mock.edge": "Show the edge menu"
-  },
-  it: {
-    "loading.title": "Preparazione di Kvale …",
-    "loading.body": "La prima volta può richiedere qualche secondo. Le volte successive sarà più veloce.",
-    "loading.restore": "Il disegno su cui stavi lavorando si aprirà appena tutto sarà pronto.",
-    "autosave.saved": "Salvato nel browser alle {time}",
-    "autosave.hint": "Il lavoro viene salvato automaticamente qui nel browser. Usa «Salva» per avere un file da conservare.",
-    "file.new": "Nuovo", "file.new.hint": "Inizia un nuovo disegno",
-    "file.open": "Apri", "file.open.hint": "Apri un file di disegno (.json) – Ctrl+O",
-    "file.save": "Salva", "file.save.hint": "Salva il disegno come file sul computer – Ctrl+S",
-    "file.export": "Salva immagine", "file.export.hint": "Scarica l’intera bordura come immagine (PNG)",
-    "lang.label": "Lingua",
-    "theme.label": "Aspetto", "theme.light": "Tema chiaro", "theme.dark": "Tema scuro",
-    "mode.edit": "Disegna", "mode.preview": "Vedi le ripetizioni",
-    "tool.label": "Strumento",
-    "tool.paint": "Ricama", "tool.paint.hint": "Aggiungi punti nel colore scelto",
-    "tool.erase": "Cancella", "tool.erase.hint": "Togli punti (con il mouse: clic destro)",
-    "history.undo": "Annulla (Ctrl+Z)", "history.redo": "Ripeti (Ctrl+Y)",
-    "zoom.in": "Ingrandisci", "zoom.out": "Riduci", "zoom.fit": "Adatta", "zoom.fit.hint": "Adatta il disegno allo schermo",
-    "canvas.hint.edit": "Tocca i quadretti per ricamare. Il clic destro cancella.",
-    "canvas.hint.edges": "Tocca un numero sul bordo per aggiungere o togliere righe e colonne.",
-    "legend.seed": "Punti messi da te", "legend.copy": "Copie create dalla simmetria",
-    "band.mini.title": "Ecco come verrà la bordura", "band.mini.open": "Mostra in grande",
-    "preview.caption": "{rx} × {ry} ripetizioni · {w} × {h} punti",
-    "preview.hint": "Questa vista serve solo a guardare. Torna a «Disegna» per modificare il disegno.",
-    "edge.col.title": "Colonna {n}", "edge.row.title": "Riga {n}",
-    "edge.col.insertBefore": "Nuova colonna a sinistra", "edge.col.insertAfter": "Nuova colonna a destra", "edge.col.remove": "Togli questa colonna",
-    "edge.row.insertBefore": "Nuova riga sopra", "edge.row.insertAfter": "Nuova riga sotto", "edge.row.remove": "Togli questa riga",
-    "edge.close": "Chiudi",
-    "panel.colours": "Colori",
-    "colours.slot": "Colore {n}",
-    "colours.selected": "Scelto",
-    "colours.one": "Un colore", "colours.many": "{n} colori a turno",
-    "colours.edit": "Modifica il colore {n}",
-    "colours.change": "Modifica",
-    "colours.add": "Aggiungi colore",
-    "colours.useSeq": "Usa la sequenza di colori",
-    "colours.useSeq.hint": "Attiva: i colori cambiano a ogni ripetizione. Disattiva: si usa solo il primo colore.",
-    "colours.background": "Tessuto (sfondo)",
-    "panel.symmetry": "Simmetria",
-    "symmetry.intro": "Scegli come vengono copiati i tuoi punti all’interno del modulo.",
-    "symmetry.squareGroup": "Solo per moduli quadrati",
-    "symmetry.alwaysOn": "Sempre attivo",
-    "symmetry.needsSquare": "Serve un modulo quadrato",
-    "symmetry.squareNotice": "Funzionano solo se il modulo è largo quanto è alto. Ora è {w} × {h}.",
-    "symmetry.makeSquare": "Rendi il modulo {n} × {n}",
-    "sym.identity": "Originale",
-    "sym.mirror_x": "Specchia sinistra–destra",
-    "sym.mirror_y": "Specchia sopra–sotto",
-    "sym.rotate_180": "Ruota di 180°",
-    "sym.rotate_90": "Ruota di 90°",
-    "sym.rotate_270": "Ruota di 270°",
-    "sym.diag_main": "Specchia in diagonale\u00a0╲",
-    "sym.diag_anti": "Specchia in diagonale\u00a0╱",
-    "panel.grid": "Modulo e ripetizioni",
-    "grid.unit": "Modulo", "grid.unit.hint": "Il riquadro in cui disegni e che viene ripetuto.",
-    "grid.width": "Larghezza", "grid.height": "Altezza", "grid.cells": "quadretti",
-    "grid.repeats": "Ripetizioni", "grid.repeats.hint": "Quante volte il modulo si ripete nella bordura (1–100).",
-    "grid.across": "In orizzontale", "grid.down": "In verticale", "grid.times": "volte",
-    "step.less": "Meno", "step.more": "Più",
-    "edges.title": "Dove i moduli si toccano",
-    "edges.explain": "Se una linea di simmetria corre proprio sul bordo del modulo, quel bordo raddoppia dove due moduli si toccano. Disattivalo per farlo condividere ai moduli vicini: verrà ricamato solo all’esterno della bordura.",
-    "edges.key.cols": "Colonna sinistra/destra", "edges.key.rows": "Riga superiore/inferiore",
-    "edges.diagramCaption": "Esempio: 3 × 2 moduli",
-    "edges.left": "Colonna sinistra", "edges.right": "Colonna destra", "edges.top": "Riga superiore", "edges.bottom": "Riga inferiore",
-    "edges.on": "In ogni ripetizione", "edges.off.left": "Solo all’estrema sinistra della bordura", "edges.off.right": "Solo all’estrema destra della bordura",
-    "edges.off.top": "Solo in cima alla bordura", "edges.off.bottom": "Solo in fondo alla bordura",
-    "dialog.title": "Colore {n}",
-    "dialog.intro": "Un colore può essere un solo filo, oppure una serie di colori che cambia a ogni ripetizione.",
-    "dialog.count": "Numero di colori",
-    "dialog.parts": "Tocca una parte per sceglierne il colore",
-    "dialog.part": "Parte {n}",
-    "dialog.pick": "Colore della parte {n}",
-    "dialog.custom": "Colore personalizzato …",
-    "dialog.howItRepeats": "Come cambia il colore lungo la bordura:",
-    "dialog.offNote": "La sequenza di colori è disattivata: ora si usa solo la parte 1.",
-    "dialog.cancel": "Annulla", "dialog.ok": "Applica",
-    "mock.title": "Mockup ▸", "mock.loading": "Mostra la schermata di caricamento", "mock.square": "Alterna quadrato / non quadrato",
-    "mock.dialog": "Apri la sequenza del colore 1", "mock.edge": "Mostra il menu del bordo"
-  }
+ "nb": {
+  "loading.title": "Gjør klar Kvale …",
+  "loading.body": "Første gang kan det ta litt tid. Etterpå går det fortere.",
+  "loading.restore": "Mønsteret du jobbet med sist, åpnes straks.",
+  "autosave.saved": "Lagret i nettleseren kl. {time}",
+  "autosave.hint": "Arbeidet lagres av seg selv her i nettleseren. Trykk «Lagre» for å få en fil du kan ta vare på.",
+  "file.label": "Fil",
+  "file.new": "Ny",
+  "file.new.hint": "Begynn på et nytt mønster",
+  "file.open": "Åpne",
+  "file.open.hint": "Åpne en mønsterfil (.json) – Ctrl+O",
+  "file.save": "Lagre",
+  "file.save.hint": "Last ned mønsteret som fil, så du kan åpne det igjen – Ctrl+S",
+  "file.export": "Lagre bilde",
+  "file.export.hint": "Last ned hele borden som bilde (PNG), med attersting og endestykker",
+  "lang.label": "Språk",
+  "theme.label": "Utseende",
+  "theme.light": "Lyst",
+  "theme.dark": "Mørkt",
+  "mode.label": "Visning",
+  "mode.edit": "Tegn",
+  "mode.preview": "Hele borden",
+  "tool.label": "Sting",
+  "tool.cross": "Korssting",
+  "tool.cross.hint": "Sy korssting i valgt farge. Dra for å sy flere.",
+  "tool.back": "Attersting",
+  "tool.back.hint": "Sy attersting langs linjene i rutenettet",
+  "tool.unpick": "Sprett opp",
+  "tool.unpick.hint": "Fjern korssting eller attersting (med mus: høyreklikk)",
+  "history.undo": "Angre (Ctrl+Z)",
+  "history.redo": "Gjør om (Ctrl+Y)",
+  "history.undone": "Angret.",
+  "history.redone": "Gjort om.",
+  "zoom.in": "Zoom inn",
+  "zoom.out": "Zoom ut",
+  "zoom.fit": "Tilpass",
+  "zoom.fit.hint": "Vis hele mønsteret på skjermen",
+  "target.label": "Du tegner i",
+  "target.unit": "Rapporten",
+  "target.unit.hint": "Mønsteret som gjentas bortover borden",
+  "target.left": "Venstre ende",
+  "target.right": "Høyre ende",
+  "target.top": "Øvre kant",
+  "target.bottom": "Nedre kant",
+  "target.edge.hint": "Gi borden en egen avslutning her",
+  "target.changed": "endret",
+  "end.title.left": "Venstre endestykke",
+  "end.title.right": "Høyre endestykke",
+  "end.title.top": "Øvre endestykke",
+  "end.title.bottom": "Nedre endestykke",
+  "end.where.left": "Den første rapporten til venstre.",
+  "end.where.right": "Den siste rapporten til høyre.",
+  "end.where.top": "Den øverste raden med rapporter.",
+  "end.where.bottom": "Den nederste raden med rapporter.",
+  "end.explain": "Det du syr eller spretter opp her, gjelder bare denne enden. Resten av borden følger rapporten.",
+  "end.extra.cols": "Ekstra kolonner utenfor",
+  "end.extra.rows": "Ekstra rader utenfor",
+  "end.extra.hint": "Gir plass til en kant utenfor rapporten",
+  "end.summary.none": "Ingen endringer ennå – enden er lik rapporten.",
+  "end.summary": "Lagt til: {added} · Sprettet opp: {removed} · Attersting endret: {lines}",
+  "end.reset": "Tilbakestill",
+  "end.reset.hint": "Fjern alle endringer i dette endestykket, også ekstra rader og kolonner",
+  "end.done": "Ferdig",
+  "end.done.hint": "Tilbake til rapporten",
+  "end.resetDone": "{name} er tilbakestilt.",
+  "toast.undo": "Angre",
+  "legend.seed": "Sting du har sydd",
+  "legend.copy": "Speilet fra stingene dine",
+  "legend.back": "Attersting",
+  "legend.fromUnit": "Som i rapporten",
+  "legend.added": "Lagt til i enden",
+  "legend.removed": "Sprettet opp i enden",
+  "legend.extra": "Ekstra, utenfor rapporten",
+  "legend.neighbour": "Neste rapport – bare til å se på",
+  "canvas.hint.cross": "Trykk eller dra over rutene for å sy. Høyreklikk spretter opp.",
+  "canvas.hint.back": "Trykk på et hjørne for å begynne og på et nytt hjørne for å sy linjen. Fortsett derfra, eller trykk Esc for å slutte.",
+  "canvas.hint.unpick": "Trykk på et sting eller en attersting for å sprette det opp.",
+  "canvas.hint.edges": "Trykk på et tall langs kanten for å legge til eller fjerne en rad eller kolonne.",
+  "canvas.hint.end": "Det svake feltet er neste rapport, så du ser hvordan enden møter resten av borden.",
+  "canvas.neighbour": "neste rapport",
+  "band.mini.title": "Slik blir borden",
+  "band.mini.open": "Vis stor",
+  "band.mini.hint": "Trykk på en ende av borden for å gi den en egen avslutning.",
+  "preview.caption": "{rx} × {ry} rapporter · {w} × {h} sting",
+  "preview.hint": "Her ser du hele borden. Gå til «Tegn» for å endre den.",
+  "edge.col.title": "Kolonne {n}",
+  "edge.row.title": "Rad {n}",
+  "edge.col.insertBefore": "Ny kolonne til venstre",
+  "edge.col.insertAfter": "Ny kolonne til høyre",
+  "edge.col.remove": "Fjern denne kolonnen",
+  "edge.row.insertBefore": "Ny rad over",
+  "edge.row.insertAfter": "Ny rad under",
+  "edge.row.remove": "Fjern denne raden",
+  "edge.close": "Lukk",
+  "edge.also": "Symmetrien tar også med {list}.",
+  "edge.more": "Flere valg …",
+  "list.and": " og ",
+  "grid.colN": "kolonne {n}",
+  "grid.rowN": "rad {n}",
+  "grid.newColN": "ny kolonne {n}",
+  "grid.newRowN": "ny rad {n}",
+  "panel.colours": "Farger",
+  "panel.symmetry": "Symmetri",
+  "panel.grid": "Rapport og størrelse",
+  "colours.slot": "Farge {n}",
+  "colours.selected": "I bruk",
+  "colours.own": "Egen farge",
+  "colours.dmc": "DMC {n}",
+  "colours.many": "{n} farger som skifter",
+  "colours.edit": "Endre farge {n}",
+  "colours.change": "Endre",
+  "colours.add": "Legg til farge",
+  "colours.useSeq": "Skift farge fra rapport til rapport",
+  "colours.useSeq.hint": "Gjelder farger med flere trådfarger. Av: bare den første brukes.",
+  "colours.background": "Stoffet",
+  "colours.background.hint": "Bakgrunnsfargen i mønsteret",
+  "symmetry.intro": "Velg hvordan stingene dine speiles i rapporten.",
+  "symmetry.squareGroup": "Krever kvadratisk rapport",
+  "symmetry.alwaysOn": "Alltid med",
+  "symmetry.needsSquare": "Krever kvadrat",
+  "symmetry.squareNotice": "Disse virker bare når rapporten er like bred som høy. Nå er den {w} × {h} sting.",
+  "symmetry.makeSquare": "Gjør rapporten {n} × {n}",
+  "symmetry.switchedOff": "Rapporten er ikke kvadratisk lenger, så dreiing og skrå speiling er slått av.",
+  "sym.identity": "Slik du syr",
+  "sym.mirror_x": "Speil venstre–høyre",
+  "sym.mirror_y": "Speil opp–ned",
+  "sym.rotate_180": "Drei 180°",
+  "sym.rotate_90": "Drei 90°",
+  "sym.rotate_270": "Drei 270°",
+  "sym.diag_main": "Speil på skrå ╲",
+  "sym.diag_anti": "Speil på skrå ╱",
+  "grid.unit": "Rapporten",
+  "grid.unit.hint": "Feltet du tegner i. Det gjentas bortover og nedover borden.",
+  "grid.width": "Bredde",
+  "grid.height": "Høyde",
+  "grid.cells": "sting",
+  "grid.repeats": "Antall rapporter",
+  "grid.repeats.hint": "Hvor mange ganger rapporten gjentas (1–100).",
+  "grid.across": "Bortover",
+  "grid.down": "Nedover",
+  "grid.times": "ganger",
+  "grid.lines": "Legg til eller fjern rad/kolonne …",
+  "step.less": "Færre",
+  "step.more": "Flere",
+  "edges.title": "Kanten mellom rapportene",
+  "edges.explain": "Ligger en speillinje helt ytterst i rapporten, blir den raden eller kolonnen dobbel der to rapporter møtes. Slå av for å la naborapportene dele den.",
+  "edges.key.cols": "Ytterste kolonner",
+  "edges.key.rows": "Ytterste rader",
+  "edges.diagramCaption": "Eksempel: 3 × 2 rapporter",
+  "edges.left": "Venstre kolonne",
+  "edges.right": "Høyre kolonne",
+  "edges.top": "Øverste rad",
+  "edges.bottom": "Nederste rad",
+  "edges.on": "Med i hver rapport",
+  "edges.off.left": "Delt – sys bare lengst til venstre",
+  "edges.off.right": "Delt – sys bare lengst til høyre",
+  "edges.off.top": "Delt – sys bare helt øverst",
+  "edges.off.bottom": "Delt – sys bare helt nederst",
+  "dialog.title": "Farge {n}",
+  "dialog.intro": "Én trådfarge, eller flere som skifter fra rapport til rapport.",
+  "dialog.count": "Antall trådfarger",
+  "dialog.parts": "Trykk på en del for å velge farge",
+  "dialog.part": "Del {n}",
+  "dialog.pick": "Farge til del {n}",
+  "dialog.dmc": "Finn DMC-garn …",
+  "dialog.custom": "Egen farge …",
+  "dialog.howItRepeats": "Slik skifter fargen bortover borden:",
+  "dialog.offNote": "Fargeskift er slått av – bare del 1 brukes nå.",
+  "dialog.cancel": "Avbryt",
+  "dialog.ok": "Bruk",
+  "dmc.title": "Velg DMC-garn",
+  "dmc.search": "Søk",
+  "dmc.search.placeholder": "Nummer eller navn, f.eks. 321",
+  "dmc.namesNote": "Fargenavnene er på engelsk, slik DMC skriver dem.",
+  "dmc.family.all": "Alle",
+  "dmc.family.red": "Rød",
+  "dmc.family.pink": "Rosa",
+  "dmc.family.orange": "Oransje",
+  "dmc.family.yellow": "Gul",
+  "dmc.family.green": "Grønn",
+  "dmc.family.blue": "Blå",
+  "dmc.family.purple": "Lilla",
+  "dmc.family.brown": "Brun",
+  "dmc.family.neutral": "Hvit, grå, svart",
+  "dmc.count": "{n} farger",
+  "dmc.none": "Ingen treff. Prøv et nummer, f.eks. 321.",
+  "dmc.approx": "Fargene på skjermen er omtrentlige. Sjekk mot et fargekart når fargen må stemme.",
+  "dmc.pickPrompt": "Velg en farge i lista.",
+  "dmc.own": "Egen farge …",
+  "dmc.cancel": "Avbryt",
+  "dmc.choose": "Velg",
+  "lines.title": "Rader og kolonner",
+  "lines.action": "Hva vil du gjøre?",
+  "lines.add": "Legge til",
+  "lines.remove": "Fjerne",
+  "lines.where": "Hvor?",
+  "lines.place.top": "Øverst",
+  "lines.place.bottom": "Nederst",
+  "lines.place.first": "Lengst til venstre",
+  "lines.place.last": "Lengst til høyre",
+  "lines.place.row": "Rad nummer …",
+  "lines.place.col": "Kolonne nummer …",
+  "lines.number": "Nummer",
+  "lines.effect.add": "Legger til {list}.",
+  "lines.effect.remove": "Fjerner {list}.",
+  "lines.symNote": "Symmetrien tar med flere enn den du valgte, så mønsteret holder seg likt.",
+  "lines.result": "Rapporten blir {w} × {h} sting.",
+  "lines.cantRemove": "Det går ikke – rapporten må ha minst én rad og én kolonne.",
+  "lines.cancel": "Avbryt",
+  "lines.apply.add": "Legg til",
+  "lines.apply.remove": "Fjern",
+  "mock.title": "Mockup ▸",
+  "mock.loading": "Vis lastesiden",
+  "mock.square": "Bytt kvadratisk / ikke kvadratisk",
+  "mock.dialog": "Åpne farge 1",
+  "mock.dmc": "Åpne DMC-velgeren",
+  "mock.edge": "Vis kantmenyen",
+  "mock.lines": "Åpne «Rader og kolonner»",
+  "mock.end": "Rediger høyre endestykke",
+  "mock.back": "Velg attersting"
+ },
+ "en": {
+  "loading.title": "Getting Kvale ready …",
+  "loading.body": "The first time can take a moment. After that it is quicker.",
+  "loading.restore": "The pattern you were working on will open in a moment.",
+  "autosave.saved": "Saved in this browser at {time}",
+  "autosave.hint": "Your work is saved automatically here in the browser. Press “Save” to get a file you can keep.",
+  "file.label": "File",
+  "file.new": "New",
+  "file.new.hint": "Start a new pattern",
+  "file.open": "Open",
+  "file.open.hint": "Open a pattern file (.json) – Ctrl+O",
+  "file.save": "Save",
+  "file.save.hint": "Download the pattern as a file so you can open it again – Ctrl+S",
+  "file.export": "Save image",
+  "file.export.hint": "Download the whole band as a picture (PNG), with backstitch and ends",
+  "lang.label": "Language",
+  "theme.label": "Appearance",
+  "theme.light": "Light",
+  "theme.dark": "Dark",
+  "mode.label": "View",
+  "mode.edit": "Draw",
+  "mode.preview": "Whole band",
+  "tool.label": "Stitch",
+  "tool.cross": "Cross stitch",
+  "tool.cross.hint": "Stitch crosses in the chosen colour. Drag to stitch several.",
+  "tool.back": "Backstitch",
+  "tool.back.hint": "Stitch backstitch along the grid lines",
+  "tool.unpick": "Unpick",
+  "tool.unpick.hint": "Remove cross stitches or backstitch (with a mouse: right-click)",
+  "history.undo": "Undo (Ctrl+Z)",
+  "history.redo": "Redo (Ctrl+Y)",
+  "history.undone": "Undone.",
+  "history.redone": "Redone.",
+  "zoom.in": "Zoom in",
+  "zoom.out": "Zoom out",
+  "zoom.fit": "Fit",
+  "zoom.fit.hint": "Show the whole pattern on screen",
+  "target.label": "Drawing in",
+  "target.unit": "The repeat",
+  "target.unit.hint": "The pattern that repeats along the band",
+  "target.left": "Left end",
+  "target.right": "Right end",
+  "target.top": "Top edge",
+  "target.bottom": "Bottom edge",
+  "target.edge.hint": "Give the band its own finish here",
+  "target.changed": "changed",
+  "end.title.left": "Left end",
+  "end.title.right": "Right end",
+  "end.title.top": "Top edge",
+  "end.title.bottom": "Bottom edge",
+  "end.where.left": "The first repeat on the left.",
+  "end.where.right": "The last repeat on the right.",
+  "end.where.top": "The top row of repeats.",
+  "end.where.bottom": "The bottom row of repeats.",
+  "end.explain": "What you stitch or unpick here only changes this end. The rest of the band follows the repeat.",
+  "end.extra.cols": "Extra columns outside",
+  "end.extra.rows": "Extra rows outside",
+  "end.extra.hint": "Makes room for a border outside the repeat",
+  "end.summary.none": "No changes yet – this end matches the repeat.",
+  "end.summary": "Added: {added} · Unpicked: {removed} · Backstitch changed: {lines}",
+  "end.reset": "Reset",
+  "end.reset.hint": "Remove every change to this end, including extra rows and columns",
+  "end.done": "Done",
+  "end.done.hint": "Back to the repeat",
+  "end.resetDone": "{name} has been reset.",
+  "toast.undo": "Undo",
+  "legend.seed": "Stitches you made",
+  "legend.copy": "Mirrored from your stitches",
+  "legend.back": "Backstitch",
+  "legend.fromUnit": "As in the repeat",
+  "legend.added": "Added at this end",
+  "legend.removed": "Unpicked at this end",
+  "legend.extra": "Extra, outside the repeat",
+  "legend.neighbour": "Next repeat – for reference only",
+  "canvas.hint.cross": "Tap or drag across the squares to stitch. Right-click unpicks.",
+  "canvas.hint.back": "Tap a corner to start, then another corner to stitch the line. Carry on from there, or press Esc to stop.",
+  "canvas.hint.unpick": "Tap a stitch or a backstitch line to unpick it.",
+  "canvas.hint.edges": "Tap a number along the edge to add or remove a row or column.",
+  "canvas.hint.end": "The faded part is the next repeat, so you can see how the end meets the rest of the band.",
+  "canvas.neighbour": "next repeat",
+  "band.mini.title": "How the band will look",
+  "band.mini.open": "Show large",
+  "band.mini.hint": "Tap an end of the band to give it its own finish.",
+  "preview.caption": "{rx} × {ry} repeats · {w} × {h} stitches",
+  "preview.hint": "This is the whole band. Go to “Draw” to change it.",
+  "edge.col.title": "Column {n}",
+  "edge.row.title": "Row {n}",
+  "edge.col.insertBefore": "New column to the left",
+  "edge.col.insertAfter": "New column to the right",
+  "edge.col.remove": "Remove this column",
+  "edge.row.insertBefore": "New row above",
+  "edge.row.insertAfter": "New row below",
+  "edge.row.remove": "Remove this row",
+  "edge.close": "Close",
+  "edge.also": "The symmetry also takes {list}.",
+  "edge.more": "More options …",
+  "list.and": " and ",
+  "grid.colN": "column {n}",
+  "grid.rowN": "row {n}",
+  "grid.newColN": "new column {n}",
+  "grid.newRowN": "new row {n}",
+  "panel.colours": "Colours",
+  "panel.symmetry": "Symmetry",
+  "panel.grid": "Repeat and size",
+  "colours.slot": "Colour {n}",
+  "colours.selected": "In use",
+  "colours.own": "Own colour",
+  "colours.dmc": "DMC {n}",
+  "colours.many": "{n} colours in turn",
+  "colours.edit": "Change colour {n}",
+  "colours.change": "Change",
+  "colours.add": "Add colour",
+  "colours.useSeq": "Change colour from repeat to repeat",
+  "colours.useSeq.hint": "For colours with several threads. Off: only the first is used.",
+  "colours.background": "Fabric",
+  "colours.background.hint": "The background colour of the pattern",
+  "symmetry.intro": "Choose how your stitches are mirrored in the repeat.",
+  "symmetry.squareGroup": "Needs a square repeat",
+  "symmetry.alwaysOn": "Always on",
+  "symmetry.needsSquare": "Needs a square",
+  "symmetry.squareNotice": "These only work when the repeat is as wide as it is tall. It is now {w} × {h} stitches.",
+  "symmetry.makeSquare": "Make the repeat {n} × {n}",
+  "symmetry.switchedOff": "The repeat is no longer square, so turning and diagonal mirroring are switched off.",
+  "sym.identity": "As you stitch it",
+  "sym.mirror_x": "Mirror left–right",
+  "sym.mirror_y": "Mirror top–bottom",
+  "sym.rotate_180": "Turn 180°",
+  "sym.rotate_90": "Turn 90°",
+  "sym.rotate_270": "Turn 270°",
+  "sym.diag_main": "Mirror diagonally ╲",
+  "sym.diag_anti": "Mirror diagonally ╱",
+  "grid.unit": "The repeat",
+  "grid.unit.hint": "The area you draw in. It repeats across and down the band.",
+  "grid.width": "Width",
+  "grid.height": "Height",
+  "grid.cells": "stitches",
+  "grid.repeats": "Number of repeats",
+  "grid.repeats.hint": "How many times the repeat is used (1–100).",
+  "grid.across": "Across",
+  "grid.down": "Down",
+  "grid.times": "times",
+  "grid.lines": "Add or remove a row/column …",
+  "step.less": "Fewer",
+  "step.more": "More",
+  "edges.title": "Where repeats meet",
+  "edges.explain": "If a mirror line runs along the very edge of the repeat, that row or column is doubled where two repeats meet. Switch it off to let neighbouring repeats share it.",
+  "edges.key.cols": "Outer columns",
+  "edges.key.rows": "Outer rows",
+  "edges.diagramCaption": "Example: 3 × 2 repeats",
+  "edges.left": "Left column",
+  "edges.right": "Right column",
+  "edges.top": "Top row",
+  "edges.bottom": "Bottom row",
+  "edges.on": "In every repeat",
+  "edges.off.left": "Shared – only stitched at the far left",
+  "edges.off.right": "Shared – only stitched at the far right",
+  "edges.off.top": "Shared – only stitched at the very top",
+  "edges.off.bottom": "Shared – only stitched at the very bottom",
+  "dialog.title": "Colour {n}",
+  "dialog.intro": "One thread colour, or several that change from repeat to repeat.",
+  "dialog.count": "Number of thread colours",
+  "dialog.parts": "Tap a part to choose its colour",
+  "dialog.part": "Part {n}",
+  "dialog.pick": "Colour for part {n}",
+  "dialog.dmc": "Find a DMC thread …",
+  "dialog.custom": "Own colour …",
+  "dialog.howItRepeats": "How the colour changes along the band:",
+  "dialog.offNote": "Colour change is switched off – only part 1 is used now.",
+  "dialog.cancel": "Cancel",
+  "dialog.ok": "Apply",
+  "dmc.title": "Choose a DMC thread",
+  "dmc.search": "Search",
+  "dmc.search.placeholder": "Number or name, e.g. 321",
+  "dmc.namesNote": "Colour names are in English, as DMC writes them.",
+  "dmc.family.all": "All",
+  "dmc.family.red": "Red",
+  "dmc.family.pink": "Pink",
+  "dmc.family.orange": "Orange",
+  "dmc.family.yellow": "Yellow",
+  "dmc.family.green": "Green",
+  "dmc.family.blue": "Blue",
+  "dmc.family.purple": "Purple",
+  "dmc.family.brown": "Brown",
+  "dmc.family.neutral": "White, grey, black",
+  "dmc.count": "{n} colours",
+  "dmc.none": "Nothing found. Try a number, e.g. 321.",
+  "dmc.approx": "Screen colours are approximate. Check against a shade card when the colour must match.",
+  "dmc.pickPrompt": "Choose a colour from the list.",
+  "dmc.own": "Own colour …",
+  "dmc.cancel": "Cancel",
+  "dmc.choose": "Choose",
+  "lines.title": "Rows and columns",
+  "lines.action": "What do you want to do?",
+  "lines.add": "Add",
+  "lines.remove": "Remove",
+  "lines.where": "Where?",
+  "lines.place.top": "At the top",
+  "lines.place.bottom": "At the bottom",
+  "lines.place.first": "At the far left",
+  "lines.place.last": "At the far right",
+  "lines.place.row": "Row number …",
+  "lines.place.col": "Column number …",
+  "lines.number": "Number",
+  "lines.effect.add": "Adds {list}.",
+  "lines.effect.remove": "Removes {list}.",
+  "lines.symNote": "The symmetry takes more than the one you chose, so the pattern stays the same.",
+  "lines.result": "The repeat becomes {w} × {h} stitches.",
+  "lines.cantRemove": "Not possible – the repeat needs at least one row and one column.",
+  "lines.cancel": "Cancel",
+  "lines.apply.add": "Add",
+  "lines.apply.remove": "Remove",
+  "mock.title": "Mockup ▸",
+  "mock.loading": "Show loading screen",
+  "mock.square": "Toggle square / not square",
+  "mock.dialog": "Open colour 1",
+  "mock.dmc": "Open the DMC picker",
+  "mock.edge": "Show the edge menu",
+  "mock.lines": "Open “Rows and columns”",
+  "mock.end": "Edit the right end",
+  "mock.back": "Choose backstitch"
+ },
+ "it": {
+  "loading.title": "Preparo Kvale …",
+  "loading.body": "La prima volta ci vuole qualche secondo. Poi sarà più veloce.",
+  "loading.restore": "Lo schema a cui stavi lavorando si riaprirà tra poco.",
+  "autosave.saved": "Salvato nel browser alle {time}",
+  "autosave.hint": "Il lavoro si salva da solo qui nel browser. Premi «Salva» per avere un file da conservare.",
+  "file.label": "File",
+  "file.new": "Nuovo",
+  "file.new.hint": "Inizia un nuovo schema",
+  "file.open": "Apri",
+  "file.open.hint": "Apri un file di schema (.json) – Ctrl+O",
+  "file.save": "Salva",
+  "file.save.hint": "Scarica lo schema come file, per riaprirlo in seguito – Ctrl+S",
+  "file.export": "Salva immagine",
+  "file.export.hint": "Scarica tutta la bordura come immagine (PNG), con punto scritto ed estremità",
+  "lang.label": "Lingua",
+  "theme.label": "Aspetto",
+  "theme.light": "Chiaro",
+  "theme.dark": "Scuro",
+  "mode.label": "Vista",
+  "mode.edit": "Disegna",
+  "mode.preview": "Bordura intera",
+  "tool.label": "Punto",
+  "tool.cross": "Punto croce",
+  "tool.cross.hint": "Ricama a punto croce nel colore scelto. Trascina per farne di più.",
+  "tool.back": "Punto scritto",
+  "tool.back.hint": "Ricama linee a punto scritto lungo la griglia",
+  "tool.unpick": "Scuci",
+  "tool.unpick.hint": "Togli punti croce o linee a punto scritto (col mouse: clic destro)",
+  "history.undo": "Annulla (Ctrl+Z)",
+  "history.redo": "Ripeti (Ctrl+Y)",
+  "history.undone": "Annullato.",
+  "history.redone": "Ripetuto.",
+  "zoom.in": "Ingrandisci",
+  "zoom.out": "Riduci",
+  "zoom.fit": "Adatta",
+  "zoom.fit.hint": "Mostra tutto lo schema sullo schermo",
+  "target.label": "Stai disegnando",
+  "target.unit": "Il modulo",
+  "target.unit.hint": "Il motivo che si ripete lungo la bordura",
+  "target.left": "Estremità sinistra",
+  "target.right": "Estremità destra",
+  "target.top": "Bordo in alto",
+  "target.bottom": "Bordo in basso",
+  "target.edge.hint": "Dai alla bordura una chiusura diversa qui",
+  "target.changed": "modificata",
+  "end.title.left": "Estremità sinistra",
+  "end.title.right": "Estremità destra",
+  "end.title.top": "Bordo in alto",
+  "end.title.bottom": "Bordo in basso",
+  "end.where.left": "È il primo modulo a sinistra.",
+  "end.where.right": "È l’ultimo modulo a destra.",
+  "end.where.top": "È la fila di moduli più in alto.",
+  "end.where.bottom": "È la fila di moduli più in basso.",
+  "end.explain": "Quello che ricami o scuci qui vale solo per questa parte. Il resto della bordura segue il modulo.",
+  "end.extra.cols": "Colonne in più all’esterno",
+  "end.extra.rows": "Righe in più all’esterno",
+  "end.extra.hint": "Lascia spazio per una chiusura fuori dal modulo",
+  "end.summary.none": "Nessuna modifica: è uguale al modulo.",
+  "end.summary": "Aggiunti: {added} · Scuciti: {removed} · Linee cambiate: {lines}",
+  "end.reset": "Ripristina",
+  "end.reset.hint": "Togli tutte le modifiche di questa parte, anche le righe e colonne in più",
+  "end.done": "Fatto",
+  "end.done.hint": "Torna al modulo",
+  "end.resetDone": "{name}: ripristinata.",
+  "toast.undo": "Annulla",
+  "legend.seed": "Punti ricamati da te",
+  "legend.copy": "Specchiati dai tuoi punti",
+  "legend.back": "Punto scritto",
+  "legend.fromUnit": "Come nel modulo",
+  "legend.added": "Aggiunti qui",
+  "legend.removed": "Scuciti qui",
+  "legend.extra": "In più, fuori dal modulo",
+  "legend.neighbour": "Modulo vicino – solo da vedere",
+  "canvas.hint.cross": "Tocca o trascina sui quadretti per ricamare. Il clic destro scuce.",
+  "canvas.hint.back": "Tocca un angolo per iniziare e un altro angolo per tracciare la linea. Continua da lì, oppure premi Esc per finire.",
+  "canvas.hint.unpick": "Tocca un punto o una linea per scucirlo.",
+  "canvas.hint.edges": "Tocca un numero sul bordo per aggiungere o togliere una riga o una colonna.",
+  "canvas.hint.end": "La parte sbiadita è il modulo vicino: così vedi come la chiusura si unisce al resto della bordura.",
+  "canvas.neighbour": "modulo vicino",
+  "band.mini.title": "Ecco la bordura",
+  "band.mini.open": "Mostra grande",
+  "band.mini.hint": "Tocca un’estremità della bordura per darle una chiusura diversa.",
+  "preview.caption": "{rx} × {ry} moduli · {w} × {h} punti",
+  "preview.hint": "Qui vedi tutta la bordura. Torna a «Disegna» per modificarla.",
+  "edge.col.title": "Colonna {n}",
+  "edge.row.title": "Riga {n}",
+  "edge.col.insertBefore": "Nuova colonna a sinistra",
+  "edge.col.insertAfter": "Nuova colonna a destra",
+  "edge.col.remove": "Togli questa colonna",
+  "edge.row.insertBefore": "Nuova riga sopra",
+  "edge.row.insertAfter": "Nuova riga sotto",
+  "edge.row.remove": "Togli questa riga",
+  "edge.close": "Chiudi",
+  "edge.also": "La simmetria cambia anche {list}.",
+  "edge.more": "Altre opzioni …",
+  "list.and": " e ",
+  "grid.colN": "la colonna {n}",
+  "grid.rowN": "la riga {n}",
+  "grid.newColN": "una nuova colonna {n}",
+  "grid.newRowN": "una nuova riga {n}",
+  "panel.colours": "Colori",
+  "panel.symmetry": "Simmetria",
+  "panel.grid": "Modulo e misure",
+  "colours.slot": "Colore {n}",
+  "colours.selected": "In uso",
+  "colours.own": "Colore libero",
+  "colours.dmc": "DMC {n}",
+  "colours.many": "{n} colori che si alternano",
+  "colours.edit": "Modifica il colore {n}",
+  "colours.change": "Cambia",
+  "colours.add": "Aggiungi colore",
+  "colours.useSeq": "Cambia colore da un modulo all’altro",
+  "colours.useSeq.hint": "Vale per i colori con più fili. Se è spento si usa solo il primo.",
+  "colours.background": "Tela",
+  "colours.background.hint": "Il colore di fondo dello schema",
+  "symmetry.intro": "Scegli come i tuoi punti si specchiano nel modulo.",
+  "symmetry.squareGroup": "Serve un modulo quadrato",
+  "symmetry.alwaysOn": "Sempre attivo",
+  "symmetry.needsSquare": "Serve un quadrato",
+  "symmetry.squareNotice": "Funzionano solo se il modulo è largo quanto è alto. Ora è {w} × {h} punti.",
+  "symmetry.makeSquare": "Rendi il modulo {n} × {n}",
+  "symmetry.switchedOff": "Il modulo non è più quadrato: le rotazioni di 90° e gli specchi in diagonale sono stati spenti.",
+  "sym.identity": "Come lo ricami",
+  "sym.mirror_x": "Specchia destra–sinistra",
+  "sym.mirror_y": "Specchia sopra–sotto",
+  "sym.rotate_180": "Ruota di 180°",
+  "sym.rotate_90": "Ruota di 90°",
+  "sym.rotate_270": "Ruota di 270°",
+  "sym.diag_main": "Specchia in diagonale ╲",
+  "sym.diag_anti": "Specchia in diagonale ╱",
+  "grid.unit": "Il modulo",
+  "grid.unit.hint": "Il riquadro in cui disegni. Si ripete lungo la bordura.",
+  "grid.width": "Larghezza",
+  "grid.height": "Altezza",
+  "grid.cells": "punti",
+  "grid.repeats": "Quanti moduli",
+  "grid.repeats.hint": "Quante volte si ripete il modulo (1–100).",
+  "grid.across": "In larghezza",
+  "grid.down": "In altezza",
+  "grid.times": "volte",
+  "grid.lines": "Aggiungi o togli righe/colonne …",
+  "step.less": "Meno",
+  "step.more": "Più",
+  "edges.title": "Dove i moduli si toccano",
+  "edges.explain": "Se un asse di simmetria cade proprio sul bordo del modulo, quella riga o colonna raddoppia dove due moduli si toccano. Spegnila per farla condividere ai moduli vicini.",
+  "edges.key.cols": "Colonne esterne",
+  "edges.key.rows": "Righe esterne",
+  "edges.diagramCaption": "Esempio: 3 × 2 moduli",
+  "edges.left": "Colonna sinistra",
+  "edges.right": "Colonna destra",
+  "edges.top": "Riga in alto",
+  "edges.bottom": "Riga in basso",
+  "edges.on": "In ogni modulo",
+  "edges.off.left": "Condivisa – solo all’estrema sinistra",
+  "edges.off.right": "Condivisa – solo all’estrema destra",
+  "edges.off.top": "Condivisa – solo in cima",
+  "edges.off.bottom": "Condivisa – solo in fondo",
+  "dialog.title": "Colore {n}",
+  "dialog.intro": "Un solo filo, oppure più colori che cambiano da un modulo all’altro.",
+  "dialog.count": "Quanti colori",
+  "dialog.parts": "Tocca una parte per sceglierne il colore",
+  "dialog.part": "Parte {n}",
+  "dialog.pick": "Colore della parte {n}",
+  "dialog.dmc": "Cerca un filo DMC …",
+  "dialog.custom": "Colore libero …",
+  "dialog.howItRepeats": "Ecco come cambia lungo la bordura:",
+  "dialog.offNote": "Il cambio colore è spento: ora si usa solo la parte 1.",
+  "dialog.cancel": "Annulla",
+  "dialog.ok": "Applica",
+  "dmc.title": "Scegli un filo DMC",
+  "dmc.search": "Cerca",
+  "dmc.search.placeholder": "Numero o nome, es. 321",
+  "dmc.namesNote": "I nomi dei colori sono in inglese, come li scrive DMC.",
+  "dmc.family.all": "Tutti",
+  "dmc.family.red": "Rossi",
+  "dmc.family.pink": "Rosa",
+  "dmc.family.orange": "Arancioni",
+  "dmc.family.yellow": "Gialli",
+  "dmc.family.green": "Verdi",
+  "dmc.family.blue": "Blu",
+  "dmc.family.purple": "Viola",
+  "dmc.family.brown": "Marroni",
+  "dmc.family.neutral": "Bianchi, grigi, neri",
+  "dmc.count": "{n} colori",
+  "dmc.none": "Nessun risultato. Prova con un numero, es. 321.",
+  "dmc.approx": "I colori sullo schermo sono indicativi. Controlla su una cartella colori quando la tinta deve essere esatta.",
+  "dmc.pickPrompt": "Scegli un colore dall’elenco.",
+  "dmc.own": "Colore libero …",
+  "dmc.cancel": "Annulla",
+  "dmc.choose": "Scegli",
+  "lines.title": "Righe e colonne",
+  "lines.action": "Cosa vuoi fare?",
+  "lines.add": "Aggiungere",
+  "lines.remove": "Togliere",
+  "lines.where": "Dove?",
+  "lines.place.top": "In alto",
+  "lines.place.bottom": "In basso",
+  "lines.place.first": "All’estrema sinistra",
+  "lines.place.last": "All’estrema destra",
+  "lines.place.row": "Riga numero …",
+  "lines.place.col": "Colonna numero …",
+  "lines.number": "Numero",
+  "lines.effect.add": "Aggiunge {list}.",
+  "lines.effect.remove": "Toglie {list}.",
+  "lines.symNote": "La simmetria ne prende più di una, così il motivo resta uguale.",
+  "lines.result": "Il modulo diventa {w} × {h} punti.",
+  "lines.cantRemove": "Non si può: il modulo deve avere almeno una riga e una colonna.",
+  "lines.cancel": "Annulla",
+  "lines.apply.add": "Aggiungi",
+  "lines.apply.remove": "Togli",
+  "mock.title": "Mockup ▸",
+  "mock.loading": "Mostra la schermata di caricamento",
+  "mock.square": "Alterna quadrato / non quadrato",
+  "mock.dialog": "Apri il colore 1",
+  "mock.dmc": "Apri la scelta dei fili DMC",
+  "mock.edge": "Mostra il menu del bordo",
+  "mock.lines": "Apri «Righe e colonne»",
+  "mock.end": "Modifica l’estremità destra",
+  "mock.back": "Scegli il punto scritto"
+ }
 };
 let lang = "nb";
 const t = (k, v = {}) => (STR[lang][k] ?? STR.nb[k] ?? k).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
+const joinList = items => items.length <= 1 ? (items[0] || "") : items.slice(0, -1).join(", ") + t("list.and") + items[items.length - 1];
 
-/* ---------------- Document (from examples/flower-band.json) ---------------- */
+/* ---------------- DMC threads (from kvale/core/dmc_palette.json: number|name|hex) ---------------- */
+const DMC = "3713|Salmon Very Light|ffe2e2;761|Salmon Light|ffc9c9;760|Salmon|f5adad;3712|Salmon Medium|f18787;3328|Salmon Dark|e36d6d;347|Salmon Very Dark|bf2d2d;353|Peach|fed7cc;352|Coral Light|fd9c97;351|Coral|e96a67;350|Coral Medium|e04848;349|Coral Dark|d21035;817|Coral Red Very Dark|bb051f;3708|Melon Light|ffcbd5;3706|Melon Medium|ffadbc;3705|Melon Dark|ff7992;3801|Melon Very Dark|e74967;666|Bright Red|e31d42;321|Red|c72b3b;304|Red Medium|b71f33;498|Red Dark|a7132b;816|Garnet|970b23;815|Garnet Medium|87071f;814|Garnet Dark|7b001b;894|Carnation Very Light|ffb2bb;893|Carnation Light|fc90a2;892|Carnation Medium|ff798c;891|Carnation Dark|ff5773;818|Baby Pink|ffdfd9;957|Geranium Pale|fdb5b5;956|Geranium|ff9191;309|Rose Dark|564a4a;963|Dusty Rose Ult Vy Lt|ffd7d7;3716|Dusty Rose Med Vy Lt|ffbdbd;962|Dusty Rose Medium|e68a8a;961|Dusty Rose Dark|cf7373;3833|Raspberry Light|ea8699;3832|Raspberry Medium|db556e;3831|Raspberry Dark|b32f48;777|Raspberry Very Dark|913546;819|Baby Pink Light|ffeeeb;3326|Rose Light|fbadb4;776|Pink Medium|fcb0b9;899|Rose Medium|f27688;335|Rose|ee546e;326|Rose Very Dark|b33b4b;151|Dusty Rose Vry Lt|f0ced4;3354|Dusty Rose Light|e4a6ac;3733|Dusty Rose|e8879b;3731|Dusty Rose Very Dark|da6783;3350|Dusty Rose Ultra Dark|bc4365;150|Dusty Rose Ult Vy Dk|ab0249;3689|Mauve Light|fbbfc2;3688|Mauve Medium|e7a9ac;3687|Mauve|c96b70;3803|Mauve Dark|ab3357;3685|Mauve Very Dark|881531;605|Cranberry Very Light|ffc0cd;604|Cranberry Light|ffb0be;603|Cranberry|ffa4be;602|Cranberry Medium|e24874;601|Cranberry Dark|d1286a;600|Cranberry Very Dark|cd2f63;3806|Cyclamen Pink Light|ff8cae;3805|Cyclamen Pink|f3478b;3804|Cyclamen Pink Dark|e02876;3609|Plum Ultra Light|f4aed5;3608|Plum Very Light|ea9cc4;3607|Plum Light|c54989;718|Plum|9c2462;917|Plum Medium|9b1359;915|Plum Dark|820043;225|Shell Pink Ult Vy Lt|ffdfd5;224|Shell Pink Very Light|ebb7af;152|Shell Pink Med Light|e2a099;223|Shell Pink Light|cc847c;3722|Shell Pink Med|bc6c64;3721|Shell Pink Dark|a14b51;221|Shell Pink Vy Dk|883e43;778|Antique Mauve Vy Lt|dfb3bb;3727|Antique Mauve Light|dba9b2;316|Antique Mauve Med|b7737f;3726|Antique Mauve Dark|9b5b66;315|Antique Mauve Md Dk|814952;3802|Antique Mauve Vy Dk|714149;902|Garnet Very Dark|822637;3743|Antique Violet Vy Lt|d7cbd3;3042|Antique Violet Light|b79da7;3041|Antique Violet Medium|956f7c;3740|Antique Violet Dark|785762;3836|Grape Light|ba91aa;3835|Grape Medium|946083;3834|Grape Dark|72375d;154|Grape Very Dark|572433;211|Lavender Light|e3cbe3;210|Lavender Medium|c39fc3;209|Lavender Dark|a37ba7;208|Lavender Very Dark|835b8b;3837|Lavender Ultra Dark|6c3a6e;327|Violet Dark|633666;153|Violet Very Light|e6ccd9;554|Violet Light|dbb3cb;553|Violet|a3638b;552|Violet  Medium|803a6b;550|Violet Very Dark|5c184e;3747|Blue Violet Vy Lt|d3d7ed;341|Blue Violet Light|b7bfdd;156|Blue Violet Med Lt|a3aed1;340|Blue Violet Medium|ada7c7;155|Blue Violet Med Dark|9891b6;3746|Blue Violet Dark|776b98;333|Blue Violet Very Dark|5c5478;157|Cornflower Blue Vy Lt|bbc3d9;794|Cornflower Blue Light|8f9cc1;793|Cornflower Blue Med|707da2;3807|Cornflower Blue|60678c;792|Cornflower Blue Dark|555b7b;158|Cornflower Blu M V D|4c526e;791|Cornflower Blue V D|464563;3840|Lavender Blue Light|b0c0da;3839|Lavender Blue Med|7b8eab;3838|Lavender Blue Dark|5c7294;800|Delft Blue Pale|c0ccde;809|Delft Blue|94a8c6;799|Delft Blue Medium|748eb6;798|Delft Blue Dark|466a8e;797|Royal Blue|13477d;796|Royal Blue Dark|11416d;820|Royal Blue Very Dark|0e365c;162|Blue Ultra Very Light|dbecf5;827|Blue Very Light|bddded;813|Blue Light|a1c2d7;826|Blue Medium|6b9ebf;825|Blue Dark|4781a5;824|Blue Very Dark|396987;996|Electric Blue Medium|30c2ec;3843|Electric Blue|14aad0;995|Electric Blue Dark|2696b6;3846|Turquoise Bright Light|06e3e6;3845|Turquoise Bright Med|04c4ca;3844|Turquoise Bright Dark|12aeba;159|Blue Gray Light|c7cad7;160|Blue Gray Medium|999fb7;161|Blue Gray|7880a4;3756|Baby Blue Ult Vy Lt|eefcfc;775|Baby Blue Very Light|d9ebf1;3841|Baby Blue Pale|cddfed;3325|Baby Blue Light|b8d2e6;3755|Baby Blue|93b4ce;334|Baby Blue Medium|739fc1;322|Baby Blue Dark|5a8fb8;312|Baby Blue Very Dark|35668b;803|Baby Blue Ult Vy Dk|2c597c;336|Navy Blue|253b73;823|Navy Blue Dark|213063;939|Navy Blue Very Dark|1b2853;3753|Antique Blue Ult Vy Lt|dbe2e9;3752|Antique Blue Very Lt|c7d1db;932|Antique Blue Light|a2b5c6;931|Antique Blue Medium|6a859e;930|Antique Blue Dark|455c71;3750|Antique Blue Very Dk|384c5e;828|Sky Blue Vy Lt|c5e8ed;3761|Sky Blue Light|acd8e2;519|Sky Blue|7eb1c8;518|Wedgewood Light|4f93a7;3760|Wedgewood Med|3e85a2;517|Wedgewood Dark|3b768f;3842|Wedgewood Vry Dk|32667c;311|Wedgewood Ult VyDk|1c5066;747|Peacock Blue Vy Lt|e5fcfd;3766|Peacock Blue Light|99cfd9;807|Peacock Blue|64abba;806|Peacock Blue Dark|3d95a5;3765|Peacock Blue Vy Dk|347f8c;3811|Turquoise Very Light|bce3e6;598|Turquoise Light|90c3cc;597|Turquoise|5ba3b3;3810|Turquoise Dark|488e9a;3809|Turquoise Vy Dark|3f7c85;3808|Turquoise Ult Vy Dk|366970;928|Gray Green Vy Lt|dde3e3;927|Gray Green Light|bdcbcb;926|Gray Green Med|98aeae;3768|Gray Green Dark|657f7f;924|Gray Green Vy Dark|566a6a;3849|Teal Green Light|52b3a4;3848|Teal Green Med|559392;3847|Teal Green Dark|347d75;964|Sea Green Light|a9e2d8;959|Sea Green Med|59c7b4;958|Sea Green Dark|3eb6a1;3812|Sea Green Vy Dk|2f8c84;3851|Green Bright Lt|49b3a1;943|Green Bright Md|3d9384;3850|Green Bright Dk|378477;993|Aquamarine Vy Lt|90c0b4;992|Aquamarine Lt|6fae9f;3814|Aquamarine|508b7d;991|Aquamarine Dk|477b6e;966|Jade Ultra Vy Lt|b9d7c0;564|Jade Very Light|a7cdaf;563|Jade Light|8fc098;562|Jade Medium|53976a;505|Jade Green|338362;3817|Celadon Green Lt|99c3aa;3816|Celadon Green|65a57d;163|Celadon Green Md|4d8361;3815|Celadon Green Dk|477759;561|Celadon Green VD|2c6a45;504|Blue Green Vy Lt|c4decc;3813|Blue Green Lt|b2d4bd;503|Blue Green Med|7bac94;502|Blue Green|5b9071;501|Blue Green Dark|396f52;500|Blue Green Vy Dk|044d33;955|Nile Green Light|a2d6ad;954|Nile Green|88ba91;913|Nile Green Med|6dab77;912|Emerald Green Lt|1b9d6b;911|Emerald Green Med|189065;910|Emerald Green Dark|187e56;909|Emerald Green Vy Dk|156f49;3818|Emerald Grn Ult V Dk|115a3b;369|Pistachio Green Vy Lt|d7edcc;368|Pistachio Green Lt|a6c298;320|Pistachio Green Med|69885a;367|Pistachio Green Dk|617a52;319|Pistachio Grn Vy Dk|205f2e;890|Pistachio Grn Ult V D|174923;164|Forest Green Lt|c8d8b8;989|Forest Green |8da675;988|Forest Green Med|738b5b;987|Forest Green Dk|587141;986|Forest Green Vy Dk|405230;772|Yellow Green Vy Lt|e4ecd4;3348|Yellow Green Lt|ccd9b1;3347|Yellow Green Med|71935c;3346|Hunter Green|406a3a;3345|Hunter Green Dk|1b5915;895|Hunter Green Vy Dk|1b5300;704|Chartreuse Bright|9ecf34;703|Chartreuse|7bb547;702|Kelly Green|47a72f;701|Green Light|3f8f29;700|Green Bright|07731b;699|Green|056517;907|Parrot Green Lt|c7e666;906|Parrot Green Md|7fb335;905|Parrot Green Dk|628a28;904|Parrot Green V Dk|557822;472|Avocado Grn U Lt|d8e498;471|Avocado Grn V Lt|aebf79;470|Avocado Grn Lt|94ab4f;469|Avocado Green|72843c;937|Avocado Green Md|627133;936|Avocado Grn V Dk|4c5826;935|Avocado Green Dk|424d21;934|Avocado Grn Black|313919;523|Fern Green Lt|abb197;3053|Green Gray|9ca482;3052|Green Gray Md|889268;3051|Green Gray Dk|5f6648;524|Fern Green Vy Lt|c4cdac;522|Fern Green|969e7e;520|Fern Green Dark|666d4f;3364|Pine Green|83975f;3363|Pine Green Md|728256;3362|Pine Green Dk|5e6b47;165|Moss Green Vy Lt|eff4a4;3819|Moss Green Lt|e0e868;166|Moss Green Md Lt|c0c840;581|Moss Green|a7ae38;580|Moss Green Dk|888d33;734|Olive Green Lt|c7c077;733|Olive Green Md|bcb34c;732|Olive Green|948c36;731|Olive Green Dk|938b37;730|Olive Green V Dk|827b30;3013|Khaki Green Lt|b9b982;3012|Khaki Green Md|a6a75d;3011|Khaki Green Dk|898a58;372|Mustard Lt|ccb784;371|Mustard|bfa671;370|Mustard Medium|b89d64;834|Golden Olive Vy Lt|dbbe7f;833|Golden Olive Lt|c8ab6c;832|Golden Olive|bd9b51;831|Golden Olive Md|aa8f56;830|Golden Olive Dk|8d784b;829|Golden Olive Vy Dk|7e6b42;613|Drab Brown V Lt|dcc4aa;612|Drab Brown Lt|bc9a78;611|Drab Brown|967656;610|Drab Brown Dk|796047;3047|Yellow Beige Lt|e7d6c1;3046|Yellow Beige Md|d8bc9a;3045|Yellow Beige Dk|bc966a;167|Yellow Beige V Dk|a77c49;746|Off White|fcfcee;677|Old Gold Vy Lt|f5eccb;422|Hazelnut Brown Lt|c69f7b;3828|Hazelnut Brown|b78b61;420|Hazelnut Brown Dk|a07042;869|Hazelnut Brown V Dk|835e39;728|Topaz|e4b468;783|Topaz Medium|ce9124;782|Topaz Dark|ae7720;781|Topaz Very Dark|a26d20;780|Topaz Ultra Vy Dk|94631a;676|Old Gold Lt|e5ce97;729|Old Gold Medium|d0a53e;680|Old Gold Dark|bc8d0e;3829|Old Gold Vy Dark|a98204;3822|Straw Light|f6dc98;3821|Straw|f3ce75;3820|Straw Dark|dfb65f;3852|Straw Very Dark|cd9d37;445|Lemon Light|fffb8b;307|Lemon|fded54;973|Canary Bright|ffe300;444|Lemon Dark|ffd600;3078|Golden Yellow Vy Lt|fdf9cd;727|Topaz Vy Lt|fff1af;726|Topaz Light|fdd755;725|Topaz Med Lt|ffc840;972|Canary Deep|ffb515;745|Yellow Pale Light|ffe9ad;744|Yellow Pale|ffe793;743|Yellow Med|fed376;742|Tangerine Light|ffbf57;741|Tangerine Med|ffa32b;740|Tangerine|ff8b00;970|Pumpkin Light|f78b13;971|Pumpkin|f67f00;947|Burnt Orange|ff7b4d;946|Burnt Orange Med|eb6307;900|Burnt Orange Dark|d15807;967|Apricot Very Light|ffded5;3824|Apricot Light|fecdc2;3341|Apricot|fcab98;3340|Apricot Med|ff836f;608|Burnt Orange Bright|fd5d35;606|Orange-Red Bright|fa3203;951|Tawny Light|ffe2cf;3856|Mahogany Ult Vy Lt|ffd3b5;722|Orange Spice Light|f7976f;721|Orange Spice Med|f27842;720|Orange Spice Dark|e55c1f;3825|Pumpkin Pale|fdbd96;922|Copper Light|e27323;921|Copper|c66218;920|Copper Med|ac5414;919|Red-Copper|a64510;918|Red-Copper Dark|82340a;3770|Tawny Vy Light|ffeee3;945|Tawny|fbd5bb;402|Mahogany Vy Lt|f7a777;3776|Mahogany Light|cf7939;301|Mahogany Med|b35f2b;400|Mahogany Dark|8f430f;300|Mahogany Vy Dk|6f2f00;3823|Yellow Ultra Pale|fffde3;3855|Autumn Gold Lt|fad396;3854|Autumn Gold Med|f2af68;3853|Autumn Gold Dk|f29746;3827|Golden Brown Pale|f7bb77;977|Golden Brown Light|dc9c56;976|Golden Brown Med|c28142;3826|Golden Brown|ad7239;975|Golden Brown Dk|914f12;948|Peach Very Light|fee7da;754|Peach Light|f7cbbf;3771|Terra Cotta Ult Vy Lt|f4bba9;758|Terra Cotta Vy Lt|eeaa9b;3778|Terra Cotta Light|d98978;356|Terra Cotta Med|c56a5b;3830|Terra Cotta|b95544;355|Terra Cotta Dark|984436;3777|Terra Cotta Vy Dk|863022;3779|Rosewood Ult Vy Lt|f8cac8;3859|Rosewood Light|ba8b7c;3858|Rosewood Med|964a3f;3857|Rosewood Dark|68251a;3774|Desert Sand Vy Lt|f3e1d7;950|Desert Sand Light|eed3c4;3064|Desert Sand|c48e70;407|Desert Sand Med|bb8161;3773|Desert Sand Dark|b67552;3772|Desert Sand Vy Dk|a06c50;632|Desert Sand Ult Vy Dk|875539;453|Shell Gray Light|d7cecb;452|Shell Gray Med|c0b3ae;451|Shell Gray Dark|917b73;3861|Cocoa Light|a68881;3860|Cocoa|7d5d57;779|Cocoa Dark|624b45;712|Cream|fffbef;739|Tan Ult Vy Lt|f8e4c8;738|Tan Very Light|eccc9e;437|Tan Light|e4bb8e;436|Tan|cb9051;435|Brown Very Light|b87748;434|Brown Light|985e33;433|Brown Med|7a451f;801|Coffee Brown Dk|653919;898|Coffee Brown Vy Dk|492a13;938|Coffee Brown Ult Dk|361f0e;3371|Black Brown|1e1108;543|Beige Brown Ult Vy Lt|f2e3ce;3864|Mocha Beige Light|cbb69c;3863|Mocha Beige Med|a4835c;3862|Mocha Beige Dark|8a6e4e;3031|Mocha Brown Vy Dk|4b3c2a;B5200|Snow White|ffffff;White|White|fcfbf8;3865|Winter White|f9f7f1;Ecru|Ecru|f0eada;822|Beige Gray Light|e7e2d3;644|Beige Gray Med|ddd8cb;642|Beige Gray Dark|a49878;640|Beige Gray Vy Dk|857b61;3787|Brown Gray Dark|625d50;3021|Brown Gray Vy Dk|4f4b41;3024|Brown Gray Vy Lt|ebeae7;3023|Brown Gray Light|b1aa97;3022|Brown Gray Med|8e9078;535|Ash Gray Vy Lt|636458;3033|Mocha Brown Vy Lt|e3d8cc;3782|Mocha Brown Lt|d2bca6;3032|Mocha Brown Med|b39f8b;3790|Beige Gray Ult Dk|7f6a55;3781|Mocha Brown Dk|6b5743;3866|Mocha Brn Ult Vy Lt|faf6f0;842|Beige Brown Vy Lt|d1baa1;841|Beige Brown Lt|b69b7e;840|Beige Brown Med|9a7c5c;839|Beige Brown Dk|675541;838|Beige Brown Vy Dk|594937;3072|Beaver Gray Vy Lt|e6e8e8;648|Beaver Gray Lt|bcb4ac;647|Beaver Gray Med|b0a69c;646|Beaver Gray Dk|877d73;645|Beaver Gray Vy Dk|6e655c;844|Beaver Gray Ult Dk|484848;762|Pearl Gray Vy Lt|ececec;415|Pearl Gray|d3d3d6;318|Steel Gray Lt|ababab;414|Steel Gray Dk|8c8c8c;168|Pewter Very Light|d1d1d1;169|Pewter Light|848484;317|Pewter Gray|6c6c6c;413|Pewter Gray Dark|565656;3799|Pewter Gray Vy Dk|424242;310|Black|000000".split(";").map(r => { const [num, name, hex] = r.split("|"); return {num, name, hex: "#" + hex}; });
+const DMC_BY_HEX = new Map(); DMC.forEach(d => { if (!DMC_BY_HEX.has(d.hex)) DMC_BY_HEX.set(d.hex, d); });
+const dmcFor = hex => DMC_BY_HEX.get((hex || "").toLowerCase()) || null;
+function family(hex) {
+  const n = parseInt(hex.slice(1), 16); let r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+  let h = 0; if (d) { h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
+  if (s < 0.14 || l > 0.94 || l < 0.08) return "neutral";
+  if ((h < 50 && l < 0.42 && s < 0.75) || (h >= 20 && h < 50 && s < 0.38)) return "brown";
+  if (h < 12 || h >= 345) return l > 0.72 ? "pink" : "red";
+  if (h < 42) return "orange";
+  if (h < 68) return "yellow";
+  if (h < 170) return "green";
+  if (h < 255) return "blue";
+  if (h < 300) return "purple";
+  return "pink";
+}
+const FAMILIES = ["all", "red", "pink", "orange", "yellow", "green", "blue", "purple", "brown", "neutral"];
+const FAMILY_CHIP = {red: "#c72b3b", pink: "#e48ea5", orange: "#ff8b00", yellow: "#ffc840", green: "#3f8f29", blue: "#253b73", purple: "#633666", brown: "#7a451f", neutral: "#8c8c8c"};
+
+/* ---------------- Document (examples/flower-band.json, with DMC colours, backstitch and a right end piece) ---------------- */
+const EDGE_LIST = ["left", "right", "top", "bottom"];
 const doc = {
   w: 12, h: 12, rx: 7, ry: 2,
   edges: { left: true, right: true, top: true, bottom: true },
   useSeq: true,
   bg: "#f5f1e8",
-  // Base colours from flower-band.json; slots 1 and 3 get demo sequences to show the split swatch.
-  seqs: [["#b1172b", "#2d7d32", "#f2c84b"], ["#2d7d32"], ["#f2c84b", "#b1172b"], ["#1b1b1b"]],
+  // DMC 498, 3346, 725, 310. Slots 1 and 3 have demo sequences to show the split swatch.
+  seqs: [["#a7132b", "#406a3a", "#ffc840"], ["#406a3a"], ["#ffc840", "#a7132b"], ["#000000"]],
   sym: ["identity", "mirror_x", "mirror_y", "rotate_180"],
-  motif: [[5,1,0],[5,2,0],[4,2,0],[5,3,1],[4,3,1],[3,3,1],[5,4,2],[4,4,2],[3,4,2],[2,4,2],[1,5,3],[2,5,3],[3,5,3]]
+  motif: [[5,1,0],[5,2,0],[4,2,0],[5,3,1],[4,3,1],[3,3,1],[5,4,2],[4,4,2],[3,4,2],[2,4,2],[1,5,3],[2,5,3],[3,5,3]],
+  // backstitch: [x1, y1, x2, y2, slot] between grid intersections; expanded by the same symmetry
+  back: [[1,1,3,3,3],[5,0,6,0,0]],
+  // end pieces: hidden cells, added cells, hidden/added backstitches and extra rows/columns outside the repeat
+  ends: {
+    left: null, top: null, bottom: null,
+    right: { ext: 2, removed: ["10,5", "10,6"], added: [[11,5,2],[11,6,2],[12,2,0],[12,3,0],[12,4,0],[12,5,0],[12,6,0],[12,7,0],[12,8,0],[12,9,0]],
+             removedBack: [], addedBack: [[14,1,14,11,3]] }
+  }
 };
-let active = 0, mode = "edit", tool = "paint", zoom = 1;
+let active = 0, mode = "edit", tool = "cross", zoom = 1, target = "unit";
 const undoStack = [], future = [];
 const snapshot = () => JSON.stringify(doc);
-function commit() { undoStack.push(snapshot()); future.length = 0; }
-function restore(s) { Object.assign(doc, JSON.parse(s)); syncFields(); renderAll(); }
+function restore(s) { const o = JSON.parse(s); Object.keys(o).forEach(k => doc[k] = o[k]); syncFields(); renderAll(); }
+let pendingSnap = null;
+function beginEdit() { pendingSnap = snapshot(); }
+function endEdit() { if (pendingSnap !== null && pendingSnap !== snapshot()) { undoStack.push(pendingSnap); future.length = 0; } pendingSnap = null; updateHistory(); }
+function edit(fn) { beginEdit(); const r = fn(); endEdit(); renderAll(); return r; }
 
 /* ---------------- Core logic (ported from kvale.core) ---------------- */
 const OPS = ["identity","mirror_x","mirror_y","rotate_180","rotate_90","rotate_270","diag_main","diag_anti"];
 const SQUARE_ONLY = new Set(["rotate_90","rotate_270","diag_main","diag_anti"]);
-function tp(x, y, w, h, op) {
+function tp(x, y, w, h, op) {            // cells
   switch (op) {
     case "identity": return [x, y];
     case "mirror_x": return [w-1-x, y];
@@ -1031,45 +1721,225 @@ function tp(x, y, w, h, op) {
     case "diag_anti": return [w-1-y, h-1-x];
   }
 }
-// Returns Map "x,y" -> {slot, seed (index into motif), isSeed}
-function expand(d = doc, ops = d.sym) {
-  const out = new Map(); const queue = [];
-  d.motif.forEach(([x, y, s], i) => { if (x < d.w && y < d.h) { out.set(x+","+y, {slot: s, seed: i, isSeed: true}); queue.push([x, y, s, i]); } });
-  while (queue.length) {
-    const [x, y, s, i] = queue.pop();
-    for (const op of ops) {
-      const [nx, ny] = tp(x, y, d.w, d.h, op); const k = nx+","+ny;
-      if (!out.has(k)) { out.set(k, {slot: s, seed: i, isSeed: false}); queue.push([nx, ny, s, i]); }
-    }
+function tpPt(x, y, w, h, op) {          // grid intersections
+  switch (op) {
+    case "identity": return [x, y];
+    case "mirror_x": return [w-x, y];
+    case "mirror_y": return [x, h-y];
+    case "rotate_180": return [w-x, h-y];
+    case "rotate_90": return [h-y, x];
+    case "rotate_270": return [y, w-x];
+    case "diag_main": return [y, x];
+    case "diag_anti": return [w-y, h-x];
   }
+}
+// Map "x,y" -> {slot, seed, isSeed}
+function expand(d = doc) {
+  const out = new Map(), queue = [];
+  d.motif.forEach(([x, y, s], i) => { if (x < d.w && y < d.h) { out.set(x+","+y, {slot: s, seed: i, isSeed: true}); queue.push([x, y, s, i]); } });
+  while (queue.length) { const [x, y, s, i] = queue.pop();
+    for (const op of d.sym) { const [nx, ny] = tp(x, y, d.w, d.h, op), k = nx+","+ny;
+      if (!out.has(k)) { out.set(k, {slot: s, seed: i, isSeed: false}); queue.push([nx, ny, s, i]); } } }
   return out;
 }
+function bkey(s) { let [a, b, c, e] = s; if (a > c || (a === c && b > e)) [a, b, c, e] = [c, e, a, b]; return `${a},${b},${c},${e}`; }
+// Map key -> {seg, slot, seed, isSeed}
+function expandBack(d = doc) {
+  const out = new Map(), queue = [];
+  d.back.forEach((s, i) => { const k = bkey(s); if (!out.has(k)) { out.set(k, {seg: s.slice(0, 4), slot: s[4], seed: i, isSeed: true}); queue.push([s.slice(0, 4), s[4], i]); } });
+  while (queue.length) { const [seg, s, i] = queue.pop();
+    for (const op of d.sym) { const p = tpPt(seg[0], seg[1], d.w, d.h, op), q = tpPt(seg[2], seg[3], d.w, d.h, op), ns = [...p, ...q], k = bkey(ns);
+      if (!out.has(k)) { out.set(k, {seg: ns, slot: s, seed: i, isSeed: false}); queue.push([ns, s, i]); } } }
+  return out;
+}
+const emptyEnd = () => ({ext: 0, removed: [], added: [], removedBack: [], addedBack: []});
+const endOf = (e, d = doc) => d.ends[e];
+const extOf = (e, d = doc) => d.ends[e]?.ext || 0;
+const ensureEnd = e => doc.ends[e] || (doc.ends[e] = emptyEnd());
+const endIsEmpty = o => !o || (!o.ext && !o.removed.length && !o.added.length && !o.removedBack.length && !o.addedBack.length);
+function endBounds(e, d = doc) {
+  const ext = extOf(e, d);
+  return { x0: e === "left" ? -ext : 0, x1: e === "right" ? d.w + ext - 1 : d.w - 1,
+           y0: e === "top" ? -ext : 0, y1: e === "bottom" ? d.h + ext - 1 : d.h - 1 };
+}
+const inUnit = (x, y) => x >= 0 && y >= 0 && x < doc.w && y < doc.h;
+// Cells shown in an end piece: Map "x,y" -> {slot, state: base|added|hidden}
+function endCells(e) {
+  const out = new Map(); for (const [k, m] of expand()) out.set(k, {slot: m.slot, state: "base"});
+  const o = endOf(e); if (!o) return out;
+  o.removed.forEach(k => { const c = out.get(k); if (c) c.state = "hidden"; });
+  o.added.forEach(([x, y, s]) => out.set(x+","+y, {slot: s, state: "added"}));
+  return out;
+}
+function endBacks(e) {
+  const out = new Map(); for (const [k, b] of expandBack()) out.set(k, {seg: b.seg, slot: b.slot, state: "base"});
+  const o = endOf(e); if (!o) return out;
+  o.removedBack.forEach(k => { const b = out.get(k); if (b) b.state = "hidden"; });
+  o.addedBack.forEach(s => out.set(bkey(s), {seg: s.slice(0, 4), slot: s[4], state: "added"}));
+  return out;
+}
+
+/* edit operations: return true when the document changed */
+function paintUnit(x, y, slot) {
+  if (!inUnit(x, y)) return false;
+  const m = expand().get(x+","+y);
+  if (m) { if (doc.motif[m.seed][2] === slot) return false; doc.motif[m.seed][2] = slot; return true; } // a copy edits its source stitch
+  doc.motif.push([x, y, slot]); return true;
+}
+function eraseUnit(x, y) { const m = expand().get(x+","+y); if (!m) return false; doc.motif.splice(m.seed, 1); return true; }
+function paintEnd(e, x, y, slot) {
+  const b = endBounds(e); if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) return false;
+  const k = x+","+y, base = inUnit(x, y) ? expand().get(k)?.slot : undefined, o0 = endOf(e);
+  const existing = o0?.added.find(a => a[0] === x && a[1] === y), removed = !!o0?.removed.includes(k);
+  if (existing && existing[2] === slot) return false;
+  if (!existing && !removed && base === slot) return false;
+  const o = ensureEnd(e); o.added = o.added.filter(a => !(a[0] === x && a[1] === y));
+  if (base === slot) o.removed = o.removed.filter(r => r !== k); else o.added.push([x, y, slot]);
+  return true;
+}
+function eraseEnd(e, x, y) {
+  const b = endBounds(e); if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) return false;
+  const k = x+","+y, hasBase = inUnit(x, y) && expand().has(k), o0 = endOf(e);
+  const hasAdded = !!o0?.added.some(a => a[0] === x && a[1] === y), isRemoved = !!o0?.removed.includes(k);
+  if ((!hasBase && !hasAdded) || (hasBase && isRemoved && !hasAdded)) return false;
+  const o = ensureEnd(e); o.added = o.added.filter(a => !(a[0] === x && a[1] === y));
+  if (hasBase && !o.removed.includes(k)) o.removed.push(k);
+  return true;
+}
+function addBackUnit(p, q, slot) {
+  const seg = [...p, ...q], ex = expandBack().get(bkey(seg));
+  if (ex) { if (ex.slot === slot) return false; doc.back[ex.seed][4] = slot; return true; }
+  doc.back.push([...seg, slot]); return true;
+}
+function addBackEnd(e, p, q, slot) {
+  const seg = [...p, ...q], k = bkey(seg), base = expandBack().get(k), o0 = endOf(e);
+  const existing = o0?.addedBack.find(s => bkey(s) === k), removed = !!o0?.removedBack.includes(k);
+  if (existing && existing[4] === slot) return false;
+  if (!existing && !removed && base && base.slot === slot) return false;
+  const o = ensureEnd(e); o.addedBack = o.addedBack.filter(s => bkey(s) !== k);
+  if (base && base.slot === slot) o.removedBack = o.removedBack.filter(r => r !== k); else o.addedBack.push([...seg, slot]);
+  return true;
+}
+function segDist(px, py, [x1, y1, x2, y2]) {
+  const dx = x2-x1, dy = y2-y1, L = dx*dx + dy*dy; let u = L ? ((px-x1)*dx + (py-y1)*dy) / L : 0; u = Math.max(0, Math.min(1, u));
+  return Math.hypot(px - (x1 + u*dx), py - (y1 + u*dy));
+}
+const HIT = 0.35;
+function nearestBack(fx, fy) {
+  const list = target === "unit" ? [...expandBack().entries()] : [...endBacks(target).entries()].filter(([, b]) => b.state !== "hidden");
+  let best = null, bd = HIT; for (const [k, b] of list) { const d = segDist(fx, fy, b.seg); if (d <= bd) { bd = d; best = [k, b]; } }
+  return best;
+}
+function eraseBackNear(fx, fy) {
+  const hit = nearestBack(fx, fy); if (!hit) return false; const [k, b] = hit;
+  if (target === "unit") { doc.back.splice(b.seed, 1); return true; }
+  const o = ensureEnd(target);
+  if (b.state === "added") { o.addedBack = o.addedBack.filter(s => bkey(s) !== k); if (!expandBack().has(k)) return true; }
+  if (!o.removedBack.includes(k)) o.removedBack.push(k);
+  return true;
+}
+function setEndExt(e, n) {
+  n = Math.max(0, Math.min(50, Math.round(n) || 0)); if (extOf(e) === n) return false;
+  const o = ensureEnd(e); o.ext = n; const b = endBounds(e);
+  o.added = o.added.filter(([x, y]) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1);
+  o.addedBack = o.addedBack.filter(s => [[s[0], s[1]], [s[2], s[3]]].every(([x, y]) => x >= b.x0 && x <= b.x1 + 1 && y >= b.y0 && y <= b.y1 + 1));
+  return true;
+}
+
+/* rows and columns: which lines does the symmetry tie together? (editing.grid_line_orbit) */
+function lineMap(axis, i, op, ins) {
+  const W = ins ? doc.w : doc.w - 1, H = ins ? doc.h : doc.h - 1, col = axis === "col";
+  switch (op) {
+    case "identity": return [axis, i];
+    case "mirror_x": return col ? ["col", W - i] : ["row", i];
+    case "mirror_y": return col ? ["col", i] : ["row", H - i];
+    case "rotate_180": return col ? ["col", W - i] : ["row", H - i];
+    case "rotate_90": return col ? ["row", i] : ["col", H - i];
+    case "rotate_270": return col ? ["row", W - i] : ["col", i];
+    case "diag_main": return col ? ["row", i] : ["col", i];
+    case "diag_anti": return col ? ["row", H - i] : ["col", W - i];
+  }
+}
+function orbit(axis, i, ins) {
+  const seen = new Set([axis + ":" + i]), queue = [[axis, i]];
+  while (queue.length) { const [a, j] = queue.pop(); for (const op of doc.sym) { const [na, nj] = lineMap(a, j, op, ins), k = na + ":" + nj; if (!seen.has(k)) { seen.add(k); queue.push([na, nj]); } } }
+  const cols = [], rows = []; for (const k of seen) { const [a, j] = k.split(":"); (a === "col" ? cols : rows).push(Number(j)); }
+  return {cols: cols.sort((a, b) => a - b), rows: rows.sort((a, b) => a - b)};
+}
+const canRemove = o => doc.w - o.cols.length >= 1 && doc.h - o.rows.length >= 1;
+// 1-based numbers of the new lines after an insertion at these gaps
+const newNumbers = gaps => gaps.map((g, k) => g + k + 1);
+function describeLines(o, ins) {
+  const cols = ins ? newNumbers(o.cols) : o.cols.map(c => c + 1), rows = ins ? newNumbers(o.rows) : o.rows.map(r => r + 1);
+  return [...rows.map(n => t(ins ? "grid.newRowN" : "grid.rowN", {n})), ...cols.map(n => t(ins ? "grid.newColN" : "grid.colN", {n}))];
+}
+function changeLines(axis, i, ins) {
+  const o = orbit(axis, i, ins); if (!ins && !canRemove(o)) { toast(t("lines.cantRemove")); return false; }
+  const C = o.cols, R = o.rows;
+  const shiftCell = (v, set) => ins ? v + set.filter(c => c <= v).length : v - set.filter(c => c < v).length;
+  const gone = (x, y) => !ins && (C.includes(x) || R.includes(y));
+  const shiftPt = (v, set) => ins ? v + set.filter(c => c < v || (c === v && v > 0)).length : v - set.filter(c => c < v).length;
+  const moveSeg = s => { const n = [shiftPt(s[0], C), shiftPt(s[1], R), shiftPt(s[2], C), shiftPt(s[3], R), s[4]]; return (n[0] === n[2] && n[1] === n[3]) ? null : n; };
+  doc.motif = doc.motif.filter(([x, y]) => !gone(x, y)).map(([x, y, s]) => [shiftCell(x, C), shiftCell(y, R), s]);
+  doc.back = doc.back.map(moveSeg).filter(Boolean);
+  for (const e of EDGE_LIST) { const en = doc.ends[e]; if (!en) continue;
+    en.removed = en.removed.map(k => k.split(",").map(Number)).filter(([x, y]) => !gone(x, y)).map(([x, y]) => shiftCell(x, C) + "," + shiftCell(y, R));
+    en.added = en.added.filter(([x, y]) => !gone(x, y)).map(([x, y, s]) => [shiftCell(x, C), shiftCell(y, R), s]);
+    en.addedBack = en.addedBack.map(moveSeg).filter(Boolean); en.removedBack = []; }
+  doc.w += ins ? C.length : -C.length; doc.h += ins ? R.length : -R.length;
+  enforceSquare(); return true;
+}
+
+/* ---------------- The whole band (renderer.build_colour_grid + backstitch segments) ---------------- */
 function includedCols(d, ux) { const last = d.rx-1; const kl = d.edges.left || ux === 0, kr = d.edges.right || ux === last;
   return [...Array(d.w).keys()].filter(x => (x !== 0 || kl) && (x !== d.w-1 || kr)); }
 function includedRows(d, uy) { const last = d.ry-1; const kt = d.edges.top || uy === 0, kb = d.edges.bottom || uy === last;
   return [...Array(d.h).keys()].filter(y => (y !== 0 || kt) && (y !== d.h-1 || kb)); }
+const colourFor = (d, slot, rep) => { const seq = d.seqs[slot % d.seqs.length]; return d.useSeq ? seq[rep % seq.length] : seq[0]; };
 function buildGrid(d = doc) {
-  const cols = [...Array(d.rx).keys()].map(u => includedCols(d, u));
-  const rows = [...Array(d.ry).keys()].map(u => includedRows(d, u));
-  const W = cols.reduce((a, c) => a + c.length, 0), H = rows.reduce((a, r) => a + r.length, 0);
+  const cols = [...Array(d.rx).keys()].map(u => includedCols(d, u)), rows = [...Array(d.ry).keys()].map(u => includedRows(d, u));
+  const baseW = cols.reduce((a, c) => a + c.length, 0), baseH = rows.reduce((a, r) => a + r.length, 0);
+  const L = extOf("left", d), R = extOf("right", d), T = extOf("top", d), B = extOf("bottom", d);
+  const W = L + baseW + R, H = T + baseH + B;
   const grid = Array.from({length: H}, () => Array(W).fill(d.bg));
-  const ex = expand(d); const vB = [], hB = [];
-  let oy = 0;
-  rows.forEach((rr, uy) => {
-    let ox = 0; hB.push(oy);
-    cols.forEach((cc, ux) => {
-      if (uy === 0) vB.push(ox);
-      const rep = uy * d.rx + ux;
-      rr.forEach((ly, iy) => cc.forEach((lx, ix) => {
-        const m = ex.get(lx+","+ly); if (!m) return;
-        const seq = d.seqs[m.slot % d.seqs.length];
-        grid[oy+iy][ox+ix] = d.useSeq ? seq[rep % seq.length] : seq[0];
-      }));
-      ox += cc.length;
-    });
-    oy += rr.length;
-  });
-  return {grid, W, H, vB, hB};
+  const xo = [], yo = []; let run = L; cols.forEach(c => { xo.push(run); run += c.length; }); run = T; rows.forEach(r => { yo.push(run); run += r.length; });
+  const ex = expand(d), exB = expandBack(d), segs = [];
+  for (let uy = 0; uy < d.ry; uy++) for (let ux = 0; ux < d.rx; ux++) {
+    const colMap = new Map(cols[ux].map((lx, i) => [lx, xo[ux] + i])), rowMap = new Map(rows[uy].map((ly, i) => [ly, yo[uy] + i]));
+    const rep = uy * d.rx + ux, lastX = ux === d.rx - 1, lastY = uy === d.ry - 1;
+    const marks = new Map(); for (const [k, m] of ex) marks.set(k, m.slot);
+    const backs = new Map(); for (const [k, b] of exB) backs.set(k, {seg: b.seg, slot: b.slot});
+    const apply = o => { if (!o) return; o.removed.forEach(k => marks.delete(k)); o.added.forEach(([x, y, s]) => marks.set(x+","+y, s));
+      o.removedBack.forEach(k => backs.delete(k)); o.addedBack.forEach(s => backs.set(bkey(s), {seg: s.slice(0, 4), slot: s[4]})); };
+    if (uy === 0) apply(d.ends.top); if (lastY) apply(d.ends.bottom); if (ux === 0) apply(d.ends.left); if (lastX) apply(d.ends.right);
+    const cx = x => colMap.has(x) ? colMap.get(x) : (ux === 0 && x < 0 && x >= -L) ? L + x : (lastX && x >= d.w && x < d.w + R) ? L + baseW + x - d.w : null;
+    const cy = y => rowMap.has(y) ? rowMap.get(y) : (uy === 0 && y < 0 && y >= -T) ? T + y : (lastY && y >= d.h && y < d.h + B) ? T + baseH + y - d.h : null;
+    for (const [k, s] of marks) { const [x, y] = k.split(",").map(Number), gx = cx(x), gy = cy(y); if (gx == null || gy == null) continue; grid[gy][gx] = colourFor(d, s, rep); }
+    const px = x => { if (x >= 0 && x <= d.w) return colMap.has(x) ? colMap.get(x) : colMap.has(x-1) ? colMap.get(x-1) + 1 : null;
+      if (ux === 0 && x < 0 && x >= -L) return L + x; if (lastX && x > d.w && x <= d.w + R) return L + baseW + x - d.w; return null; };
+    const py = y => { if (y >= 0 && y <= d.h) return rowMap.has(y) ? rowMap.get(y) : rowMap.has(y-1) ? rowMap.get(y-1) + 1 : null;
+      if (uy === 0 && y < 0 && y >= -T) return T + y; if (lastY && y > d.h && y <= d.h + B) return T + baseH + y - d.h; return null; };
+    for (const b of backs.values()) { const p = [px(b.seg[0]), py(b.seg[1]), px(b.seg[2]), py(b.seg[3])]; if (p.some(v => v == null)) continue; segs.push({p, col: colourFor(d, b.slot, rep)}); }
+  }
+  return {grid, W, H, xo, yo, cols, rows, L, R, T, B, segs};
+}
+// Rectangle (in band cells) covered by the repeat or by an end piece
+function regionRect(band, tg) {
+  const {xo, yo, cols, rows, W, H} = band, lx = xo.length - 1, ly = yo.length - 1;
+  if (tg === "left") return [0, 0, xo[0] + cols[0].length, H];
+  if (tg === "right") return [xo[lx], 0, W - xo[lx], H];
+  if (tg === "top") return [0, 0, W, yo[0] + rows[0].length];
+  if (tg === "bottom") return [0, yo[ly], W, H - yo[ly]];
+  const mx = Math.floor(xo.length / 2), my = Math.floor((yo.length - 1) / 2);
+  return [xo[mx], yo[my], cols[mx].length, rows[my].length];
+}
+function regionAt(band, cx, cy) {
+  const {xo, yo, cols, rows, T, B, H, W} = band;
+  if (cx < 0 || cy < 0 || cx >= W || cy >= H) return null;
+  if (T && cy < T) return "top"; if (B && cy >= H - B) return "bottom";
+  if (cx < xo[0] + cols[0].length) return "left"; if (cx >= xo[xo.length - 1]) return "right";
+  if (yo.length > 1 && cy < yo[0] + rows[0].length) return "top"; if (yo.length > 1 && cy >= yo[yo.length - 1]) return "bottom";
+  return "unit";
 }
 const lum = hex => { const n = parseInt(hex.slice(1), 16); const c = [n>>16, (n>>8)&255, n&255].map(v => { v /= 255; return v <= .03928 ? v/12.92 : ((v+.055)/1.055)**2.4; }); return .2126*c[0]+.7152*c[1]+.0722*c[2]; };
 
@@ -1077,90 +1947,157 @@ const lum = hex => { const n = parseInt(hex.slice(1), 16); const c = [n>>16, (n>
 function sizeCanvas(cv, w, h) { const r = window.devicePixelRatio || 1; cv.width = Math.round(w*r); cv.height = Math.round(h*r); cv.style.width = w+"px"; cv.style.height = h+"px"; const g = cv.getContext("2d"); g.setTransform(r,0,0,r,0,0); return g; }
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const $ = id => document.getElementById(id);
+function drawLine(g, x1, y1, x2, y2, col, width, dash) { g.save(); g.strokeStyle = col; g.lineWidth = width; g.lineCap = "round"; if (dash) g.setLineDash(dash); g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); g.restore(); }
+function pill(g, text, x, y) { g.save(); g.font = "700 11px " + css("--font-ui"); const w = g.measureText(text).width + 12;
+  g.fillStyle = css("--surface"); g.globalAlpha = .92; g.beginPath(); g.roundRect ? g.roundRect(x - w/2, y - 9, w, 18, 9) : g.rect(x - w/2, y - 9, w, 18); g.fill();
+  g.globalAlpha = 1; g.fillStyle = css("--text-muted"); g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(text, x, y + .5); g.restore(); }
 
-let cs = 32, hoverCell = null, edgeTarget = null;
+/* ---------------- Edit canvas: the repeat, or an end piece shown with the next repeat beside it ---------------- */
+let cs = 32, hover = null, edgeTarget = null, lineHi = null, pending = null, snap = null;
 function stageInnerWidth() { const b = $("stageBody"); const s = getComputedStyle(b); return b.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); }
-
+function view() {
+  const w = doc.w, h = doc.h, v = {x0: 0, x1: w-1, y0: 0, y1: h-1, ex0: 0, ex1: w-1, ey0: 0, ey1: h-1};
+  if (target === "unit") return v;
+  const ext = extOf(target), nbc = Math.min(w, Math.max(3, Math.ceil(w/2))), nbr = Math.min(h, Math.max(3, Math.ceil(h/2)));
+  if (target === "left") { v.ex0 = v.x0 = -ext; v.x1 = w - 1 + nbc; }
+  if (target === "right") { v.ex1 = v.x1 = w - 1 + ext; v.x0 = -nbc; }
+  if (target === "top") { v.ey0 = v.y0 = -ext; v.y1 = h - 1 + nbr; }
+  if (target === "bottom") { v.ey1 = v.y1 = h - 1 + ext; v.y0 = -nbr; }
+  return v;
+}
+function kindAt(v, x, y) {
+  if (x < v.x0 || x > v.x1 || y < v.y0 || y > v.y1) return null;
+  if (target === "unit") return "unit";
+  if (x >= v.ex0 && x <= v.ex1 && y >= v.ey0 && y <= v.ey1) return inUnit(x, y) ? "unit" : "extra";
+  return "nb";
+}
+const ptAllowed = (v, x, y) => x >= v.ex0 && x <= v.ex1 + 1 && y >= v.ey0 && y <= v.ey1 + 1;
 function drawEdit() {
   const ruler = parseFloat(getComputedStyle($("editor")).getPropertyValue("--ruler")) || 30;
-  const inner = stageInnerWidth(), wide = inner >= 700;
-  $("editView").classList.toggle("narrow", !wide);
+  const inner = stageInnerWidth(), wide = inner >= 700, v = view();
+  $("editLayout").classList.toggle("narrow", !wide);
+  const nx = v.x1 - v.x0 + 1, ny = v.y1 - v.y0 + 1;
   const availW = inner - ruler - 4 - (wide ? 340 + 24 : 0);
-  const availH = Math.max(260, window.innerHeight - (wide ? 250 : 420));
-  const fit = Math.max(8, Math.min(44, Math.floor(availW / doc.w), Math.floor(availH / doc.h)));
+  const availH = Math.max(260, window.innerHeight - (wide ? (target === "unit" ? 300 : 400) : 460));
+  const fit = Math.max(8, Math.min(44, Math.floor(availW / nx), Math.floor(availH / ny)));
   cs = Math.max(6, Math.round(fit * zoom));
-  const W = doc.w*cs, H = doc.h*cs, g = sizeCanvas($("editCanvas"), W, H);
-  const ex = expand();
+  const W = nx*cs, H = ny*cs, g = sizeCanvas($("editCanvas"), W, H);
+  const X = x => (x - v.x0) * cs, Y = y => (y - v.y0) * cs;
+  const ex = expand(), cells = target === "unit" ? null : endCells(target), base0 = s => doc.seqs[s % doc.seqs.length][0];
   g.fillStyle = doc.bg; g.fillRect(0, 0, W, H);
-  for (let y = 0; y < doc.h; y++) for (let x = 0; x < doc.w; x++) {
-    const m = ex.get(x+","+y); if (!m) continue;
-    const col = doc.seqs[m.slot % doc.seqs.length][0];
-    g.fillStyle = col; g.fillRect(x*cs, y*cs, cs, cs);
+  for (let y = v.y0; y <= v.y1; y++) for (let x = v.x0; x <= v.x1; x++) {
+    const kind = kindAt(v, x, y);
+    if (kind === "extra") { g.fillStyle = "rgba(47,93,158,.10)"; g.fillRect(X(x), Y(y), cs, cs); }
+    let c = null, hidden = false;
+    if (kind === "nb") { const m = ex.get((((x % doc.w) + doc.w) % doc.w) + "," + (((y % doc.h) + doc.h) % doc.h)); if (m) c = base0(m.slot); }
+    else if (target === "unit") { const m = ex.get(x+","+y); if (m) c = base0(m.slot); }
+    else { const m = cells.get(x+","+y); if (m) { c = base0(m.slot); hidden = m.state === "hidden"; } }
+    if (!c) continue;
+    g.save(); if (hidden) g.globalAlpha = .2; g.fillStyle = c; g.fillRect(X(x), Y(y), cs, cs); g.restore();
   }
-  // highlighted row/column for the open edge menu
-  if (edgeTarget) { g.fillStyle = css("--edge-tint") || "rgba(47,93,158,.16)";
-    if (edgeTarget.axis === "col") g.fillRect(edgeTarget.i*cs, 0, cs, H); else g.fillRect(0, edgeTarget.i*cs, W, cs); }
+  // highlighted rows/columns for the edge menu (with their symmetric partners)
+  if (lineHi && target === "unit") { g.fillStyle = lineHi.ins ? "rgba(47,93,158,.9)" : "rgba(47,93,158,.18)";
+    if (lineHi.ins) { lineHi.cols.forEach(c => g.fillRect(c*cs - 2, 0, 4, H)); lineHi.rows.forEach(r => g.fillRect(0, r*cs - 2, W, 4)); }
+    else { lineHi.cols.forEach(c => g.fillRect(c*cs, 0, cs, H)); lineHi.rows.forEach(r => g.fillRect(0, r*cs, W, cs)); } }
   // grid lines (aida)
   g.strokeStyle = "rgba(70,50,30,.18)"; g.lineWidth = 1; g.beginPath();
-  for (let x = 0; x <= doc.w; x++) { g.moveTo(x*cs+.5, 0); g.lineTo(x*cs+.5, H); }
-  for (let y = 0; y <= doc.h; y++) { g.moveTo(0, y*cs+.5); g.lineTo(W, y*cs+.5); }
+  for (let i = 0; i <= nx; i++) { g.moveTo(i*cs+.5, 0); g.lineTo(i*cs+.5, H); }
+  for (let i = 0; i <= ny; i++) { g.moveTo(0, i*cs+.5); g.lineTo(W, i*cs+.5); }
   g.stroke();
-  // symmetry axes
+  // symmetry axes (inside the repeat)
   g.save(); g.setLineDash([6, 5]); g.strokeStyle = "rgba(158,27,44,.6)"; g.lineWidth = 1.5; g.beginPath();
-  if (doc.sym.includes("mirror_x")) { g.moveTo(W/2, 0); g.lineTo(W/2, H); }
-  if (doc.sym.includes("mirror_y")) { g.moveTo(0, H/2); g.lineTo(W, H/2); }
-  if (doc.sym.includes("diag_main")) { g.moveTo(0, 0); g.lineTo(W, H); }
-  if (doc.sym.includes("diag_anti")) { g.moveTo(W, 0); g.lineTo(0, H); }
+  const ux0 = X(0), uy0 = Y(0), uW = doc.w*cs, uH = doc.h*cs;
+  if (doc.sym.includes("mirror_x")) { g.moveTo(ux0 + uW/2, uy0); g.lineTo(ux0 + uW/2, uy0 + uH); }
+  if (doc.sym.includes("mirror_y")) { g.moveTo(ux0, uy0 + uH/2); g.lineTo(ux0 + uW, uy0 + uH/2); }
+  if (doc.sym.includes("diag_main")) { g.moveTo(ux0, uy0); g.lineTo(ux0 + uW, uy0 + uH); }
+  if (doc.sym.includes("diag_anti")) { g.moveTo(ux0 + uW, uy0); g.lineTo(ux0, uy0 + uH); }
   g.stroke(); g.restore();
-  // seed marks: inset border in a contrasting colour
-  const inset = Math.max(3, cs*.17);
-  for (const [k, m] of ex) { if (!m.isSeed) continue; const [x, y] = k.split(",").map(Number);
-    const col = doc.seqs[m.slot % doc.seqs.length][0];
-    g.strokeStyle = lum(col) > .35 ? "#1b1712" : "#ffffff"; g.lineWidth = Math.max(1.5, cs*.08);
-    g.strokeRect(x*cs+inset, y*cs+inset, cs-2*inset, cs-2*inset); }
-  if (hoverCell) { g.strokeStyle = "rgba(47,93,158,.9)"; g.lineWidth = 2; g.strokeRect(hoverCell[0]*cs+1, hoverCell[1]*cs+1, cs-2, cs-2); }
-  buildRulers();
+  // markers: your own stitches (repeat) or stitches added here (end piece); crosses for unpicked
+  const inset = Math.max(3, cs*.17), bw = Math.max(1.5, cs*.08);
+  const box = (x, y, col) => { g.strokeStyle = lum(col) > .35 ? "#1b1712" : "#ffffff"; g.lineWidth = bw; g.strokeRect(X(x)+inset, Y(y)+inset, cs-2*inset, cs-2*inset); };
+  if (target === "unit") { for (const [k, m] of ex) if (m.isSeed) { const [x, y] = k.split(",").map(Number); box(x, y, base0(m.slot)); } }
+  else for (const [k, m] of cells) { const [x, y] = k.split(",").map(Number);
+    if (m.state === "added") box(x, y, base0(m.slot));
+    if (m.state === "hidden") { const i = cs*.22; drawLine(g, X(x)+i, Y(y)+i, X(x)+cs-i, Y(y)+cs-i, "#b3261e", Math.max(1.5, cs*.08)); drawLine(g, X(x)+cs-i, Y(y)+i, X(x)+i, Y(y)+cs-i, "#b3261e", Math.max(1.5, cs*.08)); } }
+  // backstitch
+  const lw = Math.max(2, cs/6), seg = (s, col, dash) => drawLine(g, X(s[0]), Y(s[1]), X(s[2]), Y(s[3]), col, lw, dash);
+  if (target === "unit") for (const b of expandBack().values()) seg(b.seg, base0(b.slot));
+  else {
+    // the next repeat's backstitch, shifted into the neighbour area
+    const dx = target === "left" ? doc.w : target === "right" ? -doc.w : 0, dy = target === "top" ? doc.h : target === "bottom" ? -doc.h : 0;
+    g.save(); g.beginPath(); g.rect(X(v.x0), Y(v.y0), W, H); g.clip();
+    for (const b of expandBack().values()) seg([b.seg[0]+dx, b.seg[1]+dy, b.seg[2]+dx, b.seg[3]+dy], base0(b.slot)); g.restore();
+    for (const b of endBacks(target).values()) b.state === "hidden" ? seg(b.seg, "#b3261e", [4, 4]) : seg(b.seg, base0(b.slot));
+    // fade the next repeat and frame the end piece
+    const nb = target === "left" ? [X(doc.w), 0, W - X(doc.w), H] : target === "right" ? [0, 0, X(0), H] : target === "top" ? [0, Y(doc.h), W, H - Y(doc.h)] : [0, 0, W, Y(0)];
+    g.save(); g.globalAlpha = .62; g.fillStyle = css("--stage"); g.fillRect(...nb); g.restore();
+    const ex0 = X(v.ex0), ey0 = Y(v.ey0), eW = (v.ex1 - v.ex0 + 1)*cs, eH = (v.ey1 - v.ey0 + 1)*cs;
+    g.save(); g.strokeStyle = css("--accent"); g.lineWidth = 3; g.strokeRect(ex0 + 1.5, ey0 + 1.5, eW - 3, eH - 3); g.restore();
+    if (extOf(target)) { g.save(); g.setLineDash([5, 4]); g.strokeStyle = "rgba(47,93,158,.8)"; g.lineWidth = 1.5; g.strokeRect(X(0)+.75, Y(0)+.75, uW-1.5, uH-1.5); g.restore(); }
+    const nbMid = [nb[0] + nb[2]/2, nb[1] + nb[3]/2]; pill(g, t("canvas.neighbour"), ...nbMid);
+  }
+  if (hover && tool !== "back") { g.strokeStyle = "rgba(47,93,158,.9)"; g.lineWidth = 2; g.strokeRect(X(hover[0])+1, Y(hover[1])+1, cs-2, cs-2); }
+  if (tool === "back") {
+    const col = doc.seqs[active][0];
+    if (pending && snap) drawLine(g, X(pending[0]), Y(pending[1]), X(snap[0]), Y(snap[1]), col, lw, [6, 4]);
+    const dot = (p, filled) => { g.save(); g.beginPath(); g.arc(X(p[0]), Y(p[1]), Math.max(4, cs*.16), 0, 7); g.fillStyle = filled ? col : "#ffffff"; g.strokeStyle = "#2f5d9e"; g.lineWidth = 2; g.fill(); g.stroke(); g.restore(); };
+    if (pending) dot(pending, true); if (snap) dot(snap, false);
+  }
+  buildRulers(v);
 }
-function buildRulers() {
+function buildRulers(v) {
   const top = $("rulerTop"), left = $("rulerLeft");
   const label = (i, n) => (n <= 30 || i === 0 || (i+1) % 5 === 0) ? String(i+1) : "";
   top.innerHTML = ""; left.innerHTML = "";
-  for (let i = 0; i < doc.w; i++) { const b = document.createElement("button"); b.style.width = cs+"px"; b.textContent = label(i, doc.w);
-    b.setAttribute("aria-label", t("edge.col.title", {n: i+1})); b.setAttribute("aria-expanded", String(edgeTarget?.axis === "col" && edgeTarget.i === i));
-    b.onclick = () => openEdge("col", i); top.appendChild(b); }
-  for (let i = 0; i < doc.h; i++) { const b = document.createElement("button"); b.style.height = cs+"px"; b.textContent = label(i, doc.h);
-    b.setAttribute("aria-label", t("edge.row.title", {n: i+1})); b.setAttribute("aria-expanded", String(edgeTarget?.axis === "row" && edgeTarget.i === i));
-    b.onclick = () => openEdge("row", i); left.appendChild(b); }
+  const make = (axis, i, size) => {
+    const b = document.createElement("button"), k = axis === "col" ? kindAt(v, i, 0) : kindAt(v, 0, i), n = axis === "col" ? doc.w : doc.h;
+    b.style[axis === "col" ? "width" : "height"] = size + "px";
+    if (target === "unit") { b.textContent = label(i, n);
+      b.setAttribute("aria-label", t(axis === "col" ? "edge.col.title" : "edge.row.title", {n: i+1}));
+      b.setAttribute("aria-expanded", String(edgeTarget?.axis === axis && edgeTarget.i === i)); b.onclick = () => openEdge(axis, i); }
+    else { b.disabled = true; b.tabIndex = -1;   // end piece: labels only; extra rows/columns count outwards (+1, +2 …)
+      if (k === "extra") { b.textContent = "+" + (i < 0 ? -i : i - n + 1); b.classList.add("extra"); }
+      else if (k === "unit") b.textContent = label(i, n); }
+    return b;
+  };
+  for (let x = v.x0; x <= v.x1; x++) top.appendChild(make("col", x, cs));
+  for (let y = v.y0; y <= v.y1; y++) left.appendChild(make("row", y, cs));
 }
 function openEdge(axis, i) {
   if (edgeTarget && edgeTarget.axis === axis && edgeTarget.i === i) return closeEdge();
-  edgeTarget = {axis, i}; renderEdgePop(); drawEdit();
+  edgeTarget = {axis, i}; lineHi = {...orbit(axis, i, false), ins: false}; renderEdgePop(); drawEdit();
 }
-function closeEdge() { edgeTarget = null; $("edgePop").hidden = true; drawEdit(); }
+function closeEdge() { edgeTarget = null; lineHi = null; $("edgePop").hidden = true; drawEdit(); }
 function renderEdgePop() {
-  const p = $("edgePop"); if (!edgeTarget) { p.hidden = true; return; }
+  const p = $("edgePop"); if (!edgeTarget || target !== "unit" || mode !== "edit") { p.hidden = true; return; }
   const {axis, i} = edgeTarget, ruler = parseFloat(getComputedStyle($("editor")).getPropertyValue("--ruler")) || 30;
   $("edgePopTitle").textContent = t(axis === "col" ? "edge.col.title" : "edge.row.title", {n: i+1});
-  const a = axis === "col" ? "col" : "row";
-  $("edgeBefore").lastElementChild.textContent = t(`edge.${a}.insertBefore`);
-  $("edgeAfter").lastElementChild.textContent = t(`edge.${a}.insertAfter`);
-  $("edgeRemove").lastElementChild.textContent = t(`edge.${a}.remove`);
+  $("edgeBefore").lastElementChild.textContent = t(`edge.${axis}.insertBefore`);
+  $("edgeAfter").lastElementChild.textContent = t(`edge.${axis}.insertAfter`);
+  $("edgeRemove").lastElementChild.textContent = t(`edge.${axis}.remove`);
+  const hi = lineHi || {...orbit(axis, i, false), ins: false};
+  const others = describeLines(hi, hi.ins).filter((s, k, all) => hi.ins || s !== t(axis === "col" ? "grid.colN" : "grid.rowN", {n: i+1}));
+  const extra = hi.ins ? (others.length > 1 ? others : []) : others;
+  $("edgeNote").hidden = !extra.length; $("edgeNote").textContent = t("edge.also", {list: joinList(extra)});
   p.hidden = false;
   const ew = $("editor").offsetWidth, pw = p.offsetWidth;
   if (axis === "col") { p.style.top = (ruler + 4) + "px"; p.style.left = Math.max(0, Math.min(ew - pw, ruler + i*cs + cs/2 - pw/2)) + "px"; }
   else { p.style.left = (ruler + 4) + "px"; p.style.top = (ruler + i*cs + cs) + "px"; }
 }
-function editStructure(kind) {
-  if (!edgeTarget) return; commit();
-  const {axis, i} = edgeTarget; const key = axis === "col" ? 0 : 1; const dim = axis === "col" ? "w" : "h";
-  if (kind === "remove") { if (doc[dim] <= 1) return; doc.motif = doc.motif.filter(m => m[key] !== i).map(m => { m = [...m]; if (m[key] > i) m[key]--; return m; }); doc[dim]--; }
-  else { const at = kind === "before" ? i : i+1; if (doc[dim] >= 100) return; doc.motif = doc.motif.map(m => { m = [...m]; if (m[key] >= at) m[key]++; return m; }); doc[dim]++; if (kind === "before") edgeTarget.i++; }
-  if (edgeTarget.i >= doc[dim]) edgeTarget.i = doc[dim]-1;
-  enforceSquare(); syncFields(); renderAll(); renderEdgePop();
+function edgeAction(kind) {
+  if (!edgeTarget) return; const {axis, i} = edgeTarget;
+  const changed = edit(() => kind === "remove" ? changeLines(axis, i, false) : changeLines(axis, kind === "before" ? i : i + 1, true));
+  if (!changed) return;
+  const n = axis === "col" ? doc.w : doc.h; if (kind === "before") edgeTarget.i++; if (edgeTarget.i >= n) edgeTarget.i = n - 1;
+  lineHi = {...orbit(edgeTarget.axis, edgeTarget.i, false), ins: false}; drawEdit(); renderEdgePop();
 }
+function hiInsert(kind) { if (!edgeTarget) return; const {axis, i} = edgeTarget;
+  lineHi = kind === "remove" ? {...orbit(axis, i, false), ins: false} : {...orbit(axis, kind === "before" ? i : i + 1, true), ins: true}; drawEdit(); renderEdgePop(); }
 
-function drawBand(cv, cell, maxW) {
-  const {grid, W, H, vB, hB} = buildGrid();
+/* ---------------- Band drawing (mini band and whole-band view) ---------------- */
+let miniBand = null, miniCell = 7, miniHover = null;
+function drawBand(cv, cell, maxW, highlight) {
+  const band = buildGrid(), {grid, W, H, xo, yo, segs} = band;
   let c = cell; if (maxW) c = Math.max(2, Math.min(cell, Math.floor(maxW / W)));
   const g = sizeCanvas(cv, W*c, H*c);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { g.fillStyle = grid[y][x]; g.fillRect(x*c, y*c, c, c); }
@@ -1169,10 +2106,18 @@ function drawBand(cv, cell, maxW) {
     for (let y = 0; y <= H; y++) { g.moveTo(0, y*c+.5); g.lineTo(W*c, y*c+.5); }
     g.stroke();
     g.strokeStyle = "rgba(70,50,30,.32)"; g.beginPath();
-    vB.slice(1).forEach(x => { g.moveTo(x*c+.5, 0); g.lineTo(x*c+.5, H*c); });
-    hB.slice(1).forEach(y => { g.moveTo(0, y*c+.5); g.lineTo(W*c, y*c+.5); });
+    xo.slice(1).forEach(x => { g.moveTo(x*c+.5, 0); g.lineTo(x*c+.5, H*c); });
+    yo.slice(1).forEach(y => { g.moveTo(0, y*c+.5); g.lineTo(W*c, y*c+.5); });
     g.stroke(); }
-  return {W, H};
+  segs.forEach(s => drawLine(g, s.p[0]*c, s.p[1]*c, s.p[2]*c, s.p[3]*c, s.col, Math.max(1.2, c/5)));
+  if (highlight) {
+    const r = regionRect(band, target).map(v => v*c);
+    if (target !== "unit") { g.save(); g.globalAlpha = .55; g.fillStyle = css("--surface"); g.beginPath(); g.rect(0, 0, W*c, H*c); g.rect(r[0], r[1], r[2], r[3]); g.fill("evenodd"); g.restore(); }
+    g.save(); g.strokeStyle = css("--accent"); g.lineWidth = 2.5; if (target === "unit") g.setLineDash([5, 3]); g.strokeRect(r[0]+1.25, r[1]+1.25, r[2]-2.5, r[3]-2.5); g.restore();
+    if (miniHover && miniHover !== target) { const h = regionRect(band, miniHover).map(v => v*c);
+      g.save(); g.strokeStyle = css("--focus"); g.lineWidth = 2; g.setLineDash([3, 3]); g.strokeRect(h[0]+1, h[1]+1, h[2]-2, h[3]-2); g.restore(); }
+  }
+  return {band, c, W, H};
 }
 function drawPreview() {
   const avail = stageInnerWidth() - 8;
@@ -1180,36 +2125,115 @@ function drawPreview() {
   const {W, H} = drawBand($("previewCanvas"), Math.max(2, Math.round(fit*zoom)));
   $("previewCaption").textContent = t("preview.caption", {rx: doc.rx, ry: doc.ry, w: W, h: H});
 }
-function drawMini() { const mb = $("miniCanvas").parentElement; drawBand($("miniCanvas"), 7, mb.clientWidth - 26); }
+function drawMini() { const mb = $("miniCanvas").parentElement; const r = drawBand($("miniCanvas"), 7, mb.clientWidth - 26, true); miniBand = r.band; miniCell = r.c; }
+function miniRegion(e) { if (!miniBand) return null; const r = $("miniCanvas").getBoundingClientRect(); return regionAt(miniBand, Math.floor((e.clientX - r.left) / miniCell), Math.floor((e.clientY - r.top) / miniCell)); }
+$("miniCanvas").addEventListener("pointermove", e => { const h = miniRegion(e); if (h !== miniHover) { miniHover = h; drawMini(); } $("miniCanvas").title = h ? t(h === "unit" ? "target.unit.hint" : "end.title." + h) : ""; });
+$("miniCanvas").addEventListener("pointerleave", () => { miniHover = null; drawMini(); });
+$("miniCanvas").addEventListener("click", e => { const h = miniRegion(e); if (h) setTarget(h); });
 
-/* ---------------- Painting ---------------- */
-function cellFromEvent(e) { const r = $("editCanvas").getBoundingClientRect(); const x = Math.floor((e.clientX - r.left)/cs), y = Math.floor((e.clientY - r.top)/cs); return (x >= 0 && y >= 0 && x < doc.w && y < doc.h) ? [x, y] : null; }
-function applyAt(cell, erase) {
-  const ex = expand(); const m = ex.get(cell.join(","));
-  if (erase) { if (!m) return; doc.motif.splice(m.seed, 1); }
-  else if (m) { if (doc.motif[m.seed][2] === active) return; doc.motif[m.seed][2] = active; }   // copy -> edits its source mark
-  else doc.motif.push([cell[0], cell[1], active]);
-  renderAll();
+/* ---------------- "Drawing in" bar and end-piece panel ---------------- */
+function targetIcon(tg, size = [30, 20]) {
+  const [W, H] = size, cols = 5, rows = 2, cw = (W - 2) / cols, ch = (H - 2) / rows;
+  let s = `<svg class="ticon" viewBox="0 0 ${W} ${H}" aria-hidden="true">`;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const on = tg === "unit" ? (c === 2 && r === 0) : tg === "left" ? c === 0 : tg === "right" ? c === cols - 1 : tg === "top" ? r === 0 : r === rows - 1;
+    s += `<rect x="${1 + c*cw + .6}" y="${1 + r*ch + .6}" width="${cw - 1.2}" height="${ch - 1.2}" rx="1" fill="currentColor" fill-opacity="${on ? 1 : .22}"/>`;
+  }
+  return s + "</svg>";
 }
+function renderTargets() {
+  const box = $("targetSeg"); box.innerHTML = "";
+  ["unit", ...EDGE_LIST].forEach(tg => {
+    const b = document.createElement("button"); b.setAttribute("aria-pressed", String(target === tg));
+    b.title = t(tg === "unit" ? "target.unit.hint" : "target.edge.hint");
+    const changed = tg !== "unit" && !endIsEmpty(doc.ends[tg]);
+    b.innerHTML = `${targetIcon(tg)}<span>${t("target." + tg)}</span>${changed ? `<i class="changed" title="${t("target.changed")}"></i><span class="sr-only">(${t("target.changed")})</span>` : ""}`;
+    b.onclick = () => setTarget(tg); box.appendChild(b);
+  });
+  const p = $("endPanel"); p.hidden = target === "unit"; if (target === "unit") return;
+  const o = endOf(target), horiz = target === "left" || target === "right";
+  $("endIcon").outerHTML = targetIcon(target, [46, 30]).replace('class="ticon"', 'id="endIcon"');
+  $("endIcon").style.color = css("--accent");
+  $("endTitle").textContent = t("end.title." + target);
+  $("endWhere").textContent = t("end.where." + target);
+  $("endExtLabel").textContent = t(horiz ? "end.extra.cols" : "end.extra.rows");
+  $("endExt").value = extOf(target);
+  $("endSummary").textContent = endIsEmpty(o) ? t("end.summary.none")
+    : t("end.summary", {added: o.added.length, removed: o.removed.length, lines: o.addedBack.length + o.removedBack.length});
+  $("endReset").disabled = endIsEmpty(o);
+}
+function setTarget(tg) {
+  target = tg; pending = null; snap = null; edgeTarget = null; lineHi = null; $("edgePop").hidden = true;
+  if (mode !== "edit") setMode("edit"); else renderAll();
+  if (tg !== "unit") $("endPanel").scrollIntoView({block: "nearest", behavior: "smooth"});
+}
+document.querySelectorAll("[data-estep]").forEach(b => b.onclick = () => { if (target !== "unit") edit(() => setEndExt(target, extOf(target) + Number(b.dataset.estep))); });
+$("endExt").onchange = e => { if (target !== "unit") edit(() => setEndExt(target, Number(e.target.value))); };
+$("endDone").onclick = () => setTarget("unit");
+$("endReset").onclick = () => { const tg = target; if (endIsEmpty(doc.ends[tg])) return;
+  edit(() => { doc.ends[tg] = null; return true; }); toast(t("end.resetDone", {name: t("end.title." + tg)}), true); };
+
+/* ---------------- Legend and hints ---------------- */
+function renderLegend() {
+  const items = target === "unit"
+    ? [["k-seed", "legend.seed"], ["k-copy", "legend.copy"], ["k-back", "legend.back"]]
+    : [["k-unit", "legend.fromUnit"], ["k-added", "legend.added"], ["k-removed", "legend.removed"], ["k-extra", "legend.extra"], ["k-nb", "legend.neighbour"]];
+  $("legend").innerHTML = items.map(([c, k]) => `<span><i class="key ${c}"></i><span>${t(k)}</span></span>`).join("");
+  const parts = [t(tool === "back" ? "canvas.hint.back" : tool === "unpick" ? "canvas.hint.unpick" : "canvas.hint.cross")];
+  parts.push(target === "unit" ? t("canvas.hint.edges") : t("canvas.hint.end"));
+  $("editHint").textContent = parts.join(" ");
+}
+
+/* ---------------- Pointer input on the edit canvas ---------------- */
+function localFromEvent(e) { const r = $("editCanvas").getBoundingClientRect(), v = view();
+  const fx = (e.clientX - r.left) / cs + v.x0, fy = (e.clientY - r.top) / cs + v.y0;
+  return {v, fx, fy, cell: [Math.floor(fx), Math.floor(fy)], pt: [Math.round(fx), Math.round(fy)]}; }
+const editable = (v, [x, y]) => { const k = kindAt(v, x, y); return k === "unit" || k === "extra"; };
 let painting = false;
-$("editCanvas").addEventListener("contextmenu", e => e.preventDefault());
-$("editCanvas").addEventListener("pointerdown", e => { const c = cellFromEvent(e); if (!c) return; painting = e.button === 2 ? "erase" : tool; commit(); applyAt(c, painting === "erase"); $("editCanvas").setPointerCapture(e.pointerId); });
-$("editCanvas").addEventListener("pointermove", e => { const c = cellFromEvent(e);
-  if (painting && c) { const m = expand().get(c.join(",")); if ((painting === "erase") === !!m) applyAt(c, painting === "erase"); }
-  if (String(c) !== String(hoverCell)) { hoverCell = c; drawEdit(); } });
-$("editCanvas").addEventListener("pointerup", () => painting = false);
-$("editCanvas").addEventListener("pointerleave", () => { hoverCell = null; drawEdit(); });
+function strokeAt(cell, kind) {
+  const changed = kind === "erase" ? (target === "unit" ? eraseUnit(...cell) : eraseEnd(target, ...cell))
+                                   : (target === "unit" ? paintUnit(...cell, active) : paintEnd(target, ...cell, active));
+  if (changed) renderAll();
+}
+const cv = $("editCanvas");
+cv.addEventListener("contextmenu", e => e.preventDefault());
+cv.addEventListener("pointerdown", e => {
+  const L = localFromEvent(e), right = e.button === 2;
+  if (tool === "back" && !right) {
+    if (!ptAllowed(L.v, ...L.pt)) return;
+    if (!pending) { pending = L.pt; drawEdit(); return; }
+    if (pending[0] === L.pt[0] && pending[1] === L.pt[1]) { pending = null; drawEdit(); return; }
+    const p = pending; edit(() => target === "unit" ? addBackUnit(p, L.pt, active) : addBackEnd(target, p, L.pt, active));
+    pending = L.pt; drawEdit(); return;
+  }
+  if ((tool === "back" && right) || (tool === "unpick" && nearestBack(L.fx, L.fy))) { pending = null; edit(() => eraseBackNear(L.fx, L.fy)); return; }
+  if (!editable(L.v, L.cell)) return;
+  painting = (right || tool === "unpick") ? "erase" : "paint";
+  beginEdit(); strokeAt(L.cell, painting); cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener("pointermove", e => {
+  const L = localFromEvent(e);
+  if (tool === "back") { const s = ptAllowed(L.v, ...L.pt) ? L.pt : null; if (String(s) !== String(snap)) { snap = s; drawEdit(); } return; }
+  const c = editable(L.v, L.cell) ? L.cell : null;
+  if (painting && c) strokeAt(c, painting);
+  cv.style.cursor = kindAt(L.v, ...L.cell) === "nb" ? "not-allowed" : "crosshair";
+  if (String(c) !== String(hover)) { hover = c; drawEdit(); }
+});
+cv.addEventListener("pointerup", () => { if (painting) { painting = false; endEdit(); renderAll(); } });
+cv.addEventListener("pointerleave", () => { hover = null; snap = null; drawEdit(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && pending) { pending = null; drawEdit(); } });
 
 /* ---------------- Side panel: colours ---------------- */
+function slotLabel(seq) { if (seq.length > 1) return t("colours.many", {n: seq.length}); const d = dmcFor(seq[0]); return d ? t("colours.dmc", {n: d.num}) : t("colours.own"); }
 function renderSlots() {
   const box = $("slots"); box.innerHTML = "";
   doc.seqs.forEach((seq, i) => {
     const row = document.createElement("div"); row.className = "slot";
     const sel = document.createElement("button"); sel.className = "slot-select"; sel.setAttribute("aria-pressed", String(i === active));
     sel.innerHTML = `<span class="slot-num">#${i+1}</span><span class="slot-body"><span class="swatchbar">${seq.map(c => `<i style="background:${c}"></i>`).join("")}</span>
-      <span class="slot-meta"><span>${seq.length === 1 ? t("colours.one") : t("colours.many", {n: seq.length})}</span><span>${i === active ? "✓ " + t("colours.selected") : ""}</span></span></span>`;
-    sel.setAttribute("aria-label", t("colours.slot", {n: i+1}));
-    sel.onclick = () => { active = i; renderSlots(); updateChip(); };
+      <span class="slot-meta"><span>${slotLabel(seq)}</span><span>${i === active ? "✓ " + t("colours.selected") : ""}</span></span></span>`;
+    sel.setAttribute("aria-label", t("colours.slot", {n: i+1}) + " – " + slotLabel(seq));
+    sel.onclick = () => { active = i; renderSlots(); updateChip(); if (tool === "back") drawEdit(); };
     sel.ondblclick = () => openSeq(i);
     const ed = document.createElement("button"); ed.className = "btn slot-edit icon-only";
     ed.title = t("colours.edit", {n: i+1}); ed.setAttribute("aria-label", t("colours.edit", {n: i+1}));
@@ -1217,15 +2241,17 @@ function renderSlots() {
     row.append(sel, ed); box.appendChild(row);
   });
 }
-function updateChip() { $("activeChip").style.background = doc.seqs[active][0]; }
-$("addColour").onclick = () => { commit(); doc.seqs.push(["#3b5b92"]); active = doc.seqs.length - 1; renderAll(); openSeq(active); };
-$("useSeq").onclick = () => { commit(); doc.useSeq = !doc.useSeq; renderAll(); };
+function updateChip() { document.querySelectorAll("[data-chip]").forEach(c => c.style.background = doc.seqs[active][0]); }
+$("addColour").onclick = () => openDmc(null, hex => { edit(() => { doc.seqs.push([hex]); return true; }); active = doc.seqs.length - 1; renderAll(); });
+$("useSeq").onclick = () => edit(() => { doc.useSeq = !doc.useSeq; return true; });
+$("bgInput").addEventListener("focus", beginEdit);
 $("bgInput").oninput = e => { doc.bg = e.target.value; renderAll(); };
+$("bgInput").onchange = () => endEdit();
 
 /* ---------------- Symmetry tiles ---------------- */
 const ICON_SEED = [[1,0],[2,0],[2,1]];
 function symIcon(op) {
-  const n = 6, c = 7, pad = 0, size = n*c;
+  const n = 6, c = 7, size = n*c;
   const cells = new Map(ICON_SEED.map(p => [p.join(","), "s"]));
   if (op !== "identity") ICON_SEED.forEach(([x, y]) => { const k = tp(x, y, n, n, op).join(","); if (!cells.has(k)) cells.set(k, "c"); });
   let s = `<svg viewBox="-1 -1 ${size+2} ${size+2}" aria-hidden="true"><rect x="0" y="0" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-opacity=".35"/>`;
@@ -1246,7 +2272,7 @@ function renderSym() {
       b.setAttribute("aria-pressed", String(on)); b.disabled = dis; if (locked) { b.classList.add("locked"); b.setAttribute("aria-disabled", "true"); }
       const sub = locked ? t("symmetry.alwaysOn") : dis ? t("symmetry.needsSquare") : "";
       b.innerHTML = `${symIcon(op)}<span class="lbl"><span>${t("sym." + op)}</span>${sub ? `<small>${sub}</small>` : ""}</span><span class="tick"><svg class="icon"><use href="#i-check"/></svg></span>`;
-      if (!locked && !dis) b.onclick = () => { commit(); doc.sym = on ? doc.sym.filter(o => o !== op) : OPS.filter(o => o === op || doc.sym.includes(o)); renderAll(); };
+      if (!locked && !dis) b.onclick = () => edit(() => { doc.sym = on ? doc.sym.filter(o => o !== op) : OPS.filter(o => o === op || doc.sym.includes(o)); return true; });
       box.appendChild(b);
     });
   });
@@ -1255,32 +2281,32 @@ function renderSym() {
     $("squareNoticeText").textContent = t("symmetry.squareNotice", {w: doc.w, h: doc.h});
     $("makeSquare").textContent = t("symmetry.makeSquare", {n}); }
 }
-$("makeSquare").onclick = () => { commit(); const n = Math.max(doc.w, doc.h); doc.w = doc.h = n; syncFields(); renderAll(); };
-function enforceSquare() { if (doc.w !== doc.h) doc.sym = doc.sym.filter(o => !SQUARE_ONLY.has(o)); }
+$("makeSquare").onclick = () => { edit(() => { const n = Math.max(doc.w, doc.h); doc.w = doc.h = n; return true; }); syncFields(); };
+function enforceSquare() { if (doc.w === doc.h) return; const before = doc.sym.length; doc.sym = doc.sym.filter(o => !SQUARE_ONLY.has(o)); if (doc.sym.length !== before) toast(t("symmetry.switchedOff")); }
 
-/* ---------------- Grid settings ---------------- */
+/* ---------------- Repeat and size ---------------- */
 const FIELD = {fW: "w", fH: "h", fRX: "rx", fRY: "ry"};
 function syncFields() { for (const [id, k] of Object.entries(FIELD)) $(id).value = doc[k]; }
-function setField(id, v) { v = Math.max(1, Math.min(100, Math.round(v) || 1)); if (doc[FIELD[id]] === v) { syncFields(); return; } commit(); doc[FIELD[id]] = v; enforceSquare(); syncFields(); edgeTarget = null; $("edgePop").hidden = true; renderAll(); }
+function setField(id, v) { v = Math.max(1, Math.min(100, Math.round(v) || 1)); if (doc[FIELD[id]] === v) { syncFields(); return; }
+  edgeTarget = null; lineHi = null; $("edgePop").hidden = true; edit(() => { doc[FIELD[id]] = v; enforceSquare(); return true; }); syncFields(); }
 document.querySelectorAll("[data-step]").forEach(b => b.onclick = () => { const [id, d] = b.dataset.step.split(":"); setField(id, doc[FIELD[id]] + Number(d)); });
 Object.keys(FIELD).forEach(id => $(id).onchange = e => setField(id, Number(e.target.value)));
 
-const EDGES = ["left", "right", "top", "bottom"];
 function renderEdges() {
   const box = $("edgeList"); box.innerHTML = "";
-  EDGES.forEach(e => {
+  EDGE_LIST.forEach(e => {
     const on = doc.edges[e]; const r = document.createElement("div"); r.className = "toggle-row";
     r.innerHTML = `<div class="text"><strong>${t("edges." + e)}</strong><span>${on ? t("edges.on") : t("edges.off." + e)}</span></div>
       <div class="switch-wrap"><button class="switch" role="switch" aria-checked="${on}" aria-label="${t("edges." + e)}"></button></div>`;
-    r.querySelector("button").onclick = () => { commit(); doc.edges[e] = !doc.edges[e]; renderAll(); };
+    r.querySelector("button").onclick = () => edit(() => { doc.edges[e] = !doc.edges[e]; return true; });
     box.appendChild(r);
   });
-  // Schematic 3 x 2 band of 5 x 4 units using the same inclusion rules as the renderer.
+  // Schematic 3 x 2 band of 5 x 4 repeats using the same inclusion rules as the renderer.
   const d = {...doc, w: 5, h: 4, rx: 3, ry: 2}; const c = 12;
   const cols = [0,1,2].map(u => includedCols(d, u)), rows = [0,1].map(u => includedRows(d, u));
   const W = cols.reduce((a, x) => a + x.length, 0)*c, H = rows.reduce((a, x) => a + x.length, 0)*c;
   let s = ""; let oy = 0;
-  rows.forEach((rr, uy) => { let ox = 0; cols.forEach((cc, ux) => {
+  rows.forEach((rr) => { let ox = 0; cols.forEach((cc) => {
     rr.forEach((ly, iy) => cc.forEach((lx, ix) => {
       const colEdge = lx === 0 || lx === 4, rowEdge = ly === 0 || ly === 3;
       const fill = colEdge ? "#2f5d9e" : rowEdge ? "#c08a1e" : "var(--surface)";
@@ -1291,8 +2317,51 @@ function renderEdges() {
   const svg = $("edgeSvg"); svg.setAttribute("viewBox", `-1 -1 ${W+2} ${H+2}`); svg.setAttribute("width", W+2); svg.setAttribute("height", H+2); svg.innerHTML = s;
 }
 
-/* ---------------- Sequence dialog ---------------- */
-const THREADS = ["#b1172b","#7d1022","#d9603b","#f2c84b","#e9d9a6","#2d7d32","#1f4d2b","#7fa36b","#2b4a8b","#6c8fc7","#5b2a6e","#c26a9a","#6b4226","#1b1b1b","#ffffff","#8a8a8a"];
+/* ---------------- Rows and columns dialog ---------------- */
+const lines = {act: "add", place: "bottom", num: 1};
+function linesPlace() {   // -> [axis, index] like editing.grid_line_for_place
+  const ins = lines.act === "add";
+  switch (lines.place) {
+    case "top": return ["row", 0];
+    case "bottom": return ["row", ins ? doc.h : doc.h - 1];
+    case "first": return ["col", 0];
+    case "last": return ["col", ins ? doc.w : doc.w - 1];
+    default: { const axis = lines.place, max = (axis === "col" ? doc.w : doc.h) + (ins ? 1 : 0); lines.num = Math.max(1, Math.min(max, lines.num)); return [axis, lines.num - 1]; }
+  }
+}
+function openLines(preset) { if (preset) Object.assign(lines, preset); renderLines(); $("linesDialog").showModal(); }
+function renderLines() {
+  const ins = lines.act === "add", [axis, i] = linesPlace(), o = orbit(axis, i, ins), numbered = lines.place === "row" || lines.place === "col";
+  document.querySelectorAll("#linesAction button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.act === lines.act)));
+  document.querySelectorAll("#linesPlaces .opt").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.place === lines.place)));
+  $("linesNumWrap").hidden = !numbered;
+  const max = (lines.place === "col" ? doc.w : doc.h) + (ins ? 1 : 0); $("linesNum").max = max; $("linesNum").value = lines.num; $("linesNumRange").textContent = `(1–${max})`;
+  const ok = ins || canRemove(o), list = describeLines(o, ins), many = list.length > 1;
+  const nw = doc.w + (ins ? 1 : -1) * o.cols.length, nh = doc.h + (ins ? 1 : -1) * o.rows.length;
+  const eff = $("linesEffect"); eff.className = "effect" + (ok ? "" : " warn");
+  eff.innerHTML = ok ? `${t(ins ? "lines.effect.add" : "lines.effect.remove", {list: joinList(list)})} ${t("lines.result", {w: nw, h: nh})}${many ? `<small>${t("lines.symNote")}</small>` : ""}` : t("lines.cantRemove");
+  $("linesApply").textContent = t(ins ? "lines.apply.add" : "lines.apply.remove"); $("linesApply").disabled = !ok;
+  // preview of the repeat with the affected lines marked
+  const c = Math.max(6, Math.min(16, Math.floor(260 / Math.max(doc.w, doc.h)))), W = doc.w*c, H = doc.h*c, ex = expand();
+  let s = `<rect x="0" y="0" width="${W}" height="${H}" fill="${doc.bg}"/>`;
+  for (const [k, m] of ex) { const [x, y] = k.split(",").map(Number); s += `<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="${doc.seqs[m.slot % doc.seqs.length][0]}"/>`; }
+  for (let x = 0; x <= doc.w; x++) s += `<path d="M${x*c} 0V${H}" stroke="rgba(70,50,30,.2)"/>`;
+  for (let y = 0; y <= doc.h; y++) s += `<path d="M0 ${y*c}H${W}" stroke="rgba(70,50,30,.2)"/>`;
+  if (ins) { o.cols.forEach(g => s += `<rect x="${g*c - 2}" y="-4" width="4" height="${H + 8}" rx="2" fill="#2f5d9e"/>`); o.rows.forEach(g => s += `<rect x="-4" y="${g*c - 2}" width="${W + 8}" height="4" rx="2" fill="#2f5d9e"/>`); }
+  else { o.cols.forEach(x => s += `<rect x="${x*c}" y="0" width="${c}" height="${H}" fill="#b3261e" fill-opacity=".45"/>`); o.rows.forEach(y => s += `<rect x="0" y="${y*c}" width="${W}" height="${c}" fill="#b3261e" fill-opacity=".45"/>`); }
+  const svg = $("linesSvg"); svg.setAttribute("viewBox", `-5 -5 ${W+10} ${H+10}`); svg.setAttribute("width", W+10); svg.setAttribute("height", H+10); svg.innerHTML = s;
+}
+document.querySelectorAll("#linesAction button").forEach(b => b.onclick = () => { lines.act = b.dataset.act; renderLines(); });
+document.querySelectorAll("#linesPlaces .opt").forEach(b => b.onclick = () => { lines.place = b.dataset.place; renderLines(); });
+document.querySelectorAll("[data-lstep]").forEach(b => b.onclick = () => { lines.num += Number(b.dataset.lstep); renderLines(); });
+$("linesNum").onchange = e => { lines.num = Number(e.target.value) || 1; renderLines(); };
+$("linesDialog").addEventListener("close", () => { if ($("linesDialog").returnValue !== "ok") return; const [axis, i] = linesPlace();
+  edit(() => changeLines(axis, i, lines.act === "add")); syncFields(); closeEdge(); });
+$("openLines").onclick = () => openLines();
+$("edgeMore").onclick = () => { const {axis, i} = edgeTarget; closeEdge(); openLines({place: axis, num: i + 1}); };
+
+/* ---------------- Colour (sequence) dialog ---------------- */
+const QUICK = ["498","321","815","606","740","725","3865","Ecru","3346","699","701","336","796","550","433","310","414","B5200"].map(n => DMC.find(d => d.num === n)).filter(Boolean);
 let dlgSlot = 0, dlgSeq = [], dlgPart = 0;
 function openSeq(i) { dlgSlot = i; dlgSeq = [...doc.seqs[i]]; dlgPart = 0; renderDlg(); $("seqDialog").showModal(); }
 function renderDlg() {
@@ -1303,11 +2372,13 @@ function renderDlg() {
   dlgSeq.forEach((c, k) => { const b = document.createElement("button"); b.type = "button"; b.className = "part"; b.textContent = k+1;
     b.style.background = c; b.style.color = lum(c) > .35 ? "#1b1712" : "#fff"; b.setAttribute("aria-pressed", String(k === dlgPart));
     b.setAttribute("aria-label", t("dialog.part", {n: k+1})); b.onclick = () => { dlgPart = k; renderDlg(); }; $("dlgParts").appendChild(b); });
-  $("dlgPickLabel").textContent = t("dialog.pick", {n: dlgPart+1});
+  const cur = dlgSeq[dlgPart], d = dmcFor(cur);
+  $("dlgPickLabel").textContent = t("dialog.pick", {n: dlgPart+1}) + " – " + (d ? `DMC ${d.num} ${d.name}` : t("colours.own"));
   $("dlgThreads").innerHTML = "";
-  THREADS.forEach(c => { const b = document.createElement("button"); b.type = "button"; b.className = "thread"; b.style.background = c; b.title = c;
-    b.setAttribute("aria-label", c); b.setAttribute("aria-pressed", String(dlgSeq[dlgPart].toLowerCase() === c)); b.onclick = () => { dlgSeq[dlgPart] = c; renderDlg(); }; $("dlgThreads").appendChild(b); });
-  $("dlgCustom").value = dlgSeq[dlgPart]; $("dlgCustomChip").style.background = dlgSeq[dlgPart];
+  QUICK.forEach(q => { const b = document.createElement("button"); b.type = "button"; b.className = "thread"; b.style.background = q.hex;
+    b.title = `DMC ${q.num} – ${q.name}`; b.setAttribute("aria-label", b.title); b.setAttribute("aria-pressed", String(cur.toLowerCase() === q.hex));
+    b.onclick = () => { dlgSeq[dlgPart] = q.hex; renderDlg(); }; $("dlgThreads").appendChild(b); });
+  $("dlgCustom").value = cur; $("dlgCustomChip").style.background = cur;
   $("dlgRepeats").innerHTML = [...Array(Math.min(doc.rx, 10)).keys()].map(r => { const c = doc.useSeq ? dlgSeq[r % dlgSeq.length] : dlgSeq[0];
     return `<span style="background:${c};color:${lum(c) > .35 ? "#1b1712" : "#fff"}">${r+1}</span>`; }).join("");
   $("dlgOffNote").hidden = doc.useSeq;
@@ -1316,25 +2387,57 @@ function resizeSeq(n) { n = Math.max(1, Math.min(24, n)); while (dlgSeq.length <
 document.querySelectorAll("[data-dstep]").forEach(b => b.onclick = () => resizeSeq(dlgSeq.length + Number(b.dataset.dstep)));
 $("dlgCount").onchange = e => resizeSeq(Number(e.target.value));
 $("dlgCustom").oninput = e => { dlgSeq[dlgPart] = e.target.value; renderDlg(); };
-$("seqDialog").addEventListener("close", () => { if ($("seqDialog").returnValue === "ok") { commit(); doc.seqs[dlgSlot] = [...dlgSeq]; renderAll(); } });
+$("dlgDmc").onclick = () => openDmc(dlgSeq[dlgPart], hex => { dlgSeq[dlgPart] = hex; renderDlg(); });
+$("seqDialog").addEventListener("close", () => { if ($("seqDialog").returnValue === "ok") edit(() => { doc.seqs[dlgSlot] = [...dlgSeq]; return true; }); });
+
+/* ---------------- DMC picker ---------------- */
+const dmc = {q: "", fam: "all", sel: null, cb: null};
+function openDmc(current, cb) { dmc.cb = cb; dmc.q = ""; dmc.fam = "all"; dmc.sel = dmcFor(current); $("dmcSearch").value = ""; $("dmcDialog").showModal(); renderDmc(true); $("dmcSearch").focus(); }
+function renderDmc(scroll) {
+  $("dmcFamilies").innerHTML = FAMILIES.map(f => `<button type="button" class="chipbtn" data-fam="${f}" aria-pressed="${dmc.fam === f}">${f === "all" ? "" : `<i style="background:${FAMILY_CHIP[f]}"></i>`}${t("dmc.family." + f)}</button>`).join("");
+  document.querySelectorAll("#dmcFamilies button").forEach(b => b.onclick = () => { dmc.fam = b.dataset.fam; renderDmc(); });
+  const words = dmc.q.toLowerCase().split(/\s+/).filter(Boolean);
+  const list = DMC.filter(d => (dmc.fam === "all" || family(d.hex) === dmc.fam) && words.every(w => d.num.toLowerCase().includes(w) || d.name.toLowerCase().includes(w)));
+  $("dmcCount").textContent = t("dmc.count", {n: list.length});
+  $("dmcList").innerHTML = list.length ? list.map(d => `<button type="button" class="dmc-row" role="option" data-num="${d.num}" aria-pressed="${dmc.sel?.num === d.num}" aria-selected="${dmc.sel?.num === d.num}"><span class="dmc-sw" style="background:${d.hex}"></span><span class="dmc-num">${d.num}</span><span>${d.name}</span></button>`).join("")
+    : `<p class="dmc-empty">${t("dmc.none")}</p>`;
+  document.querySelectorAll("#dmcList .dmc-row").forEach(b => { b.onclick = () => { dmc.sel = DMC.find(d => d.num === b.dataset.num); renderDmc(); };
+    b.ondblclick = () => { dmc.sel = DMC.find(d => d.num === b.dataset.num); $("dmcDialog").close("ok"); }; });
+  $("dmcBig").style.background = dmc.sel ? dmc.sel.hex : "";
+  $("dmcDetail").innerHTML = dmc.sel ? `<strong>DMC ${dmc.sel.num}</strong> – ${dmc.sel.name}` : t("dmc.pickPrompt");
+  $("dmcChoose").disabled = !dmc.sel;
+  if (scroll && dmc.sel) $("dmcList").querySelector(`[data-num="${CSS.escape(dmc.sel.num)}"]`)?.scrollIntoView({block: "center"});
+}
+$("dmcSearch").oninput = e => { dmc.q = e.target.value; renderDmc(); };
+$("dmcOwn").oninput = e => $("dmcOwnChip").style.background = e.target.value;
+$("dmcOwn").onchange = e => { const hex = e.target.value; $("dmcDialog").close("cancel"); dmc.cb && dmc.cb(hex); };
+$("dmcDialog").addEventListener("close", () => { if ($("dmcDialog").returnValue === "ok" && dmc.sel && dmc.cb) dmc.cb(dmc.sel.hex); });
+
+/* ---------------- Toast ---------------- */
+let toastTimer = 0;
+function toast(msg, undoable) { $("toastMsg").textContent = msg; $("toastUndo").hidden = !undoable; $("toast").hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => $("toast").hidden = true, undoable ? 6000 : 3500); }
+$("toastUndo").onclick = () => { $("undoBtn").click(); $("toast").hidden = true; };
 
 /* ---------------- Toolbar, modes, theme, language ---------------- */
 function pressGroup(groupId, attr, val) { document.querySelectorAll(`#${groupId} button`).forEach(b => b.setAttribute("aria-pressed", String(b.dataset[attr] === val))); }
 document.querySelectorAll("#modeSeg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
 function setMode(m) { mode = m; zoom = 1; pressGroup("modeSeg", "mode", m); $("editView").hidden = m !== "edit"; $("previewView").hidden = m !== "preview";
-  $("toolSeg").style.visibility = m === "edit" ? "visible" : "hidden"; renderAll(); }
+  $("toolSeg").style.visibility = m === "edit" ? "visible" : "hidden"; if (m !== "edit") { edgeTarget = null; lineHi = null; } renderAll(); renderEdgePop(); }
 $("miniOpen").onclick = () => setMode("preview");
-document.querySelectorAll("#toolSeg button").forEach(b => b.onclick = () => { tool = b.dataset.tool; pressGroup("toolSeg", "tool", tool); });
-$("undoBtn").onclick = () => { if (!undoStack.length) return; future.push(snapshot()); restore(undoStack.pop()); };
-$("redoBtn").onclick = () => { if (!future.length) return; undoStack.push(snapshot()); restore(future.pop()); };
-document.addEventListener("keydown", e => { if (!(e.ctrlKey || e.metaKey)) return; const k = e.key.toLowerCase();
+function setTool(tl) { tool = tl; pending = null; snap = null; hover = null; pressGroup("toolSeg", "tool", tl); renderLegend(); drawEdit(); }
+document.querySelectorAll("#toolSeg button").forEach(b => b.onclick = () => { if (mode !== "edit") setMode("edit"); setTool(b.dataset.tool); });
+function updateHistory() { $("undoBtn").disabled = !undoStack.length; $("redoBtn").disabled = !future.length; }
+$("undoBtn").onclick = () => { if (!undoStack.length) return; future.push(snapshot()); restore(undoStack.pop()); updateHistory(); toast(t("history.undone")); };
+$("redoBtn").onclick = () => { if (!future.length) return; undoStack.push(snapshot()); restore(future.pop()); updateHistory(); toast(t("history.redone")); };
+document.addEventListener("keydown", e => { if (!(e.ctrlKey || e.metaKey) || document.querySelector("dialog[open]")) return; const k = e.key.toLowerCase();
   if (k === "z" && !e.shiftKey) { e.preventDefault(); $("undoBtn").click(); } else if (k === "y" || (k === "z" && e.shiftKey)) { e.preventDefault(); $("redoBtn").click(); } });
 const ZOOMS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 $("zoomIn").onclick = () => { zoom = ZOOMS.find(z => z > zoom) ?? zoom; renderAll(); };
 $("zoomOut").onclick = () => { zoom = [...ZOOMS].reverse().find(z => z < zoom) ?? zoom; renderAll(); };
 $("zoomFit").onclick = () => { zoom = 1; renderAll(); };
 
-function setTheme(th) { document.documentElement.setAttribute("data-theme", th); pressGroup("themeSeg", "themeSet", th); }
+function setTheme(th) { document.documentElement.setAttribute("data-theme", th); pressGroup("themeSeg", "themeSet", th); renderAll(); }
 document.querySelectorAll("#themeSeg button").forEach(b => b.onclick = () => setTheme(b.dataset.themeSet));
 pressGroup("themeSeg", "themeSet", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 
@@ -1343,7 +2446,8 @@ function setLang(l) {
   document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n, {time: "14:32"}));
   document.querySelectorAll("[data-i18n-title]").forEach(el => el.title = t(el.dataset.i18nTitle));
   document.querySelectorAll("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
-  renderAll(); renderEdgePop(); if ($("seqDialog").open) renderDlg();
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => el.placeholder = t(el.dataset.i18nPlaceholder));
+  renderAll(); renderEdgePop(); if ($("seqDialog").open) renderDlg(); if ($("dmcDialog").open) renderDmc(); if ($("linesDialog").open) renderLines();
 }
 document.querySelectorAll("#langSeg button").forEach(b => b.onclick = () => setLang(b.dataset.lang));
 
@@ -1359,33 +2463,42 @@ $("loading").onclick = () => $("loading").hidden = true;
 $("mLoading").onclick = () => showLoading(0);
 $("mSquare").onclick = () => setField("fH", doc.w === doc.h ? doc.w - 3 : doc.w);
 $("mDialog").onclick = () => openSeq(0);
-$("mEdge").onclick = () => { setMode("edit"); edgeTarget = null; openEdge("col", 5); };
+$("mDmc").onclick = () => openDmc(doc.seqs[active][0], hex => edit(() => { doc.seqs[active] = [hex]; return true; }));
+$("mEdge").onclick = () => { setTarget("unit"); edgeTarget = null; openEdge("col", 5); };
+$("mLines").onclick = () => openLines();
+$("mEnd").onclick = () => setTarget("right");
+$("mBack").onclick = () => { if (mode !== "edit") setMode("edit"); setTool("back"); };
 $("edgePopClose").onclick = closeEdge;
-$("edgeBefore").onclick = () => editStructure("before");
-$("edgeAfter").onclick = () => editStructure("after");
-$("edgeRemove").onclick = () => editStructure("remove");
+[["edgeBefore", "before"], ["edgeAfter", "after"], ["edgeRemove", "remove"]].forEach(([id, kind]) => {
+  $(id).onclick = () => edgeAction(kind);
+  $(id).onmouseenter = $(id).onfocus = () => hiInsert(kind);
+});
 
 /* ---------------- Render ---------------- */
 function renderAll() {
   $("useSeq").setAttribute("aria-checked", String(doc.useSeq));
   $("bgSwatch").style.backgroundColor = doc.bg; $("bgHex").textContent = doc.bg; $("bgInput").value = doc.bg;
   if (active >= doc.seqs.length) active = 0;
-  renderSlots(); updateChip(); renderSym(); renderEdges();
+  renderSlots(); updateChip(); renderSym(); renderEdges(); renderTargets(); renderLegend();
   if (mode === "edit") { drawEdit(); drawMini(); } else drawPreview();
   $("zoomLabel").textContent = Math.round(zoom*100) + " %";
-  $("undoBtn").disabled = !undoStack.length; $("redoBtn").disabled = !future.length;
+  updateHistory();
 }
 window.addEventListener("resize", () => { renderAll(); renderEdgePop(); });
 
-// URL hash hooks for screenshots: #loading #preview #dialog #edge #nonsquare #en #it #dark #light
-const H = location.hash.slice(1).split(",");
-if (H.includes("dark")) setTheme("dark"); if (H.includes("light")) setTheme("light");
-setLang(H.includes("en") ? "en" : H.includes("it") ? "it" : "nb");
-if (H.includes("nonsquare")) { doc.h = 9; enforceSquare(); syncFields(); }
-if (H.includes("preview")) setMode("preview"); else renderAll();
-if (H.includes("edge")) openEdge("col", 5);
-if (H.includes("dialog")) openSeq(0);
-if (H.includes("loading")) showLoading(0); else if (!H.filter(Boolean).length) showLoading(1600);
+// URL hash hooks for screenshots: #loading #preview #dialog #dmc #lines #edge #end #back #nonsquare #en #it #dark #light
+const HASH = location.hash.slice(1).split(",");
+if (HASH.includes("dark")) setTheme("dark"); if (HASH.includes("light")) setTheme("light");
+setLang(HASH.includes("en") ? "en" : HASH.includes("it") ? "it" : "nb");
+if (HASH.includes("nonsquare")) { doc.h = 9; enforceSquare(); syncFields(); }
+if (HASH.includes("end")) setTarget("right");
+if (HASH.includes("back")) { setTool("back"); pending = [1, 1]; snap = [4, 1]; }
+if (HASH.includes("preview")) setMode("preview"); else renderAll();
+if (HASH.includes("edge")) openEdge("col", 5);
+if (HASH.includes("dialog")) openSeq(0);
+if (HASH.includes("dmc")) openDmc(doc.seqs[0][0], () => {});
+if (HASH.includes("lines")) openLines({act: "remove", place: "col", num: 2});
+if (HASH.includes("loading")) showLoading(0); else if (!HASH.filter(Boolean).length) showLoading(1600);
 if (document.fonts) document.fonts.ready.then(() => { renderAll(); renderEdgePop(); });
 </script>
 </body>
