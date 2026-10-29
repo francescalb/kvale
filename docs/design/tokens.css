@@ -30,6 +30,9 @@
   --cloth-line-strong: rgba(70, 50, 30, 0.38);
   --axis: rgba(158, 27, 44, 0.55);
   --edge-tint: rgba(47, 93, 158, 0.16);
+  --danger: #b3261e;
+  --danger-hover: #8f1d17;
+  --danger-text: #ffffff;
 
   /* Type */
   --font-ui: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -80,6 +83,9 @@
     --stage: #13110f;
     --swatch-ring: rgba(255, 255, 255, 0.5);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --danger: #f2a199;
+    --danger-hover: #f7bcb6;
+    --danger-text: #1b1815;
   }
 }
 :root[data-theme="dark"] {
@@ -104,6 +110,9 @@
   --stage: #13110f;
   --swatch-ring: rgba(255, 255, 255, 0.5);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --danger: #f2a199;
+  --danger-hover: #f7bcb6;
+  --danger-text: #1b1815;
 }
 :root[data-theme="light"] {
   --bg: #f4efe6;
@@ -127,4 +136,7 @@
   --stage: #e8e0d2;
   --swatch-ring: rgba(0, 0, 0, 0.25);
   --shadow: 0 1px 2px rgba(60, 40, 20, 0.08), 0 6px 18px rgba(60, 40, 20, 0.08);
+  --danger: #b3261e;
+  --danger-hover: #8f1d17;
+  --danger-text: #ffffff;
 }

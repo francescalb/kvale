@@ -19,16 +19,53 @@ The tables match the `STR` object in `mockup.html`; change both together.
   | backstitch | attersting | backstitch | punto scritto |
   | remove stitches | sprette opp | unpick | scucire |
   | an end piece | endestykke | end / edge | estremità / bordo |
+  | a corner (where two end pieces meet) | hjørne | corner | angolo |
   | the background | stoffet | fabric | tela |
-  | a DMC colour | DMC-garn | DMC thread | filo DMC |
+  | a thread colour | garn | thread | filato |
+  | a thread brand (DMC, Anchor …) | garnprodusent | thread brand | marca |
   | the chart / pattern | mønster | pattern | schema |
 
 - Norwegian: «bord» for an embroidered band is *en bord / borden* – never *bordet*
   (that is a table). Use «drei» for rotation, «speil» for mirroring.
 - Italian: address the user with *tu*; use «schema» for the pattern file and chart.
 - "–" (en dash) with spaces joins two clauses. Keyboard shortcuts appear only in tooltips.
-- DMC colour names stay in English, as DMC publishes them; the picker says so.
+- A thread code is never shown alone: always with its brand, as «DMC 321» (key `thread.code`).
+- Thread colour names stay in English, as the brand publishes them; the picker says so.
 
+## Owner-approved design decisions
+
+The owner reviewed the mockup and approved these decisions. The mockup and the string
+tables below follow them.
+
+1. **Backstitch keeps chaining from the last point.** After a line is stitched, the next
+   line starts where the last one ended. The chain stops with Esc, by tapping the last
+   point again, or by choosing another stitch. The on-screen hint (`canvas.hint.back`)
+   and the tool tooltip (`tool.back.hint`) say so.
+2. **Resetting an end piece or a corner asks "Are you sure?" first.** «Tilbakestill» opens
+   a confirm dialog in the usual dialog style. It names the piece and lists what will be
+   lost: the stitch changes, the extra rows/columns (for an end piece) and any corner
+   stitches that lie in them. Cancel has focus; the destructive button is red and reads
+   «Ja, tilbakestill». Undo can still bring the piece back afterwards (`end.confirm.*`,
+   `corner.confirm.*`).
+3. **«Endestykke» is the Norwegian term** for an end piece (English "end" / "edge",
+   Italian «estremità» / «bordo»).
+4. **Thread codes always name their brand, and the design allows more brands later.**
+   A colour is a (brand, code) pair, or an own colour with no code. Every place a code
+   is shown says «DMC 321», not «321»: colour slots, the picker list, the colour dialog,
+   and the thread list under the whole band. The picker has a labelled selector
+   «Garnprodusent: DMC», with Anchor and Madeira listed but disabled as «kommer senere»,
+   so it is clear that the numbers are DMC numbers and that more brands can come.
+   Search works within the chosen brand, and «DMC 321» finds the same as «321».
+   «Legg til farge» opens this picker.
+5. **The four corners are editable on their own.** A corner (top-left, top-right,
+   bottom-left, bottom-right) is where two end pieces meet. It starts from the result of
+   its two end pieces; you can then add or unpick stitches and backstitch there, also in
+   the square where the extra rows and columns cross. A corner has no size of its own:
+   it follows the neighbouring ends' extra rows and columns. The corners are in the
+   «Du tegner i» bar (under «Hjørner») and can be clicked in the mini band; changed
+   corners get a dot. A corner is shown with its two neighbouring end pieces faded
+   beside it, and has «Tilbakestill» (with the same confirm dialog) and «Ferdig».
+   In the band, the end pieces are applied first and the corners last.
 
 ## loading
 
@@ -89,7 +126,7 @@ The tables match the `STR` object in `mockup.html`; change both together.
 | `tool.cross` | Korssting | Cross stitch | Punto croce |
 | `tool.cross.hint` | Sy korssting i valgt farge. Dra for å sy flere. | Stitch crosses in the chosen colour. Drag to stitch several. | Ricama a punto croce nel colore scelto. Trascina per farne di più. |
 | `tool.back` | Attersting | Backstitch | Punto scritto |
-| `tool.back.hint` | Sy attersting langs linjene i rutenettet | Stitch backstitch along the grid lines | Ricama linee a punto scritto lungo la griglia |
+| `tool.back.hint` | Sy attersting langs linjene i rutenettet. Linjen fortsetter fra det siste punktet til du stopper. | Stitch backstitch along the grid lines. The line carries on from the last point until you stop. | Ricama linee a punto scritto lungo la griglia. La linea riparte dall’ultimo punto finché non ti fermi. |
 | `tool.unpick` | Sprett opp | Unpick | Scuci |
 | `tool.unpick.hint` | Fjern korssting eller attersting (med mus: høyreklikk) | Remove cross stitches or backstitch (with a mouse: right-click) | Togli punti croce o linee a punto scritto (col mouse: clic destro) |
 
@@ -122,6 +159,12 @@ The tables match the `STR` object in `mockup.html`; change both together.
 | `target.right` | Høyre ende | Right end | Estremità destra |
 | `target.top` | Øvre kant | Top edge | Bordo in alto |
 | `target.bottom` | Nedre kant | Bottom edge | Bordo in basso |
+| `target.corners` | Hjørner | Corners | Angoli |
+| `target.tl` | Oppe til venstre | Top left | In alto a sinistra |
+| `target.tr` | Oppe til høyre | Top right | In alto a destra |
+| `target.bl` | Nede til venstre | Bottom left | In basso a sinistra |
+| `target.br` | Nede til høyre | Bottom right | In basso a destra |
+| `target.corner.hint` | gi hjørnet en egen avslutning | give the corner its own finish | dai all’angolo una chiusura diversa |
 | `target.edge.hint` | Gi borden en egen avslutning her | Give the band its own finish here | Dai alla bordura una chiusura diversa qui |
 | `target.changed` | endret | changed | modificata |
 
@@ -144,10 +187,37 @@ The tables match the `STR` object in `mockup.html`; change both together.
 | `end.summary.none` | Ingen endringer ennå – enden er lik rapporten. | No changes yet – this end matches the repeat. | Nessuna modifica: è uguale al modulo. |
 | `end.summary` | Lagt til: {added} · Sprettet opp: {removed} · Attersting endret: {lines} | Added: {added} · Unpicked: {removed} · Backstitch changed: {lines} | Aggiunti: {added} · Scuciti: {removed} · Linee cambiate: {lines} |
 | `end.reset` | Tilbakestill | Reset | Ripristina |
-| `end.reset.hint` | Fjern alle endringer i dette endestykket, også ekstra rader og kolonner | Remove every change to this end, including extra rows and columns | Togli tutte le modifiche di questa parte, anche le righe e colonne in più |
+| `end.reset.hint` | Fjern alle endringer her, også ekstra rader og kolonner. Du blir spurt først. | Remove every change here, including extra rows and columns. You will be asked first. | Togli tutte le modifiche di questa parte, anche le righe e colonne in più. Ti verrà chiesto prima. |
 | `end.done` | Ferdig | Done | Fatto |
 | `end.done.hint` | Tilbake til rapporten | Back to the repeat | Torna al modulo |
 | `end.resetDone` | {name} er tilbakestilt. | {name} has been reset. | {name}: ripristinata. |
+| `end.confirm.title` | Tilbakestille endestykket? | Reset this end? | Ripristinare questa parte? |
+| `end.confirm.body` | {name} blir likt rapporten igjen. Dette blir borte: | {name} will match the repeat again. This will be lost: | {name} tornerà uguale al modulo. Si perderà: |
+| `end.confirm.changes` | Endringer i stingene – lagt til: {added}, sprettet opp: {removed}, attersting: {lines} | Stitch changes – added: {added}, unpicked: {removed}, backstitch: {lines} | Modifiche ai punti – aggiunti: {added}, scuciti: {removed}, punto scritto: {lines} |
+| `end.confirm.extraCols` | Ekstra kolonner utenfor rapporten: {n} | Extra columns outside the repeat: {n} | Colonne in più all’esterno: {n} |
+| `end.confirm.extraRows` | Ekstra rader utenfor rapporten: {n} | Extra rows outside the repeat: {n} | Righe in più all’esterno: {n} |
+| `end.confirm.corners` | Sting i hjørnene som ligger i disse radene eller kolonnene: {n} | Stitches in the corners that lie in these rows or columns: {n} | Punti negli angoli che stanno in queste righe o colonne: {n} |
+| `end.confirm.undo` | Ombestemmer du deg, kan du angre etterpå. | If you change your mind, you can undo it afterwards. | Se cambi idea, puoi annullare dopo. |
+| `end.confirm.cancel` | Avbryt | Cancel | Annulla |
+| `end.confirm.ok` | Ja, tilbakestill | Yes, reset | Sì, ripristina |
+
+## corner
+
+| Key | nb | en | it |
+|---|---|---|---|
+| `corner.title.tl` | Hjørne oppe til venstre | Top-left corner | Angolo in alto a sinistra |
+| `corner.title.tr` | Hjørne oppe til høyre | Top-right corner | Angolo in alto a destra |
+| `corner.title.bl` | Hjørne nede til venstre | Bottom-left corner | Angolo in basso a sinistra |
+| `corner.title.br` | Hjørne nede til høyre | Bottom-right corner | Angolo in basso a destra |
+| `corner.where.tl` | Der øvre og venstre endestykke møtes. | Where the top edge meets the left end. | Dove il bordo in alto incontra l’estremità sinistra. |
+| `corner.where.tr` | Der øvre og høyre endestykke møtes. | Where the top edge meets the right end. | Dove il bordo in alto incontra l’estremità destra. |
+| `corner.where.bl` | Der nedre og venstre endestykke møtes. | Where the bottom edge meets the left end. | Dove il bordo in basso incontra l’estremità sinistra. |
+| `corner.where.br` | Der nedre og høyre endestykke møtes. | Where the bottom edge meets the right end. | Dove il bordo in basso incontra l’estremità destra. |
+| `corner.explain` | Hjørnet begynner slik de to endestykkene gjør det. Det du syr eller spretter opp her, gjelder bare hjørnet – også i ruta der de ekstra radene og kolonnene krysser hverandre. | The corner starts out as the two ends make it. What you stitch or unpick here only changes this corner – also in the square where the extra rows and columns cross. | L’angolo parte da come lo fanno le due parti vicine. Quello che ricami o scuci qui vale solo per l’angolo, anche nel riquadro dove si incrociano le righe e le colonne in più. |
+| `corner.size` | Størrelsen følger de ekstra radene og kolonnene i endestykkene ved siden av. | Its size follows the extra rows and columns of the two ends beside it. | La misura segue le righe e le colonne in più delle due parti vicine. |
+| `corner.summary.none` | Ingen endringer ennå – hjørnet er likt endestykkene ved siden av. | No changes yet – the corner matches the ends beside it. | Nessuna modifica: l’angolo è uguale alle parti vicine. |
+| `corner.confirm.title` | Tilbakestille hjørnet? | Reset this corner? | Ripristinare l’angolo? |
+| `corner.confirm.body` | {name} blir likt endestykkene ved siden av igjen. Dette blir borte: | {name} will match the ends beside it again. This will be lost: | {name} tornerà uguale alle parti vicine. Si perderà: |
 
 ## toast
 
@@ -167,16 +237,21 @@ The tables match the `STR` object in `mockup.html`; change both together.
 | `legend.removed` | Sprettet opp i enden | Unpicked at this end | Scuciti qui |
 | `legend.extra` | Ekstra, utenfor rapporten | Extra, outside the repeat | In più, fuori dal modulo |
 | `legend.neighbour` | Neste rapport – bare til å se på | Next repeat – for reference only | Modulo vicino – solo da vedere |
+| `legend.fromEnds` | Som i endestykkene | As in the ends | Come nelle parti vicine |
+| `legend.addedCorner` | Lagt til i hjørnet | Added in this corner | Aggiunti nell’angolo |
+| `legend.removedCorner` | Sprettet opp i hjørnet | Unpicked in this corner | Scuciti nell’angolo |
+| `legend.neighbourEnds` | Endestykkene ved siden av – bare til å se på | The ends beside it – for reference only | Parti vicine – solo da vedere |
 
 ## canvas
 
 | Key | nb | en | it |
 |---|---|---|---|
 | `canvas.hint.cross` | Trykk eller dra over rutene for å sy. Høyreklikk spretter opp. | Tap or drag across the squares to stitch. Right-click unpicks. | Tocca o trascina sui quadretti per ricamare. Il clic destro scuce. |
-| `canvas.hint.back` | Trykk på et hjørne for å begynne og på et nytt hjørne for å sy linjen. Fortsett derfra, eller trykk Esc for å slutte. | Tap a corner to start, then another corner to stitch the line. Carry on from there, or press Esc to stop. | Tocca un angolo per iniziare e un altro angolo per tracciare la linea. Continua da lì, oppure premi Esc per finire. |
+| `canvas.hint.back` | Trykk på et hjørne for å begynne, og på neste hjørne for å sy en linje. Linjen fortsetter fra det siste punktet, så du kan sy flere linjer etter hverandre. For å slutte: trykk Esc, trykk på det siste punktet en gang til, eller velg et annet sting. | Tap a corner to start, then the next corner to stitch a line. The line carries on from the last point, so you can stitch several lines in a row. To stop: press Esc, tap the last point again, or choose another stitch. | Tocca un angolo per iniziare e poi l’angolo successivo per tracciare una linea. La linea riparte dall’ultimo punto, così puoi farne diverse di seguito. Per finire: premi Esc, tocca di nuovo l’ultimo punto o scegli un altro tipo di punto. |
 | `canvas.hint.unpick` | Trykk på et sting eller en attersting for å sprette det opp. | Tap a stitch or a backstitch line to unpick it. | Tocca un punto o una linea per scucirlo. |
 | `canvas.hint.edges` | Trykk på et tall langs kanten for å legge til eller fjerne en rad eller kolonne. | Tap a number along the edge to add or remove a row or column. | Tocca un numero sul bordo per aggiungere o togliere una riga o una colonna. |
 | `canvas.hint.end` | Det svake feltet er neste rapport, så du ser hvordan enden møter resten av borden. | The faded part is the next repeat, so you can see how the end meets the rest of the band. | La parte sbiadita è il modulo vicino: così vedi come la chiusura si unisce al resto della bordura. |
+| `canvas.hint.corner` | De svake feltene er endestykkene ved siden av, så du ser hvordan hjørnet møter dem. | The faded parts are the ends beside it, so you can see how the corner meets them. | Le parti sbiadite sono le parti vicine: così vedi come l’angolo si unisce a loro. |
 | `canvas.neighbour` | neste rapport | next repeat | modulo vicino |
 
 ## band
@@ -185,7 +260,7 @@ The tables match the `STR` object in `mockup.html`; change both together.
 |---|---|---|---|
 | `band.mini.title` | Slik blir borden | How the band will look | Ecco la bordura |
 | `band.mini.open` | Vis stor | Show large | Mostra grande |
-| `band.mini.hint` | Trykk på en ende av borden for å gi den en egen avslutning. | Tap an end of the band to give it its own finish. | Tocca un’estremità della bordura per darle una chiusura diversa. |
+| `band.mini.hint` | Trykk på en ende eller et hjørne av borden for å gi det en egen avslutning. | Tap an end or a corner of the band to give it its own finish. | Tocca un’estremità o un angolo della bordura per darle una chiusura diversa. |
 
 ## preview
 
@@ -193,6 +268,12 @@ The tables match the `STR` object in `mockup.html`; change both together.
 |---|---|---|---|
 | `preview.caption` | {rx} × {ry} rapporter · {w} × {h} sting | {rx} × {ry} repeats · {w} × {h} stitches | {rx} × {ry} moduli · {w} × {h} punti |
 | `preview.hint` | Her ser du hele borden. Gå til «Tegn» for å endre den. | This is the whole band. Go to “Draw” to change it. | Qui vedi tutta la bordura. Torna a «Disegna» per modificarla. |
+
+## threads
+
+| Key | nb | en | it |
+|---|---|---|---|
+| `threads.title` | Garn i mønsteret | Threads in this pattern | Filati dello schema |
 
 ## edge
 
@@ -251,7 +332,6 @@ The tables match the `STR` object in `mockup.html`; change both together.
 | `colours.slot` | Farge {n} | Colour {n} | Colore {n} |
 | `colours.selected` | I bruk | In use | In uso |
 | `colours.own` | Egen farge | Own colour | Colore libero |
-| `colours.dmc` | DMC {n} | DMC {n} | DMC {n} |
 | `colours.many` | {n} farger som skifter | {n} colours in turn | {n} colori che si alternano |
 | `colours.edit` | Endre farge {n} | Change colour {n} | Modifica il colore {n} |
 | `colours.change` | Endre | Change | Cambia |
@@ -322,38 +402,42 @@ The tables match the `STR` object in `mockup.html`; change both together.
 | `dialog.parts` | Trykk på en del for å velge farge | Tap a part to choose its colour | Tocca una parte per sceglierne il colore |
 | `dialog.part` | Del {n} | Part {n} | Parte {n} |
 | `dialog.pick` | Farge til del {n} | Colour for part {n} | Colore della parte {n} |
-| `dialog.dmc` | Finn DMC-garn … | Find a DMC thread … | Cerca un filo DMC … |
+| `dialog.thread` | Finn garn … | Find a thread … | Cerca un filato … |
 | `dialog.custom` | Egen farge … | Own colour … | Colore libero … |
 | `dialog.howItRepeats` | Slik skifter fargen bortover borden: | How the colour changes along the band: | Ecco come cambia lungo la bordura: |
 | `dialog.offNote` | Fargeskift er slått av – bare del 1 brukes nå. | Colour change is switched off – only part 1 is used now. | Il cambio colore è spento: ora si usa solo la parte 1. |
 | `dialog.cancel` | Avbryt | Cancel | Annulla |
 | `dialog.ok` | Bruk | Apply | Applica |
 
-## dmc
+## thread
 
 | Key | nb | en | it |
 |---|---|---|---|
-| `dmc.title` | Velg DMC-garn | Choose a DMC thread | Scegli un filo DMC |
-| `dmc.search` | Søk | Search | Cerca |
-| `dmc.search.placeholder` | Nummer eller navn, f.eks. 321 | Number or name, e.g. 321 | Numero o nome, es. 321 |
-| `dmc.namesNote` | Fargenavnene er på engelsk, slik DMC skriver dem. | Colour names are in English, as DMC writes them. | I nomi dei colori sono in inglese, come li scrive DMC. |
-| `dmc.family.all` | Alle | All | Tutti |
-| `dmc.family.red` | Rød | Red | Rossi |
-| `dmc.family.pink` | Rosa | Pink | Rosa |
-| `dmc.family.orange` | Oransje | Orange | Arancioni |
-| `dmc.family.yellow` | Gul | Yellow | Gialli |
-| `dmc.family.green` | Grønn | Green | Verdi |
-| `dmc.family.blue` | Blå | Blue | Blu |
-| `dmc.family.purple` | Lilla | Purple | Viola |
-| `dmc.family.brown` | Brun | Brown | Marroni |
-| `dmc.family.neutral` | Hvit, grå, svart | White, grey, black | Bianchi, grigi, neri |
-| `dmc.count` | {n} farger | {n} colours | {n} colori |
-| `dmc.none` | Ingen treff. Prøv et nummer, f.eks. 321. | Nothing found. Try a number, e.g. 321. | Nessun risultato. Prova con un numero, es. 321. |
-| `dmc.approx` | Fargene på skjermen er omtrentlige. Sjekk mot et fargekart når fargen må stemme. | Screen colours are approximate. Check against a shade card when the colour must match. | I colori sullo schermo sono indicativi. Controlla su una cartella colori quando la tinta deve essere esatta. |
-| `dmc.pickPrompt` | Velg en farge i lista. | Choose a colour from the list. | Scegli un colore dall’elenco. |
-| `dmc.own` | Egen farge … | Own colour … | Colore libero … |
-| `dmc.cancel` | Avbryt | Cancel | Annulla |
-| `dmc.choose` | Velg | Choose | Scegli |
+| `thread.title` | Velg garn | Choose a thread | Scegli un filato |
+| `thread.system` | Garnprodusent | Thread brand | Marca |
+| `thread.system.soon` | {name} – kommer senere | {name} – coming later | {name} – in arrivo |
+| `thread.system.hint` | Numrene i lista er {system}-numre. Flere garnprodusenter kan komme senere. | The numbers in the list are {system} numbers. More thread brands may come later. | I numeri dell’elenco sono numeri {system}. Altre marche potranno arrivare in seguito. |
+| `thread.code` | {system} {code} | {system} {code} | {system} {code} |
+| `thread.search` | Søk | Search | Cerca |
+| `thread.search.placeholder` | {system}-nummer eller navn, f.eks. 321 | {system} number or name, e.g. 321 | Numero {system} o nome, es. 321 |
+| `thread.namesNote` | Fargenavnene er på engelsk, slik {system} skriver dem. | Colour names are in English, as {system} writes them. | I nomi dei colori sono in inglese, come li scrive {system}. |
+| `thread.family.all` | Alle | All | Tutti |
+| `thread.family.red` | Rød | Red | Rossi |
+| `thread.family.pink` | Rosa | Pink | Rosa |
+| `thread.family.orange` | Oransje | Orange | Arancioni |
+| `thread.family.yellow` | Gul | Yellow | Gialli |
+| `thread.family.green` | Grønn | Green | Verdi |
+| `thread.family.blue` | Blå | Blue | Blu |
+| `thread.family.purple` | Lilla | Purple | Viola |
+| `thread.family.brown` | Brun | Brown | Marroni |
+| `thread.family.neutral` | Hvit, grå, svart | White, grey, black | Bianchi, grigi, neri |
+| `thread.count` | {n} farger fra {system} | {n} {system} colours | {n} colori {system} |
+| `thread.none` | Ingen treff. Prøv et {system}-nummer, f.eks. 321. | Nothing found. Try a {system} number, e.g. 321. | Nessun risultato. Prova con un numero {system}, es. 321. |
+| `thread.approx` | Fargene på skjermen er omtrentlige. Sjekk mot et fargekart når fargen må stemme. | Screen colours are approximate. Check against a shade card when the colour must match. | I colori sullo schermo sono indicativi. Controlla su una cartella colori quando la tinta deve essere esatta. |
+| `thread.pickPrompt` | Velg en farge i lista. | Choose a colour from the list. | Scegli un colore dall’elenco. |
+| `thread.own` | Egen farge … | Own colour … | Colore libero … |
+| `thread.cancel` | Avbryt | Cancel | Annulla |
+| `thread.choose` | Velg | Choose | Scegli |
 
 ## lines
 
@@ -388,8 +472,10 @@ The tables match the `STR` object in `mockup.html`; change both together.
 | `mock.loading` | Vis lastesiden | Show loading screen | Mostra la schermata di caricamento |
 | `mock.square` | Bytt kvadratisk / ikke kvadratisk | Toggle square / not square | Alterna quadrato / non quadrato |
 | `mock.dialog` | Åpne farge 1 | Open colour 1 | Apri il colore 1 |
-| `mock.dmc` | Åpne DMC-velgeren | Open the DMC picker | Apri la scelta dei fili DMC |
+| `mock.thread` | Åpne garnvelgeren | Open the thread picker | Apri la scelta dei filati |
 | `mock.edge` | Vis kantmenyen | Show the edge menu | Mostra il menu del bordo |
 | `mock.lines` | Åpne «Rader og kolonner» | Open “Rows and columns” | Apri «Righe e colonne» |
 | `mock.end` | Rediger høyre endestykke | Edit the right end | Modifica l’estremità destra |
+| `mock.reset` | Tilbakestill høyre endestykke (spør først) | Reset the right end (asks first) | Ripristina l’estremità destra (chiede prima) |
+| `mock.corner` | Rediger hjørnet oppe til høyre | Edit the top-right corner | Modifica l’angolo in alto a destra |
 | `mock.back` | Velg attersting | Choose backstitch | Scegli il punto scritto |

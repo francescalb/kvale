@@ -36,6 +36,9 @@
   --cloth-line-strong: rgba(70, 50, 30, 0.38);
   --axis: rgba(158, 27, 44, 0.55);
   --edge-tint: rgba(47, 93, 158, 0.16);
+  --danger: #b3261e;
+  --danger-hover: #8f1d17;
+  --danger-text: #ffffff;
 
   /* Type */
   --font-ui: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -86,6 +89,9 @@
     --stage: #13110f;
     --swatch-ring: rgba(255, 255, 255, 0.5);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --danger: #f2a199;
+    --danger-hover: #f7bcb6;
+    --danger-text: #1b1815;
   }
 }
 :root[data-theme="dark"] {
@@ -110,6 +116,9 @@
   --stage: #13110f;
   --swatch-ring: rgba(255, 255, 255, 0.5);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --danger: #f2a199;
+  --danger-hover: #f7bcb6;
+  --danger-text: #1b1815;
 }
 :root[data-theme="light"] {
   --bg: #f4efe6;
@@ -133,6 +142,9 @@
   --stage: #e8e0d2;
   --swatch-ring: rgba(0, 0, 0, 0.25);
   --shadow: 0 1px 2px rgba(60, 40, 20, 0.08), 0 6px 18px rgba(60, 40, 20, 0.08);
+  --danger: #b3261e;
+  --danger-hover: #8f1d17;
+  --danger-text: #ffffff;
 }
 /* ===== TOKENS END ===== */
 
@@ -216,6 +228,7 @@ svg.icon { width: 22px; height: 22px; flex: none; fill: none; stroke: currentCol
   background: var(--stage); border-radius: var(--radius-lg);
   display: flex; flex-direction: column; min-width: 0; min-height: 560px;
   position: sticky; top: var(--space-5);
+  max-height: calc(100vh - 2 * var(--space-5));   /* taller views (end pieces, corners) scroll inside the stage */
 }
 .stage-toolbar {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
@@ -226,7 +239,7 @@ svg.icon { width: 22px; height: 22px; flex: none; fill: none; stroke: currentCol
 .zoom-label { min-width: 44px; text-align: center; font-size: var(--text-sm); font-variant-numeric: tabular-nums; color: var(--text-muted); }
 .chip { display: inline-block; width: 16px; height: 16px; border-radius: 4px; box-shadow: inset 0 0 0 1px var(--swatch-ring); flex: none; }
 
-.stage-body { flex: 1; padding: var(--space-5); overflow: auto; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+.stage-body { flex: 1; min-height: 0; padding: var(--space-5); overflow: auto; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
 
 /* Edit grid with rulers */
 .editor {
@@ -515,7 +528,7 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 .chipbtn:hover { border-color: var(--border-strong); }
 .chipbtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
 .chipbtn i { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--swatch-ring); }
-.dmc-list { max-height: min(42vh, 360px); overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+.dmc-list { position: relative; max-height: min(42vh, 360px); overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
 .dmc-row {
   display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: var(--hit);
   padding: 4px var(--space-3); border: 0; border-bottom: 1px solid var(--surface-2); background: transparent; text-align: left; font-size: var(--text-sm);
@@ -523,7 +536,7 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 .dmc-row:hover { background: var(--surface-2); }
 .dmc-row[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-soft-text); }
 .dmc-sw { width: 34px; height: 30px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--swatch-ring); flex: none; }
-.dmc-num { font-weight: 700; width: 4.2em; flex: none; font-variant-numeric: tabular-nums; }
+.dmc-num { font-weight: 700; width: 6em; flex: none; font-variant-numeric: tabular-nums; }
 .dmc-empty { padding: var(--space-4); color: var(--text-muted); font-size: var(--text-sm); text-align: center; }
 .dmc-detail { display: flex; align-items: center; gap: var(--space-3); min-height: 48px; font-size: var(--text-sm); }
 .dmc-big { width: 72px; height: 48px; border-radius: var(--radius-sm); box-shadow: inset 0 0 0 1px var(--swatch-ring); flex: none; background: var(--surface-sunken); }
@@ -541,6 +554,26 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 .effect { margin: 0; font-size: var(--text-sm); }
 .effect.warn { color: var(--notice-text); background: var(--notice-bg); border: 1px solid var(--notice-border); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); }
 .effect small { display: block; color: var(--text-muted); font-size: var(--text-xs); margin-top: 2px; }
+
+/* Thread brand selector in the picker */
+.sysrow { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.sysrow label { font-weight: 700; font-size: var(--text-sm); }
+.sysselect {
+  min-height: var(--hit); padding: 0 var(--space-3); flex: 1 1 200px; max-width: 320px;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface); font-weight: 700;
+}
+/* Threads used, under the whole-band view (and in the saved image) */
+.threadkey { width: 100%; max-width: 760px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); }
+.threadkey h3 { margin: 0 0 var(--space-2); font-size: var(--text-sm); }
+.threadkey ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-2) var(--space-4); font-size: var(--text-sm); }
+.threadkey li { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.threadkey li .chip { width: 22px; height: 22px; }
+.threadkey li strong { white-space: nowrap; }
+/* Destructive confirm */
+.btn.danger { background: var(--danger); border-color: var(--danger); color: var(--danger-text); }
+.btn.danger:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
+.losslist { margin: 0; padding-left: 1.2em; font-size: var(--text-sm); display: flex; flex-direction: column; gap: 4px; }
+.endpanel .cornersize { margin: 0; flex: 0 1 240px; font-size: var(--text-xs); color: var(--text-muted); }
 
 /* ---------- Mockup-only controls (not part of the design) ---------- */
 .mock {
@@ -567,7 +600,7 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 }
 @media (max-width: 820px) {
   .workspace { grid-template-columns: minmax(0, 1fr); }
-  .stage { position: static; min-height: 0; }
+  .stage { position: static; min-height: 0; max-height: none; }
   .panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
 }
 @media (max-width: 640px) {
@@ -585,6 +618,7 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   #toolSeg button { position: relative; }
   .targetbar .tlabel { width: 100%; text-align: center; }
   .targetseg { width: 100%; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .targetseg.cornerseg { grid-template-columns: repeat(4, 1fr); }
   .targetseg button { flex-direction: column; gap: 2px; padding: 4px 2px; min-height: 58px; font-size: 0.75rem; white-space: normal; line-height: 1.1; text-align: center; }
   .targetseg .changed { position: absolute; top: 5px; right: 5px; }
   .endpanel { padding: var(--space-3); }
@@ -716,6 +750,8 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
           <div class="targetbar">
             <span class="tlabel" id="targetLabel" data-i18n="target.label"></span>
             <div class="seg targetseg" role="group" id="targetSeg" aria-labelledby="targetLabel"></div>
+            <span class="tlabel" id="cornerLabel" data-i18n="target.corners"></span>
+            <div class="seg targetseg cornerseg" role="group" id="cornerSeg" aria-labelledby="cornerLabel"></div>
           </div>
 
           <!-- Shown only while an end piece is being edited -->
@@ -724,15 +760,16 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
               <svg id="endIcon" aria-hidden="true"></svg>
               <div>
                 <h3 id="endTitle"></h3>
-                <p><span id="endWhere"></span> <span data-i18n="end.explain"></span></p>
+                <p><span id="endWhere"></span> <span id="endExplain"></span></p>
                 <p class="endsummary" id="endSummary"></p>
               </div>
             </div>
-            <div class="ext">
+            <div class="ext" id="endExtWrap">
               <label for="endExt" id="endExtLabel"></label>
               <div class="stepper"><button data-estep="-1" data-i18n-aria="step.less">−</button><input id="endExt" type="number" min="0" max="50" value="0" inputmode="numeric"><button data-estep="1" data-i18n-aria="step.more">+</button></div>
               <small data-i18n="end.extra.hint"></small>
             </div>
+            <p class="cornersize" id="cornerSize" data-i18n="corner.size" hidden></p>
             <div class="actions">
               <button class="btn danger-text" id="endReset" data-i18n-title="end.reset.hint"><svg class="icon"><use href="#i-reset"/></svg><span data-i18n="end.reset"></span></button>
               <button class="btn primary" id="endDone" data-i18n-title="end.done.hint"><svg class="icon"><use href="#i-check"/></svg><span data-i18n="end.done"></span></button>
@@ -774,6 +811,10 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
         <div id="previewView" hidden style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
           <div class="preview-wrap"><canvas id="previewCanvas"></canvas></div>
           <p class="caption" id="previewCaption"></p>
+          <section class="threadkey" aria-labelledby="threadKeyTitle">
+            <h3 id="threadKeyTitle" data-i18n="threads.title"></h3>
+            <ul id="threadKey"></ul>
+          </section>
           <p class="hint" data-i18n="preview.hint"></p>
         </div>
       </div>
@@ -880,7 +921,7 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
         <p class="label" id="dlgPickLabel"></p>
         <div class="threads" id="dlgThreads"></div>
         <div class="row-btns">
-          <button type="button" class="btn" id="dlgDmc"><svg class="icon"><use href="#i-search"/></svg><span data-i18n="dialog.dmc"></span></button>
+          <button type="button" class="btn" id="dlgDmc"><svg class="icon"><use href="#i-search"/></svg><span data-i18n="dialog.thread"></span></button>
           <label class="btn">
             <span class="chip" id="dlgCustomChip"></span><span data-i18n="dialog.custom"></span>
             <input type="color" class="visually-hidden-input" id="dlgCustom">
@@ -904,13 +945,17 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
 <dialog id="dmcDialog" aria-labelledby="dmcTitle">
   <form method="dialog" class="dlg">
     <header>
-      <h2 id="dmcTitle" data-i18n="dmc.title"></h2>
-      <p data-i18n="dmc.namesNote"></p>
+      <h2 id="dmcTitle" data-i18n="thread.title"></h2>
+      <p id="dmcSystemNote"></p>
     </header>
     <div class="content">
+      <div class="sysrow">
+        <label for="threadSystem" data-i18n="thread.system"></label>
+        <select id="threadSystem" class="sysselect"></select>
+      </div>
       <div>
-        <label class="sr-only" for="dmcSearch" data-i18n="dmc.search"></label>
-        <input class="searchbox" id="dmcSearch" type="search" autocomplete="off" data-i18n-placeholder="dmc.search.placeholder">
+        <label class="sr-only" for="dmcSearch" data-i18n="thread.search"></label>
+        <input class="searchbox" id="dmcSearch" type="search" autocomplete="off">
       </div>
       <div class="chips" id="dmcFamilies"></div>
       <div>
@@ -918,15 +963,32 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
         <div class="dmc-list" id="dmcList" role="listbox" aria-labelledby="dmcTitle"></div>
       </div>
       <div class="dmc-detail"><span class="dmc-big" id="dmcBig"></span><span id="dmcDetail"></span></div>
-      <p class="caption" data-i18n="dmc.approx" style="margin:0"></p>
+      <p class="caption" id="dmcNamesNote" style="margin:0"></p>
+      <p class="caption" data-i18n="thread.approx" style="margin:0"></p>
     </div>
     <footer>
       <label class="btn left">
-        <span class="chip" id="dmcOwnChip" style="background:#808080"></span><span data-i18n="dmc.own"></span>
+        <span class="chip" id="dmcOwnChip" style="background:#808080"></span><span data-i18n="thread.own"></span>
         <input type="color" class="visually-hidden-input" id="dmcOwn" value="#808080">
       </label>
-      <button class="btn" value="cancel" data-i18n="dmc.cancel"></button>
-      <button class="btn primary" value="ok" id="dmcChoose" data-i18n="dmc.choose" disabled></button>
+      <button class="btn" value="cancel" data-i18n="thread.cancel"></button>
+      <button class="btn primary" value="ok" id="dmcChoose" data-i18n="thread.choose" disabled></button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ RESET END PIECE / CORNER: ARE YOU SURE? ============ -->
+<dialog id="resetDialog" aria-labelledby="resetTitle" aria-describedby="resetBody">
+  <form method="dialog" class="dlg">
+    <header><h2 id="resetTitle"></h2></header>
+    <div class="content" id="resetBody">
+      <p class="effect" id="resetWhat"></p>
+      <ul class="losslist" id="resetLoss"></ul>
+      <p class="caption" style="margin:0" data-i18n="end.confirm.undo"></p>
+    </div>
+    <footer>
+      <button class="btn" value="cancel" autofocus data-i18n="end.confirm.cancel"></button>
+      <button class="btn danger" value="ok" id="resetOk"><svg class="icon"><use href="#i-reset"/></svg><span data-i18n="end.confirm.ok"></span></button>
     </footer>
   </form>
 </dialog>
@@ -974,9 +1036,11 @@ dialog::backdrop { background: rgba(30, 22, 15, .45); }
   <div>
     <button id="mLoading" data-i18n="mock.loading"></button>
     <button id="mEnd" data-i18n="mock.end"></button>
+    <button id="mReset" data-i18n="mock.reset"></button>
+    <button id="mCorner" data-i18n="mock.corner"></button>
     <button id="mBack" data-i18n="mock.back"></button>
     <button id="mDialog" data-i18n="mock.dialog"></button>
-    <button id="mDmc" data-i18n="mock.dmc"></button>
+    <button id="mDmc" data-i18n="mock.thread"></button>
     <button id="mEdge" data-i18n="mock.edge"></button>
     <button id="mLines" data-i18n="mock.lines"></button>
     <button id="mSquare" data-i18n="mock.square"></button>
@@ -1013,7 +1077,7 @@ const STR = {
   "tool.cross": "Korssting",
   "tool.cross.hint": "Sy korssting i valgt farge. Dra for å sy flere.",
   "tool.back": "Attersting",
-  "tool.back.hint": "Sy attersting langs linjene i rutenettet",
+  "tool.back.hint": "Sy attersting langs linjene i rutenettet. Linjen fortsetter fra det siste punktet til du stopper.",
   "tool.unpick": "Sprett opp",
   "tool.unpick.hint": "Fjern korssting eller attersting (med mus: høyreklikk)",
   "history.undo": "Angre (Ctrl+Z)",
@@ -1031,6 +1095,12 @@ const STR = {
   "target.right": "Høyre ende",
   "target.top": "Øvre kant",
   "target.bottom": "Nedre kant",
+  "target.corners": "Hjørner",
+  "target.tl": "Oppe til venstre",
+  "target.tr": "Oppe til høyre",
+  "target.bl": "Nede til venstre",
+  "target.br": "Nede til høyre",
+  "target.corner.hint": "gi hjørnet en egen avslutning",
   "target.edge.hint": "Gi borden en egen avslutning her",
   "target.changed": "endret",
   "end.title.left": "Venstre endestykke",
@@ -1048,10 +1118,32 @@ const STR = {
   "end.summary.none": "Ingen endringer ennå – enden er lik rapporten.",
   "end.summary": "Lagt til: {added} · Sprettet opp: {removed} · Attersting endret: {lines}",
   "end.reset": "Tilbakestill",
-  "end.reset.hint": "Fjern alle endringer i dette endestykket, også ekstra rader og kolonner",
+  "end.reset.hint": "Fjern alle endringer her, også ekstra rader og kolonner. Du blir spurt først.",
   "end.done": "Ferdig",
   "end.done.hint": "Tilbake til rapporten",
   "end.resetDone": "{name} er tilbakestilt.",
+  "end.confirm.title": "Tilbakestille endestykket?",
+  "end.confirm.body": "{name} blir likt rapporten igjen. Dette blir borte:",
+  "end.confirm.changes": "Endringer i stingene – lagt til: {added}, sprettet opp: {removed}, attersting: {lines}",
+  "end.confirm.extraCols": "Ekstra kolonner utenfor rapporten: {n}",
+  "end.confirm.extraRows": "Ekstra rader utenfor rapporten: {n}",
+  "end.confirm.corners": "Sting i hjørnene som ligger i disse radene eller kolonnene: {n}",
+  "end.confirm.undo": "Ombestemmer du deg, kan du angre etterpå.",
+  "end.confirm.cancel": "Avbryt",
+  "end.confirm.ok": "Ja, tilbakestill",
+  "corner.title.tl": "Hjørne oppe til venstre",
+  "corner.title.tr": "Hjørne oppe til høyre",
+  "corner.title.bl": "Hjørne nede til venstre",
+  "corner.title.br": "Hjørne nede til høyre",
+  "corner.where.tl": "Der øvre og venstre endestykke møtes.",
+  "corner.where.tr": "Der øvre og høyre endestykke møtes.",
+  "corner.where.bl": "Der nedre og venstre endestykke møtes.",
+  "corner.where.br": "Der nedre og høyre endestykke møtes.",
+  "corner.explain": "Hjørnet begynner slik de to endestykkene gjør det. Det du syr eller spretter opp her, gjelder bare hjørnet – også i ruta der de ekstra radene og kolonnene krysser hverandre.",
+  "corner.size": "Størrelsen følger de ekstra radene og kolonnene i endestykkene ved siden av.",
+  "corner.summary.none": "Ingen endringer ennå – hjørnet er likt endestykkene ved siden av.",
+  "corner.confirm.title": "Tilbakestille hjørnet?",
+  "corner.confirm.body": "{name} blir likt endestykkene ved siden av igjen. Dette blir borte:",
   "toast.undo": "Angre",
   "legend.seed": "Sting du har sydd",
   "legend.copy": "Speilet fra stingene dine",
@@ -1061,17 +1153,23 @@ const STR = {
   "legend.removed": "Sprettet opp i enden",
   "legend.extra": "Ekstra, utenfor rapporten",
   "legend.neighbour": "Neste rapport – bare til å se på",
+  "legend.fromEnds": "Som i endestykkene",
+  "legend.addedCorner": "Lagt til i hjørnet",
+  "legend.removedCorner": "Sprettet opp i hjørnet",
+  "legend.neighbourEnds": "Endestykkene ved siden av – bare til å se på",
   "canvas.hint.cross": "Trykk eller dra over rutene for å sy. Høyreklikk spretter opp.",
-  "canvas.hint.back": "Trykk på et hjørne for å begynne og på et nytt hjørne for å sy linjen. Fortsett derfra, eller trykk Esc for å slutte.",
+  "canvas.hint.back": "Trykk på et hjørne for å begynne, og på neste hjørne for å sy en linje. Linjen fortsetter fra det siste punktet, så du kan sy flere linjer etter hverandre. For å slutte: trykk Esc, trykk på det siste punktet en gang til, eller velg et annet sting.",
   "canvas.hint.unpick": "Trykk på et sting eller en attersting for å sprette det opp.",
   "canvas.hint.edges": "Trykk på et tall langs kanten for å legge til eller fjerne en rad eller kolonne.",
   "canvas.hint.end": "Det svake feltet er neste rapport, så du ser hvordan enden møter resten av borden.",
+  "canvas.hint.corner": "De svake feltene er endestykkene ved siden av, så du ser hvordan hjørnet møter dem.",
   "canvas.neighbour": "neste rapport",
   "band.mini.title": "Slik blir borden",
   "band.mini.open": "Vis stor",
-  "band.mini.hint": "Trykk på en ende av borden for å gi den en egen avslutning.",
+  "band.mini.hint": "Trykk på en ende eller et hjørne av borden for å gi det en egen avslutning.",
   "preview.caption": "{rx} × {ry} rapporter · {w} × {h} sting",
   "preview.hint": "Her ser du hele borden. Gå til «Tegn» for å endre den.",
+  "threads.title": "Garn i mønsteret",
   "edge.col.title": "Kolonne {n}",
   "edge.row.title": "Rad {n}",
   "edge.col.insertBefore": "Ny kolonne til venstre",
@@ -1094,7 +1192,6 @@ const STR = {
   "colours.slot": "Farge {n}",
   "colours.selected": "I bruk",
   "colours.own": "Egen farge",
-  "colours.dmc": "DMC {n}",
   "colours.many": "{n} farger som skifter",
   "colours.edit": "Endre farge {n}",
   "colours.change": "Endre",
@@ -1151,33 +1248,37 @@ const STR = {
   "dialog.parts": "Trykk på en del for å velge farge",
   "dialog.part": "Del {n}",
   "dialog.pick": "Farge til del {n}",
-  "dialog.dmc": "Finn DMC-garn …",
+  "dialog.thread": "Finn garn …",
   "dialog.custom": "Egen farge …",
   "dialog.howItRepeats": "Slik skifter fargen bortover borden:",
   "dialog.offNote": "Fargeskift er slått av – bare del 1 brukes nå.",
   "dialog.cancel": "Avbryt",
   "dialog.ok": "Bruk",
-  "dmc.title": "Velg DMC-garn",
-  "dmc.search": "Søk",
-  "dmc.search.placeholder": "Nummer eller navn, f.eks. 321",
-  "dmc.namesNote": "Fargenavnene er på engelsk, slik DMC skriver dem.",
-  "dmc.family.all": "Alle",
-  "dmc.family.red": "Rød",
-  "dmc.family.pink": "Rosa",
-  "dmc.family.orange": "Oransje",
-  "dmc.family.yellow": "Gul",
-  "dmc.family.green": "Grønn",
-  "dmc.family.blue": "Blå",
-  "dmc.family.purple": "Lilla",
-  "dmc.family.brown": "Brun",
-  "dmc.family.neutral": "Hvit, grå, svart",
-  "dmc.count": "{n} farger",
-  "dmc.none": "Ingen treff. Prøv et nummer, f.eks. 321.",
-  "dmc.approx": "Fargene på skjermen er omtrentlige. Sjekk mot et fargekart når fargen må stemme.",
-  "dmc.pickPrompt": "Velg en farge i lista.",
-  "dmc.own": "Egen farge …",
-  "dmc.cancel": "Avbryt",
-  "dmc.choose": "Velg",
+  "thread.title": "Velg garn",
+  "thread.system": "Garnprodusent",
+  "thread.system.soon": "{name} – kommer senere",
+  "thread.system.hint": "Numrene i lista er {system}-numre. Flere garnprodusenter kan komme senere.",
+  "thread.code": "{system} {code}",
+  "thread.search": "Søk",
+  "thread.search.placeholder": "{system}-nummer eller navn, f.eks. 321",
+  "thread.namesNote": "Fargenavnene er på engelsk, slik {system} skriver dem.",
+  "thread.family.all": "Alle",
+  "thread.family.red": "Rød",
+  "thread.family.pink": "Rosa",
+  "thread.family.orange": "Oransje",
+  "thread.family.yellow": "Gul",
+  "thread.family.green": "Grønn",
+  "thread.family.blue": "Blå",
+  "thread.family.purple": "Lilla",
+  "thread.family.brown": "Brun",
+  "thread.family.neutral": "Hvit, grå, svart",
+  "thread.count": "{n} farger fra {system}",
+  "thread.none": "Ingen treff. Prøv et {system}-nummer, f.eks. 321.",
+  "thread.approx": "Fargene på skjermen er omtrentlige. Sjekk mot et fargekart når fargen må stemme.",
+  "thread.pickPrompt": "Velg en farge i lista.",
+  "thread.own": "Egen farge …",
+  "thread.cancel": "Avbryt",
+  "thread.choose": "Velg",
   "lines.title": "Rader og kolonner",
   "lines.action": "Hva vil du gjøre?",
   "lines.add": "Legge til",
@@ -1202,10 +1303,12 @@ const STR = {
   "mock.loading": "Vis lastesiden",
   "mock.square": "Bytt kvadratisk / ikke kvadratisk",
   "mock.dialog": "Åpne farge 1",
-  "mock.dmc": "Åpne DMC-velgeren",
+  "mock.thread": "Åpne garnvelgeren",
   "mock.edge": "Vis kantmenyen",
   "mock.lines": "Åpne «Rader og kolonner»",
   "mock.end": "Rediger høyre endestykke",
+  "mock.reset": "Tilbakestill høyre endestykke (spør først)",
+  "mock.corner": "Rediger hjørnet oppe til høyre",
   "mock.back": "Velg attersting"
  },
  "en": {
@@ -1234,7 +1337,7 @@ const STR = {
   "tool.cross": "Cross stitch",
   "tool.cross.hint": "Stitch crosses in the chosen colour. Drag to stitch several.",
   "tool.back": "Backstitch",
-  "tool.back.hint": "Stitch backstitch along the grid lines",
+  "tool.back.hint": "Stitch backstitch along the grid lines. The line carries on from the last point until you stop.",
   "tool.unpick": "Unpick",
   "tool.unpick.hint": "Remove cross stitches or backstitch (with a mouse: right-click)",
   "history.undo": "Undo (Ctrl+Z)",
@@ -1252,6 +1355,12 @@ const STR = {
   "target.right": "Right end",
   "target.top": "Top edge",
   "target.bottom": "Bottom edge",
+  "target.corners": "Corners",
+  "target.tl": "Top left",
+  "target.tr": "Top right",
+  "target.bl": "Bottom left",
+  "target.br": "Bottom right",
+  "target.corner.hint": "give the corner its own finish",
   "target.edge.hint": "Give the band its own finish here",
   "target.changed": "changed",
   "end.title.left": "Left end",
@@ -1269,10 +1378,32 @@ const STR = {
   "end.summary.none": "No changes yet – this end matches the repeat.",
   "end.summary": "Added: {added} · Unpicked: {removed} · Backstitch changed: {lines}",
   "end.reset": "Reset",
-  "end.reset.hint": "Remove every change to this end, including extra rows and columns",
+  "end.reset.hint": "Remove every change here, including extra rows and columns. You will be asked first.",
   "end.done": "Done",
   "end.done.hint": "Back to the repeat",
   "end.resetDone": "{name} has been reset.",
+  "end.confirm.title": "Reset this end?",
+  "end.confirm.body": "{name} will match the repeat again. This will be lost:",
+  "end.confirm.changes": "Stitch changes – added: {added}, unpicked: {removed}, backstitch: {lines}",
+  "end.confirm.extraCols": "Extra columns outside the repeat: {n}",
+  "end.confirm.extraRows": "Extra rows outside the repeat: {n}",
+  "end.confirm.corners": "Stitches in the corners that lie in these rows or columns: {n}",
+  "end.confirm.undo": "If you change your mind, you can undo it afterwards.",
+  "end.confirm.cancel": "Cancel",
+  "end.confirm.ok": "Yes, reset",
+  "corner.title.tl": "Top-left corner",
+  "corner.title.tr": "Top-right corner",
+  "corner.title.bl": "Bottom-left corner",
+  "corner.title.br": "Bottom-right corner",
+  "corner.where.tl": "Where the top edge meets the left end.",
+  "corner.where.tr": "Where the top edge meets the right end.",
+  "corner.where.bl": "Where the bottom edge meets the left end.",
+  "corner.where.br": "Where the bottom edge meets the right end.",
+  "corner.explain": "The corner starts out as the two ends make it. What you stitch or unpick here only changes this corner – also in the square where the extra rows and columns cross.",
+  "corner.size": "Its size follows the extra rows and columns of the two ends beside it.",
+  "corner.summary.none": "No changes yet – the corner matches the ends beside it.",
+  "corner.confirm.title": "Reset this corner?",
+  "corner.confirm.body": "{name} will match the ends beside it again. This will be lost:",
   "toast.undo": "Undo",
   "legend.seed": "Stitches you made",
   "legend.copy": "Mirrored from your stitches",
@@ -1282,17 +1413,23 @@ const STR = {
   "legend.removed": "Unpicked at this end",
   "legend.extra": "Extra, outside the repeat",
   "legend.neighbour": "Next repeat – for reference only",
+  "legend.fromEnds": "As in the ends",
+  "legend.addedCorner": "Added in this corner",
+  "legend.removedCorner": "Unpicked in this corner",
+  "legend.neighbourEnds": "The ends beside it – for reference only",
   "canvas.hint.cross": "Tap or drag across the squares to stitch. Right-click unpicks.",
-  "canvas.hint.back": "Tap a corner to start, then another corner to stitch the line. Carry on from there, or press Esc to stop.",
+  "canvas.hint.back": "Tap a corner to start, then the next corner to stitch a line. The line carries on from the last point, so you can stitch several lines in a row. To stop: press Esc, tap the last point again, or choose another stitch.",
   "canvas.hint.unpick": "Tap a stitch or a backstitch line to unpick it.",
   "canvas.hint.edges": "Tap a number along the edge to add or remove a row or column.",
   "canvas.hint.end": "The faded part is the next repeat, so you can see how the end meets the rest of the band.",
+  "canvas.hint.corner": "The faded parts are the ends beside it, so you can see how the corner meets them.",
   "canvas.neighbour": "next repeat",
   "band.mini.title": "How the band will look",
   "band.mini.open": "Show large",
-  "band.mini.hint": "Tap an end of the band to give it its own finish.",
+  "band.mini.hint": "Tap an end or a corner of the band to give it its own finish.",
   "preview.caption": "{rx} × {ry} repeats · {w} × {h} stitches",
   "preview.hint": "This is the whole band. Go to “Draw” to change it.",
+  "threads.title": "Threads in this pattern",
   "edge.col.title": "Column {n}",
   "edge.row.title": "Row {n}",
   "edge.col.insertBefore": "New column to the left",
@@ -1315,7 +1452,6 @@ const STR = {
   "colours.slot": "Colour {n}",
   "colours.selected": "In use",
   "colours.own": "Own colour",
-  "colours.dmc": "DMC {n}",
   "colours.many": "{n} colours in turn",
   "colours.edit": "Change colour {n}",
   "colours.change": "Change",
@@ -1372,33 +1508,37 @@ const STR = {
   "dialog.parts": "Tap a part to choose its colour",
   "dialog.part": "Part {n}",
   "dialog.pick": "Colour for part {n}",
-  "dialog.dmc": "Find a DMC thread …",
+  "dialog.thread": "Find a thread …",
   "dialog.custom": "Own colour …",
   "dialog.howItRepeats": "How the colour changes along the band:",
   "dialog.offNote": "Colour change is switched off – only part 1 is used now.",
   "dialog.cancel": "Cancel",
   "dialog.ok": "Apply",
-  "dmc.title": "Choose a DMC thread",
-  "dmc.search": "Search",
-  "dmc.search.placeholder": "Number or name, e.g. 321",
-  "dmc.namesNote": "Colour names are in English, as DMC writes them.",
-  "dmc.family.all": "All",
-  "dmc.family.red": "Red",
-  "dmc.family.pink": "Pink",
-  "dmc.family.orange": "Orange",
-  "dmc.family.yellow": "Yellow",
-  "dmc.family.green": "Green",
-  "dmc.family.blue": "Blue",
-  "dmc.family.purple": "Purple",
-  "dmc.family.brown": "Brown",
-  "dmc.family.neutral": "White, grey, black",
-  "dmc.count": "{n} colours",
-  "dmc.none": "Nothing found. Try a number, e.g. 321.",
-  "dmc.approx": "Screen colours are approximate. Check against a shade card when the colour must match.",
-  "dmc.pickPrompt": "Choose a colour from the list.",
-  "dmc.own": "Own colour …",
-  "dmc.cancel": "Cancel",
-  "dmc.choose": "Choose",
+  "thread.title": "Choose a thread",
+  "thread.system": "Thread brand",
+  "thread.system.soon": "{name} – coming later",
+  "thread.system.hint": "The numbers in the list are {system} numbers. More thread brands may come later.",
+  "thread.code": "{system} {code}",
+  "thread.search": "Search",
+  "thread.search.placeholder": "{system} number or name, e.g. 321",
+  "thread.namesNote": "Colour names are in English, as {system} writes them.",
+  "thread.family.all": "All",
+  "thread.family.red": "Red",
+  "thread.family.pink": "Pink",
+  "thread.family.orange": "Orange",
+  "thread.family.yellow": "Yellow",
+  "thread.family.green": "Green",
+  "thread.family.blue": "Blue",
+  "thread.family.purple": "Purple",
+  "thread.family.brown": "Brown",
+  "thread.family.neutral": "White, grey, black",
+  "thread.count": "{n} {system} colours",
+  "thread.none": "Nothing found. Try a {system} number, e.g. 321.",
+  "thread.approx": "Screen colours are approximate. Check against a shade card when the colour must match.",
+  "thread.pickPrompt": "Choose a colour from the list.",
+  "thread.own": "Own colour …",
+  "thread.cancel": "Cancel",
+  "thread.choose": "Choose",
   "lines.title": "Rows and columns",
   "lines.action": "What do you want to do?",
   "lines.add": "Add",
@@ -1423,10 +1563,12 @@ const STR = {
   "mock.loading": "Show loading screen",
   "mock.square": "Toggle square / not square",
   "mock.dialog": "Open colour 1",
-  "mock.dmc": "Open the DMC picker",
+  "mock.thread": "Open the thread picker",
   "mock.edge": "Show the edge menu",
   "mock.lines": "Open “Rows and columns”",
   "mock.end": "Edit the right end",
+  "mock.reset": "Reset the right end (asks first)",
+  "mock.corner": "Edit the top-right corner",
   "mock.back": "Choose backstitch"
  },
  "it": {
@@ -1455,7 +1597,7 @@ const STR = {
   "tool.cross": "Punto croce",
   "tool.cross.hint": "Ricama a punto croce nel colore scelto. Trascina per farne di più.",
   "tool.back": "Punto scritto",
-  "tool.back.hint": "Ricama linee a punto scritto lungo la griglia",
+  "tool.back.hint": "Ricama linee a punto scritto lungo la griglia. La linea riparte dall’ultimo punto finché non ti fermi.",
   "tool.unpick": "Scuci",
   "tool.unpick.hint": "Togli punti croce o linee a punto scritto (col mouse: clic destro)",
   "history.undo": "Annulla (Ctrl+Z)",
@@ -1473,6 +1615,12 @@ const STR = {
   "target.right": "Estremità destra",
   "target.top": "Bordo in alto",
   "target.bottom": "Bordo in basso",
+  "target.corners": "Angoli",
+  "target.tl": "In alto a sinistra",
+  "target.tr": "In alto a destra",
+  "target.bl": "In basso a sinistra",
+  "target.br": "In basso a destra",
+  "target.corner.hint": "dai all’angolo una chiusura diversa",
   "target.edge.hint": "Dai alla bordura una chiusura diversa qui",
   "target.changed": "modificata",
   "end.title.left": "Estremità sinistra",
@@ -1490,10 +1638,32 @@ const STR = {
   "end.summary.none": "Nessuna modifica: è uguale al modulo.",
   "end.summary": "Aggiunti: {added} · Scuciti: {removed} · Linee cambiate: {lines}",
   "end.reset": "Ripristina",
-  "end.reset.hint": "Togli tutte le modifiche di questa parte, anche le righe e colonne in più",
+  "end.reset.hint": "Togli tutte le modifiche di questa parte, anche le righe e colonne in più. Ti verrà chiesto prima.",
   "end.done": "Fatto",
   "end.done.hint": "Torna al modulo",
   "end.resetDone": "{name}: ripristinata.",
+  "end.confirm.title": "Ripristinare questa parte?",
+  "end.confirm.body": "{name} tornerà uguale al modulo. Si perderà:",
+  "end.confirm.changes": "Modifiche ai punti – aggiunti: {added}, scuciti: {removed}, punto scritto: {lines}",
+  "end.confirm.extraCols": "Colonne in più all’esterno: {n}",
+  "end.confirm.extraRows": "Righe in più all’esterno: {n}",
+  "end.confirm.corners": "Punti negli angoli che stanno in queste righe o colonne: {n}",
+  "end.confirm.undo": "Se cambi idea, puoi annullare dopo.",
+  "end.confirm.cancel": "Annulla",
+  "end.confirm.ok": "Sì, ripristina",
+  "corner.title.tl": "Angolo in alto a sinistra",
+  "corner.title.tr": "Angolo in alto a destra",
+  "corner.title.bl": "Angolo in basso a sinistra",
+  "corner.title.br": "Angolo in basso a destra",
+  "corner.where.tl": "Dove il bordo in alto incontra l’estremità sinistra.",
+  "corner.where.tr": "Dove il bordo in alto incontra l’estremità destra.",
+  "corner.where.bl": "Dove il bordo in basso incontra l’estremità sinistra.",
+  "corner.where.br": "Dove il bordo in basso incontra l’estremità destra.",
+  "corner.explain": "L’angolo parte da come lo fanno le due parti vicine. Quello che ricami o scuci qui vale solo per l’angolo, anche nel riquadro dove si incrociano le righe e le colonne in più.",
+  "corner.size": "La misura segue le righe e le colonne in più delle due parti vicine.",
+  "corner.summary.none": "Nessuna modifica: l’angolo è uguale alle parti vicine.",
+  "corner.confirm.title": "Ripristinare l’angolo?",
+  "corner.confirm.body": "{name} tornerà uguale alle parti vicine. Si perderà:",
   "toast.undo": "Annulla",
   "legend.seed": "Punti ricamati da te",
   "legend.copy": "Specchiati dai tuoi punti",
@@ -1503,17 +1673,23 @@ const STR = {
   "legend.removed": "Scuciti qui",
   "legend.extra": "In più, fuori dal modulo",
   "legend.neighbour": "Modulo vicino – solo da vedere",
+  "legend.fromEnds": "Come nelle parti vicine",
+  "legend.addedCorner": "Aggiunti nell’angolo",
+  "legend.removedCorner": "Scuciti nell’angolo",
+  "legend.neighbourEnds": "Parti vicine – solo da vedere",
   "canvas.hint.cross": "Tocca o trascina sui quadretti per ricamare. Il clic destro scuce.",
-  "canvas.hint.back": "Tocca un angolo per iniziare e un altro angolo per tracciare la linea. Continua da lì, oppure premi Esc per finire.",
+  "canvas.hint.back": "Tocca un angolo per iniziare e poi l’angolo successivo per tracciare una linea. La linea riparte dall’ultimo punto, così puoi farne diverse di seguito. Per finire: premi Esc, tocca di nuovo l’ultimo punto o scegli un altro tipo di punto.",
   "canvas.hint.unpick": "Tocca un punto o una linea per scucirlo.",
   "canvas.hint.edges": "Tocca un numero sul bordo per aggiungere o togliere una riga o una colonna.",
   "canvas.hint.end": "La parte sbiadita è il modulo vicino: così vedi come la chiusura si unisce al resto della bordura.",
+  "canvas.hint.corner": "Le parti sbiadite sono le parti vicine: così vedi come l’angolo si unisce a loro.",
   "canvas.neighbour": "modulo vicino",
   "band.mini.title": "Ecco la bordura",
   "band.mini.open": "Mostra grande",
-  "band.mini.hint": "Tocca un’estremità della bordura per darle una chiusura diversa.",
+  "band.mini.hint": "Tocca un’estremità o un angolo della bordura per darle una chiusura diversa.",
   "preview.caption": "{rx} × {ry} moduli · {w} × {h} punti",
   "preview.hint": "Qui vedi tutta la bordura. Torna a «Disegna» per modificarla.",
+  "threads.title": "Filati dello schema",
   "edge.col.title": "Colonna {n}",
   "edge.row.title": "Riga {n}",
   "edge.col.insertBefore": "Nuova colonna a sinistra",
@@ -1536,7 +1712,6 @@ const STR = {
   "colours.slot": "Colore {n}",
   "colours.selected": "In uso",
   "colours.own": "Colore libero",
-  "colours.dmc": "DMC {n}",
   "colours.many": "{n} colori che si alternano",
   "colours.edit": "Modifica il colore {n}",
   "colours.change": "Cambia",
@@ -1593,33 +1768,37 @@ const STR = {
   "dialog.parts": "Tocca una parte per sceglierne il colore",
   "dialog.part": "Parte {n}",
   "dialog.pick": "Colore della parte {n}",
-  "dialog.dmc": "Cerca un filo DMC …",
+  "dialog.thread": "Cerca un filato …",
   "dialog.custom": "Colore libero …",
   "dialog.howItRepeats": "Ecco come cambia lungo la bordura:",
   "dialog.offNote": "Il cambio colore è spento: ora si usa solo la parte 1.",
   "dialog.cancel": "Annulla",
   "dialog.ok": "Applica",
-  "dmc.title": "Scegli un filo DMC",
-  "dmc.search": "Cerca",
-  "dmc.search.placeholder": "Numero o nome, es. 321",
-  "dmc.namesNote": "I nomi dei colori sono in inglese, come li scrive DMC.",
-  "dmc.family.all": "Tutti",
-  "dmc.family.red": "Rossi",
-  "dmc.family.pink": "Rosa",
-  "dmc.family.orange": "Arancioni",
-  "dmc.family.yellow": "Gialli",
-  "dmc.family.green": "Verdi",
-  "dmc.family.blue": "Blu",
-  "dmc.family.purple": "Viola",
-  "dmc.family.brown": "Marroni",
-  "dmc.family.neutral": "Bianchi, grigi, neri",
-  "dmc.count": "{n} colori",
-  "dmc.none": "Nessun risultato. Prova con un numero, es. 321.",
-  "dmc.approx": "I colori sullo schermo sono indicativi. Controlla su una cartella colori quando la tinta deve essere esatta.",
-  "dmc.pickPrompt": "Scegli un colore dall’elenco.",
-  "dmc.own": "Colore libero …",
-  "dmc.cancel": "Annulla",
-  "dmc.choose": "Scegli",
+  "thread.title": "Scegli un filato",
+  "thread.system": "Marca",
+  "thread.system.soon": "{name} – in arrivo",
+  "thread.system.hint": "I numeri dell’elenco sono numeri {system}. Altre marche potranno arrivare in seguito.",
+  "thread.code": "{system} {code}",
+  "thread.search": "Cerca",
+  "thread.search.placeholder": "Numero {system} o nome, es. 321",
+  "thread.namesNote": "I nomi dei colori sono in inglese, come li scrive {system}.",
+  "thread.family.all": "Tutti",
+  "thread.family.red": "Rossi",
+  "thread.family.pink": "Rosa",
+  "thread.family.orange": "Arancioni",
+  "thread.family.yellow": "Gialli",
+  "thread.family.green": "Verdi",
+  "thread.family.blue": "Blu",
+  "thread.family.purple": "Viola",
+  "thread.family.brown": "Marroni",
+  "thread.family.neutral": "Bianchi, grigi, neri",
+  "thread.count": "{n} colori {system}",
+  "thread.none": "Nessun risultato. Prova con un numero {system}, es. 321.",
+  "thread.approx": "I colori sullo schermo sono indicativi. Controlla su una cartella colori quando la tinta deve essere esatta.",
+  "thread.pickPrompt": "Scegli un colore dall’elenco.",
+  "thread.own": "Colore libero …",
+  "thread.cancel": "Annulla",
+  "thread.choose": "Scegli",
   "lines.title": "Righe e colonne",
   "lines.action": "Cosa vuoi fare?",
   "lines.add": "Aggiungere",
@@ -1644,10 +1823,12 @@ const STR = {
   "mock.loading": "Mostra la schermata di caricamento",
   "mock.square": "Alterna quadrato / non quadrato",
   "mock.dialog": "Apri il colore 1",
-  "mock.dmc": "Apri la scelta dei fili DMC",
+  "mock.thread": "Apri la scelta dei filati",
   "mock.edge": "Mostra il menu del bordo",
   "mock.lines": "Apri «Righe e colonne»",
   "mock.end": "Modifica l’estremità destra",
+  "mock.reset": "Ripristina l’estremità destra (chiede prima)",
+  "mock.corner": "Modifica l’angolo in alto a destra",
   "mock.back": "Scegli il punto scritto"
  }
 };
@@ -1657,8 +1838,25 @@ const joinList = items => items.length <= 1 ? (items[0] || "") : items.slice(0, 
 
 /* ---------------- DMC threads (from kvale/core/dmc_palette.json: number|name|hex) ---------------- */
 const DMC = "3713|Salmon Very Light|ffe2e2;761|Salmon Light|ffc9c9;760|Salmon|f5adad;3712|Salmon Medium|f18787;3328|Salmon Dark|e36d6d;347|Salmon Very Dark|bf2d2d;353|Peach|fed7cc;352|Coral Light|fd9c97;351|Coral|e96a67;350|Coral Medium|e04848;349|Coral Dark|d21035;817|Coral Red Very Dark|bb051f;3708|Melon Light|ffcbd5;3706|Melon Medium|ffadbc;3705|Melon Dark|ff7992;3801|Melon Very Dark|e74967;666|Bright Red|e31d42;321|Red|c72b3b;304|Red Medium|b71f33;498|Red Dark|a7132b;816|Garnet|970b23;815|Garnet Medium|87071f;814|Garnet Dark|7b001b;894|Carnation Very Light|ffb2bb;893|Carnation Light|fc90a2;892|Carnation Medium|ff798c;891|Carnation Dark|ff5773;818|Baby Pink|ffdfd9;957|Geranium Pale|fdb5b5;956|Geranium|ff9191;309|Rose Dark|564a4a;963|Dusty Rose Ult Vy Lt|ffd7d7;3716|Dusty Rose Med Vy Lt|ffbdbd;962|Dusty Rose Medium|e68a8a;961|Dusty Rose Dark|cf7373;3833|Raspberry Light|ea8699;3832|Raspberry Medium|db556e;3831|Raspberry Dark|b32f48;777|Raspberry Very Dark|913546;819|Baby Pink Light|ffeeeb;3326|Rose Light|fbadb4;776|Pink Medium|fcb0b9;899|Rose Medium|f27688;335|Rose|ee546e;326|Rose Very Dark|b33b4b;151|Dusty Rose Vry Lt|f0ced4;3354|Dusty Rose Light|e4a6ac;3733|Dusty Rose|e8879b;3731|Dusty Rose Very Dark|da6783;3350|Dusty Rose Ultra Dark|bc4365;150|Dusty Rose Ult Vy Dk|ab0249;3689|Mauve Light|fbbfc2;3688|Mauve Medium|e7a9ac;3687|Mauve|c96b70;3803|Mauve Dark|ab3357;3685|Mauve Very Dark|881531;605|Cranberry Very Light|ffc0cd;604|Cranberry Light|ffb0be;603|Cranberry|ffa4be;602|Cranberry Medium|e24874;601|Cranberry Dark|d1286a;600|Cranberry Very Dark|cd2f63;3806|Cyclamen Pink Light|ff8cae;3805|Cyclamen Pink|f3478b;3804|Cyclamen Pink Dark|e02876;3609|Plum Ultra Light|f4aed5;3608|Plum Very Light|ea9cc4;3607|Plum Light|c54989;718|Plum|9c2462;917|Plum Medium|9b1359;915|Plum Dark|820043;225|Shell Pink Ult Vy Lt|ffdfd5;224|Shell Pink Very Light|ebb7af;152|Shell Pink Med Light|e2a099;223|Shell Pink Light|cc847c;3722|Shell Pink Med|bc6c64;3721|Shell Pink Dark|a14b51;221|Shell Pink Vy Dk|883e43;778|Antique Mauve Vy Lt|dfb3bb;3727|Antique Mauve Light|dba9b2;316|Antique Mauve Med|b7737f;3726|Antique Mauve Dark|9b5b66;315|Antique Mauve Md Dk|814952;3802|Antique Mauve Vy Dk|714149;902|Garnet Very Dark|822637;3743|Antique Violet Vy Lt|d7cbd3;3042|Antique Violet Light|b79da7;3041|Antique Violet Medium|956f7c;3740|Antique Violet Dark|785762;3836|Grape Light|ba91aa;3835|Grape Medium|946083;3834|Grape Dark|72375d;154|Grape Very Dark|572433;211|Lavender Light|e3cbe3;210|Lavender Medium|c39fc3;209|Lavender Dark|a37ba7;208|Lavender Very Dark|835b8b;3837|Lavender Ultra Dark|6c3a6e;327|Violet Dark|633666;153|Violet Very Light|e6ccd9;554|Violet Light|dbb3cb;553|Violet|a3638b;552|Violet  Medium|803a6b;550|Violet Very Dark|5c184e;3747|Blue Violet Vy Lt|d3d7ed;341|Blue Violet Light|b7bfdd;156|Blue Violet Med Lt|a3aed1;340|Blue Violet Medium|ada7c7;155|Blue Violet Med Dark|9891b6;3746|Blue Violet Dark|776b98;333|Blue Violet Very Dark|5c5478;157|Cornflower Blue Vy Lt|bbc3d9;794|Cornflower Blue Light|8f9cc1;793|Cornflower Blue Med|707da2;3807|Cornflower Blue|60678c;792|Cornflower Blue Dark|555b7b;158|Cornflower Blu M V D|4c526e;791|Cornflower Blue V D|464563;3840|Lavender Blue Light|b0c0da;3839|Lavender Blue Med|7b8eab;3838|Lavender Blue Dark|5c7294;800|Delft Blue Pale|c0ccde;809|Delft Blue|94a8c6;799|Delft Blue Medium|748eb6;798|Delft Blue Dark|466a8e;797|Royal Blue|13477d;796|Royal Blue Dark|11416d;820|Royal Blue Very Dark|0e365c;162|Blue Ultra Very Light|dbecf5;827|Blue Very Light|bddded;813|Blue Light|a1c2d7;826|Blue Medium|6b9ebf;825|Blue Dark|4781a5;824|Blue Very Dark|396987;996|Electric Blue Medium|30c2ec;3843|Electric Blue|14aad0;995|Electric Blue Dark|2696b6;3846|Turquoise Bright Light|06e3e6;3845|Turquoise Bright Med|04c4ca;3844|Turquoise Bright Dark|12aeba;159|Blue Gray Light|c7cad7;160|Blue Gray Medium|999fb7;161|Blue Gray|7880a4;3756|Baby Blue Ult Vy Lt|eefcfc;775|Baby Blue Very Light|d9ebf1;3841|Baby Blue Pale|cddfed;3325|Baby Blue Light|b8d2e6;3755|Baby Blue|93b4ce;334|Baby Blue Medium|739fc1;322|Baby Blue Dark|5a8fb8;312|Baby Blue Very Dark|35668b;803|Baby Blue Ult Vy Dk|2c597c;336|Navy Blue|253b73;823|Navy Blue Dark|213063;939|Navy Blue Very Dark|1b2853;3753|Antique Blue Ult Vy Lt|dbe2e9;3752|Antique Blue Very Lt|c7d1db;932|Antique Blue Light|a2b5c6;931|Antique Blue Medium|6a859e;930|Antique Blue Dark|455c71;3750|Antique Blue Very Dk|384c5e;828|Sky Blue Vy Lt|c5e8ed;3761|Sky Blue Light|acd8e2;519|Sky Blue|7eb1c8;518|Wedgewood Light|4f93a7;3760|Wedgewood Med|3e85a2;517|Wedgewood Dark|3b768f;3842|Wedgewood Vry Dk|32667c;311|Wedgewood Ult VyDk|1c5066;747|Peacock Blue Vy Lt|e5fcfd;3766|Peacock Blue Light|99cfd9;807|Peacock Blue|64abba;806|Peacock Blue Dark|3d95a5;3765|Peacock Blue Vy Dk|347f8c;3811|Turquoise Very Light|bce3e6;598|Turquoise Light|90c3cc;597|Turquoise|5ba3b3;3810|Turquoise Dark|488e9a;3809|Turquoise Vy Dark|3f7c85;3808|Turquoise Ult Vy Dk|366970;928|Gray Green Vy Lt|dde3e3;927|Gray Green Light|bdcbcb;926|Gray Green Med|98aeae;3768|Gray Green Dark|657f7f;924|Gray Green Vy Dark|566a6a;3849|Teal Green Light|52b3a4;3848|Teal Green Med|559392;3847|Teal Green Dark|347d75;964|Sea Green Light|a9e2d8;959|Sea Green Med|59c7b4;958|Sea Green Dark|3eb6a1;3812|Sea Green Vy Dk|2f8c84;3851|Green Bright Lt|49b3a1;943|Green Bright Md|3d9384;3850|Green Bright Dk|378477;993|Aquamarine Vy Lt|90c0b4;992|Aquamarine Lt|6fae9f;3814|Aquamarine|508b7d;991|Aquamarine Dk|477b6e;966|Jade Ultra Vy Lt|b9d7c0;564|Jade Very Light|a7cdaf;563|Jade Light|8fc098;562|Jade Medium|53976a;505|Jade Green|338362;3817|Celadon Green Lt|99c3aa;3816|Celadon Green|65a57d;163|Celadon Green Md|4d8361;3815|Celadon Green Dk|477759;561|Celadon Green VD|2c6a45;504|Blue Green Vy Lt|c4decc;3813|Blue Green Lt|b2d4bd;503|Blue Green Med|7bac94;502|Blue Green|5b9071;501|Blue Green Dark|396f52;500|Blue Green Vy Dk|044d33;955|Nile Green Light|a2d6ad;954|Nile Green|88ba91;913|Nile Green Med|6dab77;912|Emerald Green Lt|1b9d6b;911|Emerald Green Med|189065;910|Emerald Green Dark|187e56;909|Emerald Green Vy Dk|156f49;3818|Emerald Grn Ult V Dk|115a3b;369|Pistachio Green Vy Lt|d7edcc;368|Pistachio Green Lt|a6c298;320|Pistachio Green Med|69885a;367|Pistachio Green Dk|617a52;319|Pistachio Grn Vy Dk|205f2e;890|Pistachio Grn Ult V D|174923;164|Forest Green Lt|c8d8b8;989|Forest Green |8da675;988|Forest Green Med|738b5b;987|Forest Green Dk|587141;986|Forest Green Vy Dk|405230;772|Yellow Green Vy Lt|e4ecd4;3348|Yellow Green Lt|ccd9b1;3347|Yellow Green Med|71935c;3346|Hunter Green|406a3a;3345|Hunter Green Dk|1b5915;895|Hunter Green Vy Dk|1b5300;704|Chartreuse Bright|9ecf34;703|Chartreuse|7bb547;702|Kelly Green|47a72f;701|Green Light|3f8f29;700|Green Bright|07731b;699|Green|056517;907|Parrot Green Lt|c7e666;906|Parrot Green Md|7fb335;905|Parrot Green Dk|628a28;904|Parrot Green V Dk|557822;472|Avocado Grn U Lt|d8e498;471|Avocado Grn V Lt|aebf79;470|Avocado Grn Lt|94ab4f;469|Avocado Green|72843c;937|Avocado Green Md|627133;936|Avocado Grn V Dk|4c5826;935|Avocado Green Dk|424d21;934|Avocado Grn Black|313919;523|Fern Green Lt|abb197;3053|Green Gray|9ca482;3052|Green Gray Md|889268;3051|Green Gray Dk|5f6648;524|Fern Green Vy Lt|c4cdac;522|Fern Green|969e7e;520|Fern Green Dark|666d4f;3364|Pine Green|83975f;3363|Pine Green Md|728256;3362|Pine Green Dk|5e6b47;165|Moss Green Vy Lt|eff4a4;3819|Moss Green Lt|e0e868;166|Moss Green Md Lt|c0c840;581|Moss Green|a7ae38;580|Moss Green Dk|888d33;734|Olive Green Lt|c7c077;733|Olive Green Md|bcb34c;732|Olive Green|948c36;731|Olive Green Dk|938b37;730|Olive Green V Dk|827b30;3013|Khaki Green Lt|b9b982;3012|Khaki Green Md|a6a75d;3011|Khaki Green Dk|898a58;372|Mustard Lt|ccb784;371|Mustard|bfa671;370|Mustard Medium|b89d64;834|Golden Olive Vy Lt|dbbe7f;833|Golden Olive Lt|c8ab6c;832|Golden Olive|bd9b51;831|Golden Olive Md|aa8f56;830|Golden Olive Dk|8d784b;829|Golden Olive Vy Dk|7e6b42;613|Drab Brown V Lt|dcc4aa;612|Drab Brown Lt|bc9a78;611|Drab Brown|967656;610|Drab Brown Dk|796047;3047|Yellow Beige Lt|e7d6c1;3046|Yellow Beige Md|d8bc9a;3045|Yellow Beige Dk|bc966a;167|Yellow Beige V Dk|a77c49;746|Off White|fcfcee;677|Old Gold Vy Lt|f5eccb;422|Hazelnut Brown Lt|c69f7b;3828|Hazelnut Brown|b78b61;420|Hazelnut Brown Dk|a07042;869|Hazelnut Brown V Dk|835e39;728|Topaz|e4b468;783|Topaz Medium|ce9124;782|Topaz Dark|ae7720;781|Topaz Very Dark|a26d20;780|Topaz Ultra Vy Dk|94631a;676|Old Gold Lt|e5ce97;729|Old Gold Medium|d0a53e;680|Old Gold Dark|bc8d0e;3829|Old Gold Vy Dark|a98204;3822|Straw Light|f6dc98;3821|Straw|f3ce75;3820|Straw Dark|dfb65f;3852|Straw Very Dark|cd9d37;445|Lemon Light|fffb8b;307|Lemon|fded54;973|Canary Bright|ffe300;444|Lemon Dark|ffd600;3078|Golden Yellow Vy Lt|fdf9cd;727|Topaz Vy Lt|fff1af;726|Topaz Light|fdd755;725|Topaz Med Lt|ffc840;972|Canary Deep|ffb515;745|Yellow Pale Light|ffe9ad;744|Yellow Pale|ffe793;743|Yellow Med|fed376;742|Tangerine Light|ffbf57;741|Tangerine Med|ffa32b;740|Tangerine|ff8b00;970|Pumpkin Light|f78b13;971|Pumpkin|f67f00;947|Burnt Orange|ff7b4d;946|Burnt Orange Med|eb6307;900|Burnt Orange Dark|d15807;967|Apricot Very Light|ffded5;3824|Apricot Light|fecdc2;3341|Apricot|fcab98;3340|Apricot Med|ff836f;608|Burnt Orange Bright|fd5d35;606|Orange-Red Bright|fa3203;951|Tawny Light|ffe2cf;3856|Mahogany Ult Vy Lt|ffd3b5;722|Orange Spice Light|f7976f;721|Orange Spice Med|f27842;720|Orange Spice Dark|e55c1f;3825|Pumpkin Pale|fdbd96;922|Copper Light|e27323;921|Copper|c66218;920|Copper Med|ac5414;919|Red-Copper|a64510;918|Red-Copper Dark|82340a;3770|Tawny Vy Light|ffeee3;945|Tawny|fbd5bb;402|Mahogany Vy Lt|f7a777;3776|Mahogany Light|cf7939;301|Mahogany Med|b35f2b;400|Mahogany Dark|8f430f;300|Mahogany Vy Dk|6f2f00;3823|Yellow Ultra Pale|fffde3;3855|Autumn Gold Lt|fad396;3854|Autumn Gold Med|f2af68;3853|Autumn Gold Dk|f29746;3827|Golden Brown Pale|f7bb77;977|Golden Brown Light|dc9c56;976|Golden Brown Med|c28142;3826|Golden Brown|ad7239;975|Golden Brown Dk|914f12;948|Peach Very Light|fee7da;754|Peach Light|f7cbbf;3771|Terra Cotta Ult Vy Lt|f4bba9;758|Terra Cotta Vy Lt|eeaa9b;3778|Terra Cotta Light|d98978;356|Terra Cotta Med|c56a5b;3830|Terra Cotta|b95544;355|Terra Cotta Dark|984436;3777|Terra Cotta Vy Dk|863022;3779|Rosewood Ult Vy Lt|f8cac8;3859|Rosewood Light|ba8b7c;3858|Rosewood Med|964a3f;3857|Rosewood Dark|68251a;3774|Desert Sand Vy Lt|f3e1d7;950|Desert Sand Light|eed3c4;3064|Desert Sand|c48e70;407|Desert Sand Med|bb8161;3773|Desert Sand Dark|b67552;3772|Desert Sand Vy Dk|a06c50;632|Desert Sand Ult Vy Dk|875539;453|Shell Gray Light|d7cecb;452|Shell Gray Med|c0b3ae;451|Shell Gray Dark|917b73;3861|Cocoa Light|a68881;3860|Cocoa|7d5d57;779|Cocoa Dark|624b45;712|Cream|fffbef;739|Tan Ult Vy Lt|f8e4c8;738|Tan Very Light|eccc9e;437|Tan Light|e4bb8e;436|Tan|cb9051;435|Brown Very Light|b87748;434|Brown Light|985e33;433|Brown Med|7a451f;801|Coffee Brown Dk|653919;898|Coffee Brown Vy Dk|492a13;938|Coffee Brown Ult Dk|361f0e;3371|Black Brown|1e1108;543|Beige Brown Ult Vy Lt|f2e3ce;3864|Mocha Beige Light|cbb69c;3863|Mocha Beige Med|a4835c;3862|Mocha Beige Dark|8a6e4e;3031|Mocha Brown Vy Dk|4b3c2a;B5200|Snow White|ffffff;White|White|fcfbf8;3865|Winter White|f9f7f1;Ecru|Ecru|f0eada;822|Beige Gray Light|e7e2d3;644|Beige Gray Med|ddd8cb;642|Beige Gray Dark|a49878;640|Beige Gray Vy Dk|857b61;3787|Brown Gray Dark|625d50;3021|Brown Gray Vy Dk|4f4b41;3024|Brown Gray Vy Lt|ebeae7;3023|Brown Gray Light|b1aa97;3022|Brown Gray Med|8e9078;535|Ash Gray Vy Lt|636458;3033|Mocha Brown Vy Lt|e3d8cc;3782|Mocha Brown Lt|d2bca6;3032|Mocha Brown Med|b39f8b;3790|Beige Gray Ult Dk|7f6a55;3781|Mocha Brown Dk|6b5743;3866|Mocha Brn Ult Vy Lt|faf6f0;842|Beige Brown Vy Lt|d1baa1;841|Beige Brown Lt|b69b7e;840|Beige Brown Med|9a7c5c;839|Beige Brown Dk|675541;838|Beige Brown Vy Dk|594937;3072|Beaver Gray Vy Lt|e6e8e8;648|Beaver Gray Lt|bcb4ac;647|Beaver Gray Med|b0a69c;646|Beaver Gray Dk|877d73;645|Beaver Gray Vy Dk|6e655c;844|Beaver Gray Ult Dk|484848;762|Pearl Gray Vy Lt|ececec;415|Pearl Gray|d3d3d6;318|Steel Gray Lt|ababab;414|Steel Gray Dk|8c8c8c;168|Pewter Very Light|d1d1d1;169|Pewter Light|848484;317|Pewter Gray|6c6c6c;413|Pewter Gray Dark|565656;3799|Pewter Gray Vy Dk|424242;310|Black|000000".split(";").map(r => { const [num, name, hex] = r.split("|"); return {num, name, hex: "#" + hex}; });
-const DMC_BY_HEX = new Map(); DMC.forEach(d => { if (!DMC_BY_HEX.has(d.hex)) DMC_BY_HEX.set(d.hex, d); });
-const dmcFor = hex => DMC_BY_HEX.get((hex || "").toLowerCase()) || null;
+/* ---------------- Thread colours: (system, code), never a bare code ----------------
+   A colour in the document is either a thread {sys, code} from a thread brand's catalogue,
+   or an own colour {hex}. Only DMC has a catalogue now; the other brands are listed so the
+   picker shows that more can be added later. Every code on screen is shown with its brand. */
+const THREAD_SYSTEMS = [
+  {id: "dmc", name: "DMC", threads: DMC},
+  {id: "anchor", name: "Anchor", threads: null},
+  {id: "madeira", name: "Madeira", threads: null},
+];
+const SYS = id => THREAD_SYSTEMS.find(s => s.id === id);
+const BY_CODE = new Map(THREAD_SYSTEMS.filter(s => s.threads).map(s => [s.id, new Map(s.threads.map(d => [d.num, d]))]));
+const D = code => ({sys: "dmc", code});
+const ownColour = hex => ({hex: hex.toLowerCase()});
+const threadEntry = c => (c && c.sys) ? BY_CODE.get(c.sys)?.get(c.code) || null : null;
+const hexOf = c => c.sys ? (threadEntry(c)?.hex || "#808080") : c.hex;
+const threadCode = c => t("thread.code", {system: SYS(c.sys).name, code: c.code});          // "DMC 321"
+const colourLabel = c => c.sys ? threadCode(c) : t("colours.own");
+const colourFull = c => c.sys ? `${threadCode(c)} – ${threadEntry(c)?.name || ""}` : `${t("colours.own")} ${c.hex}`;
+const sameColour = (a, b) => !!a && !!b && (a.sys ? a.sys === b.sys && a.code === b.code : !b.sys && a.hex === b.hex);
 function family(hex) {
   const n = parseInt(hex.slice(1), 16); let r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
   const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
@@ -1684,17 +1882,21 @@ const doc = {
   edges: { left: true, right: true, top: true, bottom: true },
   useSeq: true,
   bg: "#f5f1e8",
-  // DMC 498, 3346, 725, 310. Slots 1 and 3 have demo sequences to show the split swatch.
-  seqs: [["#a7132b", "#406a3a", "#ffc840"], ["#406a3a"], ["#ffc840", "#a7132b"], ["#000000"]],
+  // Colours are (thread brand, code) pairs. Slots 1 and 3 have demo sequences to show the split swatch.
+  seqs: [[D("498"), D("3346"), D("725")], [D("3346")], [D("725"), D("498")], [D("310")]],
   sym: ["identity", "mirror_x", "mirror_y", "rotate_180"],
   motif: [[5,1,0],[5,2,0],[4,2,0],[5,3,1],[4,3,1],[3,3,1],[5,4,2],[4,4,2],[3,4,2],[2,4,2],[1,5,3],[2,5,3],[3,5,3]],
   // backstitch: [x1, y1, x2, y2, slot] between grid intersections; expanded by the same symmetry
   back: [[1,1,3,3,3],[5,0,6,0,0]],
-  // end pieces: hidden cells, added cells, hidden/added backstitches and extra rows/columns outside the repeat
+  // end pieces: hidden cells, added cells, hidden/added backstitches and extra rows/columns outside the repeat.
+  // corners (tl, tr, bl, br) have the same overrides but no extra rows/columns of their own:
+  // they start from their two neighbouring end pieces and follow those ends' size.
   ends: {
     left: null, top: null, bottom: null,
     right: { ext: 2, removed: ["10,5", "10,6"], added: [[11,5,2],[11,6,2],[12,2,0],[12,3,0],[12,4,0],[12,5,0],[12,6,0],[12,7,0],[12,8,0],[12,9,0]],
-             removedBack: [], addedBack: [[14,1,14,11,3]] }
+             removedBack: [], addedBack: [[14,1,14,11,3]] },
+    tl: null, bl: null, br: null,
+    tr: { ext: 0, removed: [], added: [[12,0,3],[13,0,3],[12,1,0]], removedBack: [], addedBack: [] }
   }
 };
 let active = 0, mode = "edit", tool = "cross", zoom = 1, target = "unit";
@@ -1704,7 +1906,7 @@ function restore(s) { const o = JSON.parse(s); Object.keys(o).forEach(k => doc[k
 let pendingSnap = null;
 function beginEdit() { pendingSnap = snapshot(); }
 function endEdit() { if (pendingSnap !== null && pendingSnap !== snapshot()) { undoStack.push(pendingSnap); future.length = 0; } pendingSnap = null; updateHistory(); }
-function edit(fn) { beginEdit(); const r = fn(); endEdit(); renderAll(); return r; }
+function edit(fn) { beginEdit(); const r = fn(), changed = pendingSnap !== snapshot(); endEdit(); if (changed) renderAll(); return r; }
 
 /* ---------------- Core logic (ported from kvale.core) ---------------- */
 const OPS = ["identity","mirror_x","mirror_y","rotate_180","rotate_90","rotate_270","diag_main","diag_anti"];
@@ -1752,27 +1954,52 @@ function expandBack(d = doc) {
       if (!out.has(k)) { out.set(k, {seg: ns, slot: s, seed: i, isSeed: false}); queue.push([ns, s, i]); } } }
   return out;
 }
+const CORNERS = {tl: ["top", "left"], tr: ["top", "right"], bl: ["bottom", "left"], br: ["bottom", "right"]};
+const CORNER_LIST = Object.keys(CORNERS), PIECES = [...EDGE_LIST, ...CORNER_LIST];
+const isCorner = tg => Object.hasOwn(CORNERS, tg);
+const sidesOf = tg => isCorner(tg) ? CORNERS[tg] : [tg];
+const cornersOf = e => CORNER_LIST.filter(c => CORNERS[c].includes(e));
+const pieceTitle = tg => t((isCorner(tg) ? "corner.title." : "end.title.") + tg);
 const emptyEnd = () => ({ext: 0, removed: [], added: [], removedBack: [], addedBack: []});
 const endOf = (e, d = doc) => d.ends[e];
 const extOf = (e, d = doc) => d.ends[e]?.ext || 0;
 const ensureEnd = e => doc.ends[e] || (doc.ends[e] = emptyEnd());
 const endIsEmpty = o => !o || (!o.ext && !o.removed.length && !o.added.length && !o.removedBack.length && !o.addedBack.length);
-function endBounds(e, d = doc) {
-  const ext = extOf(e, d);
-  return { x0: e === "left" ? -ext : 0, x1: e === "right" ? d.w + ext - 1 : d.w - 1,
-           y0: e === "top" ? -ext : 0, y1: e === "bottom" ? d.h + ext - 1 : d.h - 1 };
+function endBounds(tg, d = doc) {   // an end piece, or a corner: the repeat plus the neighbouring ends' extra rows/columns
+  const s = sidesOf(tg), ext = e => s.includes(e) ? extOf(e, d) : 0;
+  return { x0: -ext("left"), x1: d.w + ext("right") - 1, y0: -ext("top"), y1: d.h + ext("bottom") - 1 };
+}
+function applyOverride(marks, backs, o) {
+  if (!o) return;
+  o.removed.forEach(k => marks.delete(k)); o.added.forEach(([x, y, s]) => marks.set(x+","+y, s));
+  o.removedBack.forEach(k => backs.delete(k)); o.addedBack.forEach(s => backs.set(bkey(s), {seg: s.slice(0, 4), slot: s[4]}));
+}
+// What a piece starts from: the repeat for an end piece; the repeat with its two end pieces applied for a corner.
+function pieceBase(tg, d = doc) {
+  const marks = new Map(), backs = new Map();
+  for (const [k, m] of expand(d)) marks.set(k, m.slot);
+  for (const [k, b] of expandBack(d)) backs.set(k, {seg: b.seg, slot: b.slot});
+  if (isCorner(tg)) CORNERS[tg].forEach(e => applyOverride(marks, backs, d.ends[e]));
+  return {marks, backs};
+}
+// Drop a piece's own stitches that no longer fit inside it (after extra rows/columns shrink).
+function clipPiece(tg) {
+  const o = doc.ends[tg]; if (!o) return 0; const b = endBounds(tg), n = o.added.length + o.addedBack.length;
+  o.added = o.added.filter(([x, y]) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1);
+  o.addedBack = o.addedBack.filter(s => [[s[0], s[1]], [s[2], s[3]]].every(([x, y]) => x >= b.x0 && x <= b.x1 + 1 && y >= b.y0 && y <= b.y1 + 1));
+  return n - o.added.length - o.addedBack.length;
 }
 const inUnit = (x, y) => x >= 0 && y >= 0 && x < doc.w && y < doc.h;
-// Cells shown in an end piece: Map "x,y" -> {slot, state: base|added|hidden}
+// Cells shown in an end piece or corner: Map "x,y" -> {slot, state: base|added|hidden}
 function endCells(e) {
-  const out = new Map(); for (const [k, m] of expand()) out.set(k, {slot: m.slot, state: "base"});
+  const out = new Map(); for (const [k, s] of pieceBase(e).marks) out.set(k, {slot: s, state: "base"});
   const o = endOf(e); if (!o) return out;
   o.removed.forEach(k => { const c = out.get(k); if (c) c.state = "hidden"; });
   o.added.forEach(([x, y, s]) => out.set(x+","+y, {slot: s, state: "added"}));
   return out;
 }
 function endBacks(e) {
-  const out = new Map(); for (const [k, b] of expandBack()) out.set(k, {seg: b.seg, slot: b.slot, state: "base"});
+  const out = new Map(); for (const [k, b] of pieceBase(e).backs) out.set(k, {seg: b.seg, slot: b.slot, state: "base"});
   const o = endOf(e); if (!o) return out;
   o.removedBack.forEach(k => { const b = out.get(k); if (b) b.state = "hidden"; });
   o.addedBack.forEach(s => out.set(bkey(s), {seg: s.slice(0, 4), slot: s[4], state: "added"}));
@@ -1789,7 +2016,7 @@ function paintUnit(x, y, slot) {
 function eraseUnit(x, y) { const m = expand().get(x+","+y); if (!m) return false; doc.motif.splice(m.seed, 1); return true; }
 function paintEnd(e, x, y, slot) {
   const b = endBounds(e); if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) return false;
-  const k = x+","+y, base = inUnit(x, y) ? expand().get(k)?.slot : undefined, o0 = endOf(e);
+  const k = x+","+y, base = pieceBase(e).marks.get(k), o0 = endOf(e);
   const existing = o0?.added.find(a => a[0] === x && a[1] === y), removed = !!o0?.removed.includes(k);
   if (existing && existing[2] === slot) return false;
   if (!existing && !removed && base === slot) return false;
@@ -1799,7 +2026,7 @@ function paintEnd(e, x, y, slot) {
 }
 function eraseEnd(e, x, y) {
   const b = endBounds(e); if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) return false;
-  const k = x+","+y, hasBase = inUnit(x, y) && expand().has(k), o0 = endOf(e);
+  const k = x+","+y, hasBase = pieceBase(e).marks.has(k), o0 = endOf(e);
   const hasAdded = !!o0?.added.some(a => a[0] === x && a[1] === y), isRemoved = !!o0?.removed.includes(k);
   if ((!hasBase && !hasAdded) || (hasBase && isRemoved && !hasAdded)) return false;
   const o = ensureEnd(e); o.added = o.added.filter(a => !(a[0] === x && a[1] === y));
@@ -1812,7 +2039,7 @@ function addBackUnit(p, q, slot) {
   doc.back.push([...seg, slot]); return true;
 }
 function addBackEnd(e, p, q, slot) {
-  const seg = [...p, ...q], k = bkey(seg), base = expandBack().get(k), o0 = endOf(e);
+  const seg = [...p, ...q], k = bkey(seg), base = pieceBase(e).backs.get(k), o0 = endOf(e);
   const existing = o0?.addedBack.find(s => bkey(s) === k), removed = !!o0?.removedBack.includes(k);
   if (existing && existing[4] === slot) return false;
   if (!existing && !removed && base && base.slot === slot) return false;
@@ -1834,15 +2061,13 @@ function eraseBackNear(fx, fy) {
   const hit = nearestBack(fx, fy); if (!hit) return false; const [k, b] = hit;
   if (target === "unit") { doc.back.splice(b.seed, 1); return true; }
   const o = ensureEnd(target);
-  if (b.state === "added") { o.addedBack = o.addedBack.filter(s => bkey(s) !== k); if (!expandBack().has(k)) return true; }
+  if (b.state === "added") { o.addedBack = o.addedBack.filter(s => bkey(s) !== k); if (!pieceBase(target).backs.has(k)) return true; }
   if (!o.removedBack.includes(k)) o.removedBack.push(k);
   return true;
 }
 function setEndExt(e, n) {
   n = Math.max(0, Math.min(50, Math.round(n) || 0)); if (extOf(e) === n) return false;
-  const o = ensureEnd(e); o.ext = n; const b = endBounds(e);
-  o.added = o.added.filter(([x, y]) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1);
-  o.addedBack = o.addedBack.filter(s => [[s[0], s[1]], [s[2], s[3]]].every(([x, y]) => x >= b.x0 && x <= b.x1 + 1 && y >= b.y0 && y <= b.y1 + 1));
+  const o = ensureEnd(e); o.ext = n; clipPiece(e); cornersOf(e).forEach(clipPiece);   // corners follow the ends' size
   return true;
 }
 
@@ -1882,7 +2107,7 @@ function changeLines(axis, i, ins) {
   const moveSeg = s => { const n = [shiftPt(s[0], C), shiftPt(s[1], R), shiftPt(s[2], C), shiftPt(s[3], R), s[4]]; return (n[0] === n[2] && n[1] === n[3]) ? null : n; };
   doc.motif = doc.motif.filter(([x, y]) => !gone(x, y)).map(([x, y, s]) => [shiftCell(x, C), shiftCell(y, R), s]);
   doc.back = doc.back.map(moveSeg).filter(Boolean);
-  for (const e of EDGE_LIST) { const en = doc.ends[e]; if (!en) continue;
+  for (const e of PIECES) { const en = doc.ends[e]; if (!en) continue;
     en.removed = en.removed.map(k => k.split(",").map(Number)).filter(([x, y]) => !gone(x, y)).map(([x, y]) => shiftCell(x, C) + "," + shiftCell(y, R));
     en.added = en.added.filter(([x, y]) => !gone(x, y)).map(([x, y, s]) => [shiftCell(x, C), shiftCell(y, R), s]);
     en.addedBack = en.addedBack.map(moveSeg).filter(Boolean); en.removedBack = []; }
@@ -1895,7 +2120,7 @@ function includedCols(d, ux) { const last = d.rx-1; const kl = d.edges.left || u
   return [...Array(d.w).keys()].filter(x => (x !== 0 || kl) && (x !== d.w-1 || kr)); }
 function includedRows(d, uy) { const last = d.ry-1; const kt = d.edges.top || uy === 0, kb = d.edges.bottom || uy === last;
   return [...Array(d.h).keys()].filter(y => (y !== 0 || kt) && (y !== d.h-1 || kb)); }
-const colourFor = (d, slot, rep) => { const seq = d.seqs[slot % d.seqs.length]; return d.useSeq ? seq[rep % seq.length] : seq[0]; };
+const colourFor = (d, slot, rep) => { const seq = d.seqs[slot % d.seqs.length]; return hexOf(d.useSeq ? seq[rep % seq.length] : seq[0]); };
 function buildGrid(d = doc) {
   const cols = [...Array(d.rx).keys()].map(u => includedCols(d, u)), rows = [...Array(d.ry).keys()].map(u => includedRows(d, u));
   const baseW = cols.reduce((a, c) => a + c.length, 0), baseH = rows.reduce((a, r) => a + r.length, 0);
@@ -1909,9 +2134,11 @@ function buildGrid(d = doc) {
     const rep = uy * d.rx + ux, lastX = ux === d.rx - 1, lastY = uy === d.ry - 1;
     const marks = new Map(); for (const [k, m] of ex) marks.set(k, m.slot);
     const backs = new Map(); for (const [k, b] of exB) backs.set(k, {seg: b.seg, slot: b.slot});
-    const apply = o => { if (!o) return; o.removed.forEach(k => marks.delete(k)); o.added.forEach(([x, y, s]) => marks.set(x+","+y, s));
-      o.removedBack.forEach(k => backs.delete(k)); o.addedBack.forEach(s => backs.set(bkey(s), {seg: s.slice(0, 4), slot: s[4]})); };
+    const apply = o => applyOverride(marks, backs, o);
     if (uy === 0) apply(d.ends.top); if (lastY) apply(d.ends.bottom); if (ux === 0) apply(d.ends.left); if (lastX) apply(d.ends.right);
+    // corners last: they start from their two ends and may also fill the square where the extra rows and columns cross
+    if (uy === 0 && ux === 0) apply(d.ends.tl); if (uy === 0 && lastX) apply(d.ends.tr);
+    if (lastY && ux === 0) apply(d.ends.bl); if (lastY && lastX) apply(d.ends.br);
     const cx = x => colMap.has(x) ? colMap.get(x) : (ux === 0 && x < 0 && x >= -L) ? L + x : (lastX && x >= d.w && x < d.w + R) ? L + baseW + x - d.w : null;
     const cy = y => rowMap.has(y) ? rowMap.get(y) : (uy === 0 && y < 0 && y >= -T) ? T + y : (lastY && y >= d.h && y < d.h + B) ? T + baseH + y - d.h : null;
     for (const [k, s] of marks) { const [x, y] = k.split(",").map(Number), gx = cx(x), gy = cy(y); if (gx == null || gy == null) continue; grid[gy][gx] = colourFor(d, s, rep); }
@@ -1926,6 +2153,8 @@ function buildGrid(d = doc) {
 // Rectangle (in band cells) covered by the repeat or by an end piece
 function regionRect(band, tg) {
   const {xo, yo, cols, rows, W, H} = band, lx = xo.length - 1, ly = yo.length - 1;
+  if (isCorner(tg)) { const [v, h] = CORNERS[tg], a = regionRect(band, v), b = regionRect(band, h);
+    const x0 = Math.max(a[0], b[0]), y0 = Math.max(a[1], b[1]); return [x0, y0, Math.min(a[0]+a[2], b[0]+b[2]) - x0, Math.min(a[1]+a[3], b[1]+b[3]) - y0]; }
   if (tg === "left") return [0, 0, xo[0] + cols[0].length, H];
   if (tg === "right") return [xo[lx], 0, W - xo[lx], H];
   if (tg === "top") return [0, 0, W, yo[0] + rows[0].length];
@@ -1936,6 +2165,11 @@ function regionRect(band, tg) {
 function regionAt(band, cx, cy) {
   const {xo, yo, cols, rows, T, B, H, W} = band;
   if (cx < 0 || cy < 0 || cx >= W || cy >= H) return null;
+  // corners: the outer half of a corner repeat (plus its extra rows/columns), so the rest of an end stays clickable
+  const lx = xo.length - 1, ly = yo.length - 1;
+  const hz = cx < xo[0] + cols[0].length / 2 ? "l" : cx >= xo[lx] + cols[lx].length / 2 ? "r" : "";
+  const vz = cy < yo[0] + rows[0].length / 2 ? "t" : cy >= yo[ly] + rows[ly].length / 2 ? "b" : "";
+  if (hz && vz) return vz + hz;
   if (T && cy < T) return "top"; if (B && cy >= H - B) return "bottom";
   if (cx < xo[0] + cols[0].length) return "left"; if (cx >= xo[xo.length - 1]) return "right";
   if (yo.length > 1 && cy < yo[0] + rows[0].length) return "top"; if (yo.length > 1 && cy >= yo[yo.length - 1]) return "bottom";
@@ -1963,7 +2197,18 @@ function view() {
   if (target === "right") { v.ex1 = v.x1 = w - 1 + ext; v.x0 = -nbc; }
   if (target === "top") { v.ey0 = v.y0 = -ext; v.y1 = h - 1 + nbr; }
   if (target === "bottom") { v.ey1 = v.y1 = h - 1 + ext; v.y0 = -nbr; }
+  if (isCorner(target)) { const [vs, hs] = CORNERS[target], ex = extOf(hs), ey = extOf(vs);   // corner, with both neighbouring ends beside it
+    if (hs === "left") { v.ex0 = v.x0 = -ex; v.x1 = w - 1 + nbc; } else { v.ex1 = v.x1 = w - 1 + ex; v.x0 = -nbc; }
+    if (vs === "top") { v.ey0 = v.y0 = -ey; v.y1 = h - 1 + nbr; } else { v.ey1 = v.y1 = h - 1 + ey; v.y0 = -nbr; } }
   return v;
+}
+const wrapN = (v, n) => ((v % n) + n) % n;
+// What a faded neighbour cell shows. Next to an end piece: the plain repeat. Next to a corner: the end piece it borders.
+function nbSource(x, y) {
+  if (!isCorner(target)) return {tg: "unit", x: wrapN(x, doc.w), y: wrapN(y, doc.h)};
+  const [vs, hs] = CORNERS[target], nx = hs === "left" ? x >= doc.w : x < 0, ny = vs === "top" ? y >= doc.h : y < 0;
+  if (nx && ny) return {tg: "unit", x: wrapN(x, doc.w), y: wrapN(y, doc.h)};
+  return nx ? {tg: vs, x: wrapN(x, doc.w), y} : {tg: hs, x, y: wrapN(y, doc.h)};
 }
 function kindAt(v, x, y) {
   if (x < v.x0 || x > v.x1 || y < v.y0 || y > v.y1) return null;
@@ -1983,13 +2228,15 @@ function drawEdit() {
   cs = Math.max(6, Math.round(fit * zoom));
   const W = nx*cs, H = ny*cs, g = sizeCanvas($("editCanvas"), W, H);
   const X = x => (x - v.x0) * cs, Y = y => (y - v.y0) * cs;
-  const ex = expand(), cells = target === "unit" ? null : endCells(target), base0 = s => doc.seqs[s % doc.seqs.length][0];
+  const ex = expand(), cells = target === "unit" ? null : endCells(target), base0 = s => hexOf(doc.seqs[s % doc.seqs.length][0]);
+  const nbCells = {unit: null}; if (isCorner(target)) CORNERS[target].forEach(e => nbCells[e] = endCells(e));
   g.fillStyle = doc.bg; g.fillRect(0, 0, W, H);
   for (let y = v.y0; y <= v.y1; y++) for (let x = v.x0; x <= v.x1; x++) {
     const kind = kindAt(v, x, y);
     if (kind === "extra") { g.fillStyle = "rgba(47,93,158,.10)"; g.fillRect(X(x), Y(y), cs, cs); }
     let c = null, hidden = false;
-    if (kind === "nb") { const m = ex.get((((x % doc.w) + doc.w) % doc.w) + "," + (((y % doc.h) + doc.h) % doc.h)); if (m) c = base0(m.slot); }
+    if (kind === "nb") { const n = nbSource(x, y), m = n.tg === "unit" ? ex.get(n.x+","+n.y) : nbCells[n.tg].get(n.x+","+n.y);
+      if (m && m.state !== "hidden") c = base0(m.slot); }
     else if (target === "unit") { const m = ex.get(x+","+y); if (m) c = base0(m.slot); }
     else { const m = cells.get(x+","+y); if (m) { c = base0(m.slot); hidden = m.state === "hidden"; } }
     if (!c) continue;
@@ -2023,22 +2270,28 @@ function drawEdit() {
   const lw = Math.max(2, cs/6), seg = (s, col, dash) => drawLine(g, X(s[0]), Y(s[1]), X(s[2]), Y(s[3]), col, lw, dash);
   if (target === "unit") for (const b of expandBack().values()) seg(b.seg, base0(b.slot));
   else {
-    // the next repeat's backstitch, shifted into the neighbour area
-    const dx = target === "left" ? doc.w : target === "right" ? -doc.w : 0, dy = target === "top" ? doc.h : target === "bottom" ? -doc.h : 0;
-    g.save(); g.beginPath(); g.rect(X(v.x0), Y(v.y0), W, H); g.clip();
-    for (const b of expandBack().values()) seg([b.seg[0]+dx, b.seg[1]+dy, b.seg[2]+dx, b.seg[3]+dy], base0(b.slot)); g.restore();
-    for (const b of endBacks(target).values()) b.state === "hidden" ? seg(b.seg, "#b3261e", [4, 4]) : seg(b.seg, base0(b.slot));
-    // fade the next repeat and frame the end piece
-    const nb = target === "left" ? [X(doc.w), 0, W - X(doc.w), H] : target === "right" ? [0, 0, X(0), H] : target === "top" ? [0, Y(doc.h), W, H - Y(doc.h)] : [0, 0, W, Y(0)];
-    g.save(); g.globalAlpha = .62; g.fillStyle = css("--stage"); g.fillRect(...nb); g.restore();
+    // the neighbours' backstitch, shifted into the neighbour area
     const ex0 = X(v.ex0), ey0 = Y(v.ey0), eW = (v.ex1 - v.ex0 + 1)*cs, eH = (v.ey1 - v.ey0 + 1)*cs;
+    const hs = sidesOf(target).find(e => e === "left" || e === "right"), vs = sidesOf(target).find(e => e === "top" || e === "bottom");
+    const dx = hs === "left" ? doc.w : hs === "right" ? -doc.w : 0, dy = vs === "top" ? doc.h : vs === "bottom" ? -doc.h : 0;
+    const shifted = (list, sx, sy) => { for (const b of list) if (b.state !== "hidden") seg([b.seg[0]+sx, b.seg[1]+sy, b.seg[2]+sx, b.seg[3]+sy], base0(b.slot)); };
+    g.save(); g.beginPath(); g.rect(0, 0, W, H); g.rect(ex0, ey0, eW, eH); g.clip("evenodd");
+    if (!isCorner(target)) shifted(expandBack().values(), dx, dy);
+    else { shifted(endBacks(vs).values(), dx, 0); shifted(endBacks(hs).values(), 0, dy); shifted(expandBack().values(), dx, dy); }
+    g.restore();
+    for (const b of endBacks(target).values()) b.state === "hidden" ? seg(b.seg, "#b3261e", [4, 4]) : seg(b.seg, base0(b.slot));
+    // fade everything outside the piece and frame the piece
+    g.save(); g.globalAlpha = .62; g.fillStyle = css("--stage"); g.beginPath(); g.rect(0, 0, W, H); g.rect(ex0, ey0, eW, eH); g.fill("evenodd"); g.restore();
     g.save(); g.strokeStyle = css("--accent"); g.lineWidth = 3; g.strokeRect(ex0 + 1.5, ey0 + 1.5, eW - 3, eH - 3); g.restore();
-    if (extOf(target)) { g.save(); g.setLineDash([5, 4]); g.strokeStyle = "rgba(47,93,158,.8)"; g.lineWidth = 1.5; g.strokeRect(X(0)+.75, Y(0)+.75, uW-1.5, uH-1.5); g.restore(); }
-    const nbMid = [nb[0] + nb[2]/2, nb[1] + nb[3]/2]; pill(g, t("canvas.neighbour"), ...nbMid);
+    if (sidesOf(target).some(e => extOf(e))) { g.save(); g.setLineDash([5, 4]); g.strokeStyle = "rgba(47,93,158,.8)"; g.lineWidth = 1.5; g.strokeRect(X(0)+.75, Y(0)+.75, uW-1.5, uH-1.5); g.restore(); }
+    // label the faded neighbours
+    const midX = hs === "left" ? (ex0 + eW + W) / 2 : ex0 / 2, midY = vs === "top" ? (ey0 + eH + H) / 2 : ey0 / 2;
+    if (!isCorner(target)) pill(g, t("canvas.neighbour"), hs ? midX : W / 2, vs ? midY : H / 2);
+    else { pill(g, pieceTitle(vs), midX, ey0 + eH / 2); pill(g, pieceTitle(hs), ex0 + eW / 2, midY); }
   }
   if (hover && tool !== "back") { g.strokeStyle = "rgba(47,93,158,.9)"; g.lineWidth = 2; g.strokeRect(X(hover[0])+1, Y(hover[1])+1, cs-2, cs-2); }
   if (tool === "back") {
-    const col = doc.seqs[active][0];
+    const col = hexOf(doc.seqs[active][0]);
     if (pending && snap) drawLine(g, X(pending[0]), Y(pending[1]), X(snap[0]), Y(snap[1]), col, lw, [6, 4]);
     const dot = (p, filled) => { g.save(); g.beginPath(); g.arc(X(p[0]), Y(p[1]), Math.max(4, cs*.16), 0, 7); g.fillStyle = filled ? col : "#ffffff"; g.strokeStyle = "#2f5d9e"; g.lineWidth = 2; g.fill(); g.stroke(); g.restore(); };
     if (pending) dot(pending, true); if (snap) dot(snap, false);
@@ -2124,10 +2377,11 @@ function drawPreview() {
   const fit = Math.max(2, Math.min(24, Math.floor(avail / buildGrid().W)));
   const {W, H} = drawBand($("previewCanvas"), Math.max(2, Math.round(fit*zoom)));
   $("previewCaption").textContent = t("preview.caption", {rx: doc.rx, ry: doc.ry, w: W, h: H});
+  renderThreadKey();
 }
 function drawMini() { const mb = $("miniCanvas").parentElement; const r = drawBand($("miniCanvas"), 7, mb.clientWidth - 26, true); miniBand = r.band; miniCell = r.c; }
 function miniRegion(e) { if (!miniBand) return null; const r = $("miniCanvas").getBoundingClientRect(); return regionAt(miniBand, Math.floor((e.clientX - r.left) / miniCell), Math.floor((e.clientY - r.top) / miniCell)); }
-$("miniCanvas").addEventListener("pointermove", e => { const h = miniRegion(e); if (h !== miniHover) { miniHover = h; drawMini(); } $("miniCanvas").title = h ? t(h === "unit" ? "target.unit.hint" : "end.title." + h) : ""; });
+$("miniCanvas").addEventListener("pointermove", e => { const h = miniRegion(e); if (h !== miniHover) { miniHover = h; drawMini(); } $("miniCanvas").title = h ? (h === "unit" ? t("target.unit.hint") : pieceTitle(h)) : ""; });
 $("miniCanvas").addEventListener("pointerleave", () => { miniHover = null; drawMini(); });
 $("miniCanvas").addEventListener("click", e => { const h = miniRegion(e); if (h) setTarget(h); });
 
@@ -2135,30 +2389,35 @@ $("miniCanvas").addEventListener("click", e => { const h = miniRegion(e); if (h)
 function targetIcon(tg, size = [30, 20]) {
   const [W, H] = size, cols = 5, rows = 2, cw = (W - 2) / cols, ch = (H - 2) / rows;
   let s = `<svg class="ticon" viewBox="0 0 ${W} ${H}" aria-hidden="true">`;
+  const side = (e, c, r) => e === "left" ? c === 0 : e === "right" ? c === cols - 1 : e === "top" ? r === 0 : r === rows - 1;
   for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-    const on = tg === "unit" ? (c === 2 && r === 0) : tg === "left" ? c === 0 : tg === "right" ? c === cols - 1 : tg === "top" ? r === 0 : r === rows - 1;
+    const on = tg === "unit" ? (c === 2 && r === 0) : sidesOf(tg).every(e => side(e, c, r));
     s += `<rect x="${1 + c*cw + .6}" y="${1 + r*ch + .6}" width="${cw - 1.2}" height="${ch - 1.2}" rx="1" fill="currentColor" fill-opacity="${on ? 1 : .22}"/>`;
   }
   return s + "</svg>";
 }
 function renderTargets() {
-  const box = $("targetSeg"); box.innerHTML = "";
-  ["unit", ...EDGE_LIST].forEach(tg => {
-    const b = document.createElement("button"); b.setAttribute("aria-pressed", String(target === tg));
-    b.title = t(tg === "unit" ? "target.unit.hint" : "target.edge.hint");
-    const changed = tg !== "unit" && !endIsEmpty(doc.ends[tg]);
-    b.innerHTML = `${targetIcon(tg)}<span>${t("target." + tg)}</span>${changed ? `<i class="changed" title="${t("target.changed")}"></i><span class="sr-only">(${t("target.changed")})</span>` : ""}`;
-    b.onclick = () => setTarget(tg); box.appendChild(b);
+  [["targetSeg", ["unit", ...EDGE_LIST]], ["cornerSeg", CORNER_LIST]].forEach(([id, list]) => {
+    const box = $(id); box.innerHTML = "";
+    list.forEach(tg => {
+      const b = document.createElement("button"); b.setAttribute("aria-pressed", String(target === tg));
+      b.title = tg === "unit" ? t("target.unit.hint") : isCorner(tg) ? pieceTitle(tg) + " – " + t("target.corner.hint") : t("target.edge.hint");
+      const changed = tg !== "unit" && !endIsEmpty(doc.ends[tg]);
+      b.innerHTML = `${targetIcon(tg)}<span>${t("target." + tg)}</span>${changed ? `<i class="changed" title="${t("target.changed")}"></i><span class="sr-only">(${t("target.changed")})</span>` : ""}`;
+      b.onclick = () => setTarget(tg); box.appendChild(b);
+    });
   });
   const p = $("endPanel"); p.hidden = target === "unit"; if (target === "unit") return;
-  const o = endOf(target), horiz = target === "left" || target === "right";
+  const o = endOf(target), horiz = target === "left" || target === "right", corner = isCorner(target);
   $("endIcon").outerHTML = targetIcon(target, [46, 30]).replace('class="ticon"', 'id="endIcon"');
   $("endIcon").style.color = css("--accent");
-  $("endTitle").textContent = t("end.title." + target);
-  $("endWhere").textContent = t("end.where." + target);
+  $("endTitle").textContent = pieceTitle(target);
+  $("endWhere").textContent = t((corner ? "corner.where." : "end.where.") + target);
+  $("endExplain").textContent = t(corner ? "corner.explain" : "end.explain");
+  $("endExtWrap").hidden = corner; $("cornerSize").hidden = !corner;   // a corner's size follows its two ends
   $("endExtLabel").textContent = t(horiz ? "end.extra.cols" : "end.extra.rows");
   $("endExt").value = extOf(target);
-  $("endSummary").textContent = endIsEmpty(o) ? t("end.summary.none")
+  $("endSummary").textContent = endIsEmpty(o) ? t(corner ? "corner.summary.none" : "end.summary.none")
     : t("end.summary", {added: o.added.length, removed: o.removed.length, lines: o.addedBack.length + o.removedBack.length});
   $("endReset").disabled = endIsEmpty(o);
 }
@@ -2167,20 +2426,45 @@ function setTarget(tg) {
   if (mode !== "edit") setMode("edit"); else renderAll();
   if (tg !== "unit") $("endPanel").scrollIntoView({block: "nearest", behavior: "smooth"});
 }
-document.querySelectorAll("[data-estep]").forEach(b => b.onclick = () => { if (target !== "unit") edit(() => setEndExt(target, extOf(target) + Number(b.dataset.estep))); });
-$("endExt").onchange = e => { if (target !== "unit") edit(() => setEndExt(target, Number(e.target.value))); };
+document.querySelectorAll("[data-estep]").forEach(b => b.onclick = () => { if (EDGE_LIST.includes(target)) edit(() => setEndExt(target, extOf(target) + Number(b.dataset.estep))); });
+$("endExt").onchange = e => { if (EDGE_LIST.includes(target)) edit(() => setEndExt(target, Number(e.target.value))); };
 $("endDone").onclick = () => setTarget("unit");
-$("endReset").onclick = () => { const tg = target; if (endIsEmpty(doc.ends[tg])) return;
-  edit(() => { doc.ends[tg] = null; return true; }); toast(t("end.resetDone", {name: t("end.title." + tg)}), true); };
+/* Reset asks first ("Are you sure?"); Undo can still bring the piece back afterwards. */
+let resetTarget = null;
+// How many stitches in the neighbouring corners lie in this end's extra rows/columns (lost with them)
+function cornerLoss(e) {
+  if (isCorner(e) || !extOf(e)) return 0; const saved = doc.ends[e]; doc.ends[e] = null;
+  const n = cornersOf(e).reduce((a, c) => { const o = doc.ends[c]; if (!o) return a; const copy = JSON.parse(JSON.stringify(o)); doc.ends[c] = copy; const lost = clipPiece(c); doc.ends[c] = o; return a + lost; }, 0);
+  doc.ends[e] = saved; return n;
+}
+function openResetConfirm(tg) { resetTarget = tg; renderResetConfirm(); $("resetDialog").showModal(); }
+function renderResetConfirm() {
+  const tg = resetTarget, o = endOf(tg) || emptyEnd(), corner = isCorner(tg), horiz = tg === "left" || tg === "right";
+  $("resetTitle").textContent = t(corner ? "corner.confirm.title" : "end.confirm.title");
+  $("resetWhat").innerHTML = t(corner ? "corner.confirm.body" : "end.confirm.body", {name: `<strong>${pieceTitle(tg)}</strong>`});
+  const loss = [], lines = o.addedBack.length + o.removedBack.length, lostInCorners = cornerLoss(tg);
+  if (o.added.length || o.removed.length || lines) loss.push(t("end.confirm.changes", {added: o.added.length, removed: o.removed.length, lines}));
+  if (o.ext) loss.push(t(horiz ? "end.confirm.extraCols" : "end.confirm.extraRows", {n: o.ext}));
+  if (lostInCorners) loss.push(t("end.confirm.corners", {n: lostInCorners}));
+  $("resetLoss").innerHTML = loss.map(l => `<li>${l}</li>`).join("");
+}
+$("endReset").onclick = () => { if (!endIsEmpty(doc.ends[target])) openResetConfirm(target); };
+$("resetDialog").addEventListener("close", () => {
+  const tg = resetTarget; if ($("resetDialog").returnValue !== "ok" || !tg || endIsEmpty(doc.ends[tg])) return;
+  edit(() => { doc.ends[tg] = null; if (!isCorner(tg)) cornersOf(tg).forEach(clipPiece); return true; });
+  toast(t("end.resetDone", {name: pieceTitle(tg)}), true);
+});
 
 /* ---------------- Legend and hints ---------------- */
 function renderLegend() {
   const items = target === "unit"
     ? [["k-seed", "legend.seed"], ["k-copy", "legend.copy"], ["k-back", "legend.back"]]
+    : isCorner(target)
+    ? [["k-unit", "legend.fromEnds"], ["k-added", "legend.addedCorner"], ["k-removed", "legend.removedCorner"], ["k-extra", "legend.extra"], ["k-nb", "legend.neighbourEnds"]]
     : [["k-unit", "legend.fromUnit"], ["k-added", "legend.added"], ["k-removed", "legend.removed"], ["k-extra", "legend.extra"], ["k-nb", "legend.neighbour"]];
   $("legend").innerHTML = items.map(([c, k]) => `<span><i class="key ${c}"></i><span>${t(k)}</span></span>`).join("");
   const parts = [t(tool === "back" ? "canvas.hint.back" : tool === "unpick" ? "canvas.hint.unpick" : "canvas.hint.cross")];
-  parts.push(target === "unit" ? t("canvas.hint.edges") : t("canvas.hint.end"));
+  parts.push(t(target === "unit" ? "canvas.hint.edges" : isCorner(target) ? "canvas.hint.corner" : "canvas.hint.end"));
   $("editHint").textContent = parts.join(" ");
 }
 
@@ -2224,15 +2508,16 @@ cv.addEventListener("pointerleave", () => { hover = null; snap = null; drawEdit(
 document.addEventListener("keydown", e => { if (e.key === "Escape" && pending) { pending = null; drawEdit(); } });
 
 /* ---------------- Side panel: colours ---------------- */
-function slotLabel(seq) { if (seq.length > 1) return t("colours.many", {n: seq.length}); const d = dmcFor(seq[0]); return d ? t("colours.dmc", {n: d.num}) : t("colours.own"); }
+function slotLabel(seq) { return seq.length > 1 ? t("colours.many", {n: seq.length}) : colourLabel(seq[0]); }
 function renderSlots() {
   const box = $("slots"); box.innerHTML = "";
   doc.seqs.forEach((seq, i) => {
     const row = document.createElement("div"); row.className = "slot";
     const sel = document.createElement("button"); sel.className = "slot-select"; sel.setAttribute("aria-pressed", String(i === active));
-    sel.innerHTML = `<span class="slot-num">#${i+1}</span><span class="slot-body"><span class="swatchbar">${seq.map(c => `<i style="background:${c}"></i>`).join("")}</span>
+    sel.innerHTML = `<span class="slot-num">#${i+1}</span><span class="slot-body"><span class="swatchbar">${seq.map(c => `<i style="background:${hexOf(c)}"></i>`).join("")}</span>
       <span class="slot-meta"><span>${slotLabel(seq)}</span><span>${i === active ? "✓ " + t("colours.selected") : ""}</span></span></span>`;
-    sel.setAttribute("aria-label", t("colours.slot", {n: i+1}) + " – " + slotLabel(seq));
+    sel.title = seq.map(colourFull).join("\n");
+    sel.setAttribute("aria-label", t("colours.slot", {n: i+1}) + " – " + seq.map(colourFull).join(", "));
     sel.onclick = () => { active = i; renderSlots(); updateChip(); if (tool === "back") drawEdit(); };
     sel.ondblclick = () => openSeq(i);
     const ed = document.createElement("button"); ed.className = "btn slot-edit icon-only";
@@ -2241,8 +2526,8 @@ function renderSlots() {
     row.append(sel, ed); box.appendChild(row);
   });
 }
-function updateChip() { document.querySelectorAll("[data-chip]").forEach(c => c.style.background = doc.seqs[active][0]); }
-$("addColour").onclick = () => openDmc(null, hex => { edit(() => { doc.seqs.push([hex]); return true; }); active = doc.seqs.length - 1; renderAll(); });
+function updateChip() { document.querySelectorAll("[data-chip]").forEach(c => c.style.background = hexOf(doc.seqs[active][0])); }
+$("addColour").onclick = () => openDmc(null, c => { edit(() => { doc.seqs.push([c]); return true; }); active = doc.seqs.length - 1; renderAll(); });
 $("useSeq").onclick = () => edit(() => { doc.useSeq = !doc.useSeq; return true; });
 $("bgInput").addEventListener("focus", beginEdit);
 $("bgInput").oninput = e => { doc.bg = e.target.value; renderAll(); };
@@ -2344,7 +2629,7 @@ function renderLines() {
   // preview of the repeat with the affected lines marked
   const c = Math.max(6, Math.min(16, Math.floor(260 / Math.max(doc.w, doc.h)))), W = doc.w*c, H = doc.h*c, ex = expand();
   let s = `<rect x="0" y="0" width="${W}" height="${H}" fill="${doc.bg}"/>`;
-  for (const [k, m] of ex) { const [x, y] = k.split(",").map(Number); s += `<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="${doc.seqs[m.slot % doc.seqs.length][0]}"/>`; }
+  for (const [k, m] of ex) { const [x, y] = k.split(",").map(Number); s += `<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="${hexOf(doc.seqs[m.slot % doc.seqs.length][0])}"/>`; }
   for (let x = 0; x <= doc.w; x++) s += `<path d="M${x*c} 0V${H}" stroke="rgba(70,50,30,.2)"/>`;
   for (let y = 0; y <= doc.h; y++) s += `<path d="M0 ${y*c}H${W}" stroke="rgba(70,50,30,.2)"/>`;
   if (ins) { o.cols.forEach(g => s += `<rect x="${g*c - 2}" y="-4" width="4" height="${H + 8}" rx="2" fill="#2f5d9e"/>`); o.rows.forEach(g => s += `<rect x="-4" y="${g*c - 2}" width="${W + 8}" height="4" rx="2" fill="#2f5d9e"/>`); }
@@ -2361,57 +2646,76 @@ $("openLines").onclick = () => openLines();
 $("edgeMore").onclick = () => { const {axis, i} = edgeTarget; closeEdge(); openLines({place: axis, num: i + 1}); };
 
 /* ---------------- Colour (sequence) dialog ---------------- */
-const QUICK = ["498","321","815","606","740","725","3865","Ecru","3346","699","701","336","796","550","433","310","414","B5200"].map(n => DMC.find(d => d.num === n)).filter(Boolean);
+const QUICK = ["498","321","815","606","740","725","3865","Ecru","3346","699","701","336","796","550","433","310","414","B5200"].map(D).filter(threadEntry);
 let dlgSlot = 0, dlgSeq = [], dlgPart = 0;
 function openSeq(i) { dlgSlot = i; dlgSeq = [...doc.seqs[i]]; dlgPart = 0; renderDlg(); $("seqDialog").showModal(); }
 function renderDlg() {
   $("dlgTitle").textContent = t("dialog.title", {n: dlgSlot+1});
-  $("dlgBar").innerHTML = dlgSeq.map(c => `<i style="background:${c}"></i>`).join("");
+  $("dlgBar").innerHTML = dlgSeq.map(c => `<i style="background:${hexOf(c)}"></i>`).join("");
   $("dlgCount").value = dlgSeq.length;
   $("dlgParts").innerHTML = "";
   dlgSeq.forEach((c, k) => { const b = document.createElement("button"); b.type = "button"; b.className = "part"; b.textContent = k+1;
-    b.style.background = c; b.style.color = lum(c) > .35 ? "#1b1712" : "#fff"; b.setAttribute("aria-pressed", String(k === dlgPart));
-    b.setAttribute("aria-label", t("dialog.part", {n: k+1})); b.onclick = () => { dlgPart = k; renderDlg(); }; $("dlgParts").appendChild(b); });
-  const cur = dlgSeq[dlgPart], d = dmcFor(cur);
-  $("dlgPickLabel").textContent = t("dialog.pick", {n: dlgPart+1}) + " – " + (d ? `DMC ${d.num} ${d.name}` : t("colours.own"));
+    b.style.background = hexOf(c); b.style.color = lum(hexOf(c)) > .35 ? "#1b1712" : "#fff"; b.setAttribute("aria-pressed", String(k === dlgPart));
+    b.title = colourFull(c); b.setAttribute("aria-label", t("dialog.part", {n: k+1}) + " – " + colourFull(c)); b.onclick = () => { dlgPart = k; renderDlg(); }; $("dlgParts").appendChild(b); });
+  const cur = dlgSeq[dlgPart];
+  $("dlgPickLabel").textContent = t("dialog.pick", {n: dlgPart+1}) + " – " + colourFull(cur);
   $("dlgThreads").innerHTML = "";
-  QUICK.forEach(q => { const b = document.createElement("button"); b.type = "button"; b.className = "thread"; b.style.background = q.hex;
-    b.title = `DMC ${q.num} – ${q.name}`; b.setAttribute("aria-label", b.title); b.setAttribute("aria-pressed", String(cur.toLowerCase() === q.hex));
-    b.onclick = () => { dlgSeq[dlgPart] = q.hex; renderDlg(); }; $("dlgThreads").appendChild(b); });
-  $("dlgCustom").value = cur; $("dlgCustomChip").style.background = cur;
-  $("dlgRepeats").innerHTML = [...Array(Math.min(doc.rx, 10)).keys()].map(r => { const c = doc.useSeq ? dlgSeq[r % dlgSeq.length] : dlgSeq[0];
+  QUICK.forEach(q => { const b = document.createElement("button"); b.type = "button"; b.className = "thread"; b.style.background = hexOf(q);
+    b.title = colourFull(q); b.setAttribute("aria-label", b.title); b.setAttribute("aria-pressed", String(sameColour(cur, q)));
+    b.onclick = () => { dlgSeq[dlgPart] = q; renderDlg(); }; $("dlgThreads").appendChild(b); });
+  $("dlgCustom").value = hexOf(cur); $("dlgCustomChip").style.background = hexOf(cur);
+  $("dlgRepeats").innerHTML = [...Array(Math.min(doc.rx, 10)).keys()].map(r => { const c = hexOf(doc.useSeq ? dlgSeq[r % dlgSeq.length] : dlgSeq[0]);
     return `<span style="background:${c};color:${lum(c) > .35 ? "#1b1712" : "#fff"}">${r+1}</span>`; }).join("");
   $("dlgOffNote").hidden = doc.useSeq;
 }
 function resizeSeq(n) { n = Math.max(1, Math.min(24, n)); while (dlgSeq.length < n) dlgSeq.push(dlgSeq[dlgSeq.length-1]); dlgSeq.length = n; dlgPart = Math.min(dlgPart, n-1); renderDlg(); }
 document.querySelectorAll("[data-dstep]").forEach(b => b.onclick = () => resizeSeq(dlgSeq.length + Number(b.dataset.dstep)));
 $("dlgCount").onchange = e => resizeSeq(Number(e.target.value));
-$("dlgCustom").oninput = e => { dlgSeq[dlgPart] = e.target.value; renderDlg(); };
-$("dlgDmc").onclick = () => openDmc(dlgSeq[dlgPart], hex => { dlgSeq[dlgPart] = hex; renderDlg(); });
+$("dlgCustom").oninput = e => { dlgSeq[dlgPart] = ownColour(e.target.value); renderDlg(); };
+$("dlgDmc").onclick = () => openDmc(dlgSeq[dlgPart], c => { dlgSeq[dlgPart] = c; renderDlg(); });
 $("seqDialog").addEventListener("close", () => { if ($("seqDialog").returnValue === "ok") edit(() => { doc.seqs[dlgSlot] = [...dlgSeq]; return true; }); });
 
-/* ---------------- DMC picker ---------------- */
-const dmc = {q: "", fam: "all", sel: null, cb: null};
-function openDmc(current, cb) { dmc.cb = cb; dmc.q = ""; dmc.fam = "all"; dmc.sel = dmcFor(current); $("dmcSearch").value = ""; $("dmcDialog").showModal(); renderDmc(true); $("dmcSearch").focus(); }
-function renderDmc(scroll) {
-  $("dmcFamilies").innerHTML = FAMILIES.map(f => `<button type="button" class="chipbtn" data-fam="${f}" aria-pressed="${dmc.fam === f}">${f === "all" ? "" : `<i style="background:${FAMILY_CHIP[f]}"></i>`}${t("dmc.family." + f)}</button>`).join("");
-  document.querySelectorAll("#dmcFamilies button").forEach(b => b.onclick = () => { dmc.fam = b.dataset.fam; renderDmc(); });
-  const words = dmc.q.toLowerCase().split(/\s+/).filter(Boolean);
-  const list = DMC.filter(d => (dmc.fam === "all" || family(d.hex) === dmc.fam) && words.every(w => d.num.toLowerCase().includes(w) || d.name.toLowerCase().includes(w)));
-  $("dmcCount").textContent = t("dmc.count", {n: list.length});
-  $("dmcList").innerHTML = list.length ? list.map(d => `<button type="button" class="dmc-row" role="option" data-num="${d.num}" aria-pressed="${dmc.sel?.num === d.num}" aria-selected="${dmc.sel?.num === d.num}"><span class="dmc-sw" style="background:${d.hex}"></span><span class="dmc-num">${d.num}</span><span>${d.name}</span></button>`).join("")
-    : `<p class="dmc-empty">${t("dmc.none")}</p>`;
-  document.querySelectorAll("#dmcList .dmc-row").forEach(b => { b.onclick = () => { dmc.sel = DMC.find(d => d.num === b.dataset.num); renderDmc(); };
-    b.ondblclick = () => { dmc.sel = DMC.find(d => d.num === b.dataset.num); $("dmcDialog").close("ok"); }; });
-  $("dmcBig").style.background = dmc.sel ? dmc.sel.hex : "";
-  $("dmcDetail").innerHTML = dmc.sel ? `<strong>DMC ${dmc.sel.num}</strong> – ${dmc.sel.name}` : t("dmc.pickPrompt");
-  $("dmcChoose").disabled = !dmc.sel;
-  if (scroll && dmc.sel) $("dmcList").querySelector(`[data-num="${CSS.escape(dmc.sel.num)}"]`)?.scrollIntoView({block: "center"});
+/* ---------------- Thread picker (DMC now; more thread brands later) ---------------- */
+const dmc = {sys: "dmc", q: "", fam: "all", sel: null, cb: null};
+function openDmc(current, cb) {
+  dmc.cb = cb; dmc.q = ""; dmc.fam = "all"; dmc.sys = current?.sys && SYS(current.sys)?.threads ? current.sys : "dmc";
+  dmc.sel = threadEntry(current) ? {...current} : null; $("dmcSearch").value = "";
+  $("dmcDialog").showModal(); renderDmc(true); $("dmcSearch").focus();
 }
+function renderDmc(scroll) {
+  const sys = SYS(dmc.sys), name = sys.name;
+  $("threadSystem").innerHTML = THREAD_SYSTEMS.map(s => `<option value="${s.id}"${s.threads ? "" : " disabled"}${s.id === dmc.sys ? " selected" : ""}>${s.threads ? s.name : t("thread.system.soon", {name: s.name})}</option>`).join("");
+  $("dmcSystemNote").textContent = t("thread.system.hint", {system: name});
+  $("dmcNamesNote").textContent = t("thread.namesNote", {system: name});
+  $("dmcSearch").placeholder = t("thread.search.placeholder", {system: name});
+  $("dmcFamilies").innerHTML = FAMILIES.map(f => `<button type="button" class="chipbtn" data-fam="${f}" aria-pressed="${dmc.fam === f}">${f === "all" ? "" : `<i style="background:${FAMILY_CHIP[f]}"></i>`}${t("thread.family." + f)}</button>`).join("");
+  document.querySelectorAll("#dmcFamilies button").forEach(b => b.onclick = () => { dmc.fam = b.dataset.fam; renderDmc(); });
+  // search within the chosen brand; "DMC 321" and "321" find the same thread
+  const words = dmc.q.toLowerCase().replace(new RegExp("^\\s*" + name.toLowerCase() + "[\\s-]*"), "").split(/\s+/).filter(Boolean);
+  const list = sys.threads.filter(d => (dmc.fam === "all" || family(d.hex) === dmc.fam) && words.every(w => d.num.toLowerCase().includes(w) || d.name.toLowerCase().includes(w)));
+  const isSel = d => dmc.sel?.sys === dmc.sys && dmc.sel.code === d.num;
+  $("dmcCount").textContent = t("thread.count", {n: list.length, system: name});
+  $("dmcList").innerHTML = list.length ? list.map(d => `<button type="button" class="dmc-row" role="option" data-num="${d.num}" aria-pressed="${isSel(d)}" aria-selected="${isSel(d)}"><span class="dmc-sw" style="background:${d.hex}"></span><span class="dmc-num">${threadCode({sys: dmc.sys, code: d.num})}</span><span>${d.name}</span></button>`).join("")
+    : `<p class="dmc-empty">${t("thread.none", {system: name})}</p>`;
+  document.querySelectorAll("#dmcList .dmc-row").forEach(b => { b.onclick = () => { dmc.sel = {sys: dmc.sys, code: b.dataset.num}; renderDmc(); };
+    b.ondblclick = () => { dmc.sel = {sys: dmc.sys, code: b.dataset.num}; $("dmcDialog").close("ok"); }; });
+  $("dmcBig").style.background = dmc.sel ? hexOf(dmc.sel) : "";
+  $("dmcDetail").innerHTML = dmc.sel ? `<strong>${threadCode(dmc.sel)}</strong> – ${threadEntry(dmc.sel).name}` : t("thread.pickPrompt");
+  $("dmcChoose").disabled = !dmc.sel;
+  if (scroll && dmc.sel) { const L = $("dmcList"), r = L.querySelector(`[data-num="${CSS.escape(dmc.sel.code)}"]`);   // scroll the list only, keep the brand selector in view
+    if (r) L.scrollTop = r.offsetTop - (L.clientHeight - r.offsetHeight) / 2; }
+}
+$("threadSystem").onchange = e => { if (SYS(e.target.value)?.threads) { dmc.sys = e.target.value; renderDmc(); } };
 $("dmcSearch").oninput = e => { dmc.q = e.target.value; renderDmc(); };
 $("dmcOwn").oninput = e => $("dmcOwnChip").style.background = e.target.value;
-$("dmcOwn").onchange = e => { const hex = e.target.value; $("dmcDialog").close("cancel"); dmc.cb && dmc.cb(hex); };
-$("dmcDialog").addEventListener("close", () => { if ($("dmcDialog").returnValue === "ok" && dmc.sel && dmc.cb) dmc.cb(dmc.sel.hex); });
+$("dmcOwn").onchange = e => { const c = ownColour(e.target.value); $("dmcDialog").close("cancel"); dmc.cb && dmc.cb(c); };
+$("dmcDialog").addEventListener("close", () => { if ($("dmcDialog").returnValue === "ok" && dmc.sel && dmc.cb) dmc.cb({...dmc.sel}); });
+
+/* ---------------- Threads used (under the whole band; also what the saved image lists) ---------------- */
+function renderThreadKey() {
+  const seen = []; doc.seqs.forEach(seq => seq.forEach(c => { if (!seen.some(s => sameColour(s, c))) seen.push(c); }));
+  $("threadKey").innerHTML = seen.map(c => `<li><i class="chip" style="background:${hexOf(c)}"></i><strong>${colourLabel(c)}</strong><span>${c.sys ? threadEntry(c)?.name || "" : c.hex}</span></li>`).join("");
+}
 
 /* ---------------- Toast ---------------- */
 let toastTimer = 0;
@@ -2447,7 +2751,7 @@ function setLang(l) {
   document.querySelectorAll("[data-i18n-title]").forEach(el => el.title = t(el.dataset.i18nTitle));
   document.querySelectorAll("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => el.placeholder = t(el.dataset.i18nPlaceholder));
-  renderAll(); renderEdgePop(); if ($("seqDialog").open) renderDlg(); if ($("dmcDialog").open) renderDmc(); if ($("linesDialog").open) renderLines();
+  renderAll(); renderEdgePop(); if ($("seqDialog").open) renderDlg(); if ($("dmcDialog").open) renderDmc(); if ($("linesDialog").open) renderLines(); if ($("resetDialog").open) renderResetConfirm();
 }
 document.querySelectorAll("#langSeg button").forEach(b => b.onclick = () => setLang(b.dataset.lang));
 
@@ -2463,7 +2767,9 @@ $("loading").onclick = () => $("loading").hidden = true;
 $("mLoading").onclick = () => showLoading(0);
 $("mSquare").onclick = () => setField("fH", doc.w === doc.h ? doc.w - 3 : doc.w);
 $("mDialog").onclick = () => openSeq(0);
-$("mDmc").onclick = () => openDmc(doc.seqs[active][0], hex => edit(() => { doc.seqs[active] = [hex]; return true; }));
+$("mDmc").onclick = () => openDmc(doc.seqs[active][0], c => edit(() => { doc.seqs[active] = [c]; return true; }));
+$("mReset").onclick = () => { setTarget("right"); if (!endIsEmpty(doc.ends.right)) openResetConfirm("right"); };
+$("mCorner").onclick = () => setTarget("tr");
 $("mEdge").onclick = () => { setTarget("unit"); edgeTarget = null; openEdge("col", 5); };
 $("mLines").onclick = () => openLines();
 $("mEnd").onclick = () => setTarget("right");
@@ -2486,18 +2792,20 @@ function renderAll() {
 }
 window.addEventListener("resize", () => { renderAll(); renderEdgePop(); });
 
-// URL hash hooks for screenshots: #loading #preview #dialog #dmc #lines #edge #end #back #nonsquare #en #it #dark #light
+// URL hash hooks for screenshots: #loading #preview #dialog #dmc #lines #edge #end #corner #reset #back #nonsquare #en #it #dark #light
 const HASH = location.hash.slice(1).split(",");
 if (HASH.includes("dark")) setTheme("dark"); if (HASH.includes("light")) setTheme("light");
 setLang(HASH.includes("en") ? "en" : HASH.includes("it") ? "it" : "nb");
 if (HASH.includes("nonsquare")) { doc.h = 9; enforceSquare(); syncFields(); }
-if (HASH.includes("end")) setTarget("right");
+if (HASH.includes("end") || HASH.includes("reset")) setTarget("right");
+if (HASH.includes("corner")) setTarget("tr");
 if (HASH.includes("back")) { setTool("back"); pending = [1, 1]; snap = [4, 1]; }
 if (HASH.includes("preview")) setMode("preview"); else renderAll();
 if (HASH.includes("edge")) openEdge("col", 5);
 if (HASH.includes("dialog")) openSeq(0);
 if (HASH.includes("dmc")) openDmc(doc.seqs[0][0], () => {});
 if (HASH.includes("lines")) openLines({act: "remove", place: "col", num: 2});
+if (HASH.includes("reset")) openResetConfirm(target);
 if (HASH.includes("loading")) showLoading(0); else if (!HASH.filter(Boolean).length) showLoading(1600);
 if (document.fonts) document.fonts.ready.then(() => { renderAll(); renderEdgePop(); });
 </script>
