@@ -232,3 +232,49 @@ def test_language_from_browser(browser: Any, site_url: str) -> None:
         assert app.errors == []
     finally:
         ctx.close()
+
+
+def run_python(app: App, code: str) -> None:
+    """Run ``code`` in the page's interpreter; it must set ``window.kvaleDone``."""
+    app.page.evaluate(
+        """code => {
+            window.kvaleDone = undefined;
+            const script = document.createElement('script');
+            script.type = 'py';
+            script.textContent = code;
+            document.body.append(script);
+        }""",
+        code,
+    )
+    app.page.wait_for_function("window.kvaleDone !== undefined", timeout=30_000)
+
+
+def test_core_package_data_and_example_load(app: App) -> None:
+    from kvale.core import build_colour_grid
+    from kvale.core.serialization import load_document
+
+    example = ROOT / "examples" / "flower-band.json"
+    app.page.evaluate("text => { window.kvaleExample = text; }", example.read_text("utf-8"))
+    run_python(
+        app,
+        """
+import json
+from pyscript import window
+from kvale.core.dmc import load_dmc_colours
+from kvale.core.model import PatternDocument
+from kvale_web import app as kvale_app
+
+document = PatternDocument.from_dict(json.loads(window.kvaleExample))
+kvale_app.app.state.load(document)
+window.kvaleDone = len(load_dmc_colours())
+""",
+    )
+    assert app.page.evaluate("window.kvaleDone") > 400  # dmc_palette.json was fetched
+    assert app.page.is_disabled("#undo")  # loading resets the history
+
+    # The preview shows the example's repeats, cell for cell.
+    grid = build_colour_grid(load_document(example))
+    app.page.click("#mode-preview")
+    for x, y in [(0, 0), (5, 3), (17, 9), (40, 20), (83, 23)]:
+        expected = tuple(bytes.fromhex(grid[y][x].lstrip("#")))
+        assert app.colour(x, y) == expected, (x, y)

@@ -33,10 +33,13 @@ TOPICS = (DOCUMENT, VIEW, STATUS, LANGUAGE)
 Mode = Literal["edit", "preview"]
 Listener = Callable[[str], None]
 
+# Undo steps kept, the same as the Tkinter app.
+HISTORY_LIMIT = 100
+
 
 class AppState:
     def __init__(self, document: PatternDocument | None = None) -> None:
-        self.editor = Editor(document)
+        self.editor = Editor(document, history_limit=HISTORY_LIMIT)
         self.active_slot = 0
         self.mode: Mode = "edit"
         self.erase_tool = False

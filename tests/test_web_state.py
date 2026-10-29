@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import functools
+from pathlib import Path
 
 import pytest
 
-from kvale.core import Editor, PatternDocument
-from kvale_web.state import DOCUMENT, STATUS, VIEW, AppState
+from kvale.core import Editor, PatternDocument, build_colour_grid
+from kvale.core.serialization import load_document
+from kvale_web.state import DOCUMENT, HISTORY_LIMIT, STATUS, VIEW, AppState
+
+EXAMPLE = Path(__file__).resolve().parent.parent / "examples" / "flower-band.json"
 
 
 def recorder(state: AppState, *topics: str) -> list[str]:
@@ -101,3 +105,35 @@ def test_load_resets_history() -> None:
     state.load(PatternDocument(unit_width=3, unit_height=3))
     assert not state.editor.can_undo
     assert state.document.unit_width == 3
+
+
+def test_history_is_capped() -> None:
+    state = AppState()
+    assert state.editor.history_limit == HISTORY_LIMIT == 100
+    for x in range(HISTORY_LIMIT + 5):
+        state.edit(functools.partial(Editor.paint, x=x % 12, y=x // 12, colour_slot=0))
+    undone = 0
+    while state.undo():
+        undone += 1
+    assert undone == HISTORY_LIMIT
+
+
+def test_load_example_then_edit_and_undo() -> None:
+    document = load_document(EXAMPLE)
+    state = AppState()
+    seen = recorder(state, DOCUMENT)
+    state.load(document)
+    assert seen == [DOCUMENT]
+    assert (state.document.unit_width, state.document.unit_height) == (12, 12)
+    grid = build_colour_grid(state.document)
+    assert len(grid) == 12 * 2 and len(grid[0]) == 12 * 7
+    before = state.document.to_dict()
+    state.edit(lambda editor: editor.erase(*_first_seed(state)))
+    assert state.document.to_dict() != before
+    assert state.undo()
+    assert state.document.to_dict() == before
+
+
+def _first_seed(state: AppState) -> tuple[int, int]:
+    mark = state.document.motif[0]
+    return mark.x, mark.y
