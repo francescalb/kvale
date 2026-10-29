@@ -68,6 +68,23 @@ notifies listeners (`state.subscribe(listener, *topics)`) by topic:
   `.preview-only` parts by mode.
 - Keyboard shortcuts: `shortcuts.register("ctrl+s", handler)` in your own module.
 
+## Installable, offline app and guide (chunk 7)
+
+Plain JavaScript, so it works before Python has started:
+
+- `sw.js`: the service worker. `tools/build_site.py` fills in the list of site
+  files, a version (a hash of them) and the CDN cache name, and writes
+  `manifest.webmanifest` with colours from `tokens.css`. Site files are cached
+  when the worker installs; PyScript, Pyodide, Pillow and the fonts are cached
+  on the first visit. A new version waits until the user presses "Reload".
+- `pwa.js` and `pwa.css`: registering the worker, the "new version" toast
+  (`#update-toast`), the install button (`#install-app`), and the help button
+  (`#help-open`) that opens `guide/<language>.html` in `<dialog id="help-dialog">`.
+  Strings: `pwa.*`, `help.*` (in the HTML with `data-i18n`, translated by Python).
+- `guide/`: the user guide in nb, en and it. Screenshots are made with
+  `python tools/guide_screenshots.py`; icons with `python tools/make_icons.py`.
+- `window.kvaleOffline === "ready"` once the CDN files are cached (for tests).
+
 ## Tests
 
 - `tests/test_web_state.py`: `AppState` in plain CPython. Add tests for new state here.

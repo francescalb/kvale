@@ -44,6 +44,7 @@ Added by the approved design (`docs/design/strings.md`, "Owner-approved design d
 - [x] Thread list under the whole band (and in the saved image: chunk 6 reuses `thread_rows`)
 - [x] Web: light/dark theme, nb/en/it switch, layout of the design (chunk 3)
 - [x] Web: autosave in the browser, restored on the next visit; the file name with an unsaved-changes marker; a warning before leaving with unsaved changes (chunk 6)
+- [x] Web: installable app that works offline after one visit, with a "new version" toast; a user guide in nb/en/it behind a help button (chunk 7)
 
 ## Chunks
 
@@ -58,7 +59,7 @@ Each chunk is one pull request.
 | 4 | ✅ Drawing grid: paint/erase (click, drag, touch), seed vs generated marking, row/column insert/remove, zoom | 1, 3 |
 | 5 | ✅ Side panels: grid settings, symmetry, colour slots, sequence editor | 1, 3 |
 | 6 | ✅ Files: open/save JSON, PNG export, autosave in the browser | 1, 2 |
-| 7 | Installable/offline (PWA) and a short user guide in nb/en/it | 4–6 |
+| 7 | ✅ Installable/offline (PWA) and a short user guide in nb/en/it | 4–6 |
 | 8 | Feature check against the checklist; remove the Tkinter interface | 7 |
 
 Rounds: 0+1, then 2+3, then 4+5+6, then 7+8. Pull requests are reviewed after
