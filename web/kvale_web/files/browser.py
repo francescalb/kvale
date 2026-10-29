@@ -77,6 +77,22 @@ async def pick_file() -> tuple[str, str, Any] | None:
     return str(file.name), str(await file.text()), handle
 
 
+def has_save_picker() -> bool:
+    return bool(getattr(window, "showSaveFilePicker", None))
+
+
+async def pick_save_file(suggested_name: str) -> Any:
+    """Ask where to save a pattern file; return its handle, or None if cancelled."""
+    try:
+        return await window.showSaveFilePicker(
+            js_object({"suggestedName": suggested_name, "types": _PICKER_TYPES})
+        )
+    except JsException as error:
+        if is_abort(error):
+            return None
+        raise
+
+
 async def write_handle(handle: Any, text: str) -> bool:
     """Write ``text`` to a file chosen in the picker; False if that is not allowed."""
     if not getattr(handle, "createWritable", None):

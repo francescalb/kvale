@@ -473,12 +473,22 @@ Keys the app needs that the mockup does not show. They are not in the mockup's `
 | `canvas.hint.minimal` | Du syr bare i den markerte delen – resten speiles av seg selv. | You only stitch in the outlined part – the rest is mirrored automatically. | Ricami solo nella parte evidenziata – il resto si specchia da solo. |
 | `file.untitled` | Nytt mønster | New pattern | Nuovo schema |
 | `file.unsaved` | Endringer som ikke er lagret i en fil | Changes not saved to a file | Modifiche non salvate in un file |
+| `file.saveAs.hint` | Ctrl+Shift+S: lagre en kopi under et nytt navn | Ctrl+Shift+S: save a copy under a new name | Ctrl+Shift+S: salva una copia con un nuovo nome |
 | `file.confirmDiscard` | Endringene som ikke er lagret i en fil, blir borte. Vil du fortsette? | Changes that are not saved to a file will be lost. Continue? | Le modifiche non salvate in un file andranno perse. Vuoi continuare? |
 | `file.export.preparing` | Gjør klar bildet … | Preparing the image … | Preparo l’immagine … |
 | `file.error.notPattern` | Denne filen er ikke et Kvale-mønster. | This file is not a Kvale pattern. | Questo file non è uno schema di Kvale. |
 | `file.error.tooNew` | Mønsteret er laget med en nyere versjon av Kvale. Last inn siden på nytt og prøv igjen. | This pattern was made with a newer version of Kvale. Reload the page and try again. | Questo schema è stato fatto con una versione più recente di Kvale. Ricarica la pagina e riprova. |
 | `file.error.fetch` | Fant ikke mønsteret i lenken. | Could not find the pattern in the link. | Non trovo lo schema nel link. |
 | `file.error.export` | Klarte ikke å lage bildet. Prøv igjen. | Could not make the image. Please try again. | Non sono riuscito a creare l’immagine. Riprova. |
+| `help.open` | Hjelp | Help | Aiuto |
+| `help.open.hint` | Les hvordan du bruker Kvale | Read how to use Kvale | Leggi come si usa Kvale |
+| `help.title` | Slik bruker du Kvale | How to use Kvale | Come si usa Kvale |
+| `help.newTab` | Åpne i egen fane | Open in its own tab | Apri in una scheda a parte |
+| `help.close` | Lukk | Close | Chiudi |
+| `pwa.install` | Installer appen | Install app | Installa l’app |
+| `pwa.install.hint` | Legg Kvale på enheten din, så virker den også uten nett. | Add Kvale to your device so it also works offline. | Aggiungi Kvale al tuo dispositivo: funziona anche senza rete. |
+| `pwa.update` | En ny versjon av Kvale er klar. | A new version of Kvale is ready. | È pronta una nuova versione di Kvale. |
+| `pwa.reload` | Last inn på nytt | Reload | Ricarica |
 
 ## mock
 

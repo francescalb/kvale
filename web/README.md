@@ -46,7 +46,7 @@ notifies listeners (`state.subscribe(listener, *topics)`) by topic:
   `state.paint_cell` / `erase_cell` edit the current `edit_target`.
 - `state.load(document)` (chunk 6) replaces the pattern, clears the history and
   goes back to the unit.
-- `set_tool`, `set_edit_target` (also switches to edit mode), `set_mode`,
+- `set_tool`, `set_edit_target` (both also switch to edit mode), `set_mode`,
   `select_slot` and `set_status` change UI state. The labels of edit targets
   are in `state.TARGET_LABEL_KEYS`.
 - Calls across chunks that are not state:
@@ -67,6 +67,23 @@ notifies listeners (`state.subscribe(listener, *topics)`) by topic:
 - `#stage` carries `data-mode` and `data-target`; CSS hides `.edit-only` and
   `.preview-only` parts by mode.
 - Keyboard shortcuts: `shortcuts.register("ctrl+s", handler)` in your own module.
+
+## Installable, offline app and guide (chunk 7)
+
+Plain JavaScript, so it works before Python has started:
+
+- `sw.js`: the service worker. `tools/build_site.py` fills in the list of site
+  files, a version (a hash of them) and the CDN cache name, and writes
+  `manifest.webmanifest` with colours from `tokens.css`. Site files are cached
+  when the worker installs; PyScript, Pyodide, Pillow and the fonts are cached
+  on the first visit. A new version waits until the user presses "Reload".
+- `pwa.js` and `pwa.css`: registering the worker, the "new version" toast
+  (`#update-toast`), the install button (`#install-app`), and the help button
+  (`#help-open`) that opens `guide/<language>.html` in `<dialog id="help-dialog">`.
+  Strings: `pwa.*`, `help.*` (in the HTML with `data-i18n`, translated by Python).
+- `guide/`: the user guide in nb, en and it. Screenshots are made with
+  `python tools/guide_screenshots.py`; icons with `python tools/make_icons.py`.
+- `window.kvaleOffline === "ready"` once the CDN files are cached (for tests).
 
 ## Tests
 

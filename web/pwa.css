@@ -1,0 +1,31 @@
+/* Chunk 7 owns this file: the install and help buttons in the top bar, the
+   "new version" toast and the guide dialog. Use tokens.css values only. */
+
+.prefs #help-open, .prefs #install-app { padding: 0 var(--space-3); }
+
+/* Above the status toast, so both can be seen at once. */
+.toast.update-toast { bottom: 76px; }
+.toast.update-toast .btn { font-weight: 700; }
+
+dialog.help-dialog { width: min(860px, calc(100vw - 24px)); height: min(900px, calc(100vh - 24px)); }
+.help-dialog .dlg { height: 100%; }
+.help-dialog .help-head {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  border-bottom: 2px dashed var(--border); /* running stitch, like the top bar */
+}
+.help-dialog .help-head h2 { margin-right: auto; }
+.help-dialog #help-newtab { text-decoration: none; font-weight: 400; }
+.help-frame { flex: 1; width: 100%; min-height: 0; border: 0; background: var(--bg); }
+
+/* Labels only on wide screens; below that the icons carry a tooltip. */
+@media (max-width: 1400px) {
+  .pwa-label { display: none; }
+  .prefs #help-open, .prefs #install-app { padding: 0; }
+}
+@media (max-width: 640px) {
+  .toast.update-toast { bottom: 120px; }
+  dialog.help-dialog { height: calc(100vh - 24px); }
+  .help-dialog .help-head { padding-left: var(--space-4); }
+  .help-dialog #help-newtab { display: none; }
+}

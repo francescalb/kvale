@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kvale</title>
+  <!-- chunk 7: installable app (manifest.webmanifest is written by tools/build_site.py). -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#fbf8f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#25211d" media="(prefers-color-scheme: dark)">
   <!-- Before anything is drawn: the saved theme and language, so the loading
        screen has the right colours and words. Python takes over afterwards
        (kvale_web/shell.py and kvale_web/i18n.py use the same storage keys). -->
@@ -29,6 +35,9 @@
   <link rel="stylesheet" href="grid.css">
   <link rel="stylesheet" href="panels.css">
   <link rel="stylesheet" href="files.css">
+  <link rel="stylesheet" href="pwa.css">
+  <!-- chunk 7: service worker, update toast, install button and the guide. -->
+  <script src="pwa.js"></script>
   <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
 </head>
 <body class="booting">
@@ -63,6 +72,8 @@
     <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></symbol>
     <symbol id="i-rows" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12h16"/><path d="M12 4v16" stroke-dasharray="2 2"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.8-2.5 2.3-2.5 4"/><path d="M12 17.2v.3"/></symbol>
+    <symbol id="i-install" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M10 18h4"/></symbol>
     <symbol id="i-logo" viewBox="0 0 34 34"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l16 16M25 9L9 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></symbol>
   </svg>
 
@@ -98,8 +109,10 @@
       <!-- chunk 6: New / Open / Save / Save image buttons (file.*), hidden file input. -->
       <nav class="file-actions" id="file-actions" data-i18n-aria-label="file.label"></nav>
 
-      <!-- shell: language and light/dark. -->
+      <!-- shell: language and light/dark. chunk 7: install and help. -->
       <div class="prefs">
+        <button type="button" class="btn ghost" id="install-app" data-i18n-title="pwa.install.hint" data-i18n-aria-label="pwa.install" hidden><svg class="icon"><use href="#i-install"/></svg><span class="pwa-label" data-i18n="pwa.install">Installer appen</span></button>
+        <button type="button" class="btn ghost" id="help-open" data-i18n-title="help.open.hint" data-i18n-aria-label="help.open" aria-haspopup="dialog"><svg class="icon"><use href="#i-help"/></svg><span class="pwa-label" data-i18n="help.open">Hjelp</span></button>
         <div class="seg" role="group" id="lang-seg" data-i18n-aria-label="lang.label">
           <button type="button" data-lang="nb" aria-pressed="false" title="Norsk bokmål" lang="nb"><span class="lang-long">Norsk</span><span class="lang-short">NB</span></button>
           <button type="button" data-lang="en" aria-pressed="false" title="English" lang="en"><span class="lang-long">English</span><span class="lang-short">EN</span></button>
@@ -272,7 +285,21 @@
        one with state.set_status(key, **values). -->
   <div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toast-message"></span><button type="button" class="btn" id="toast-undo" data-i18n="toast.undo">Angre</button></div>
 
+  <!-- chunk 7 (pwa.js): a new version is ready. -->
+  <div class="toast update-toast" id="update-toast" role="status" aria-live="polite" hidden><span data-i18n="pwa.update">En ny versjon av Kvale er klar.</span><button type="button" class="btn" id="update-reload" data-i18n="pwa.reload">Last inn på nytt</button></div>
+
   <!-- Dialogs: empty until their owner fills them. -->
+  <!-- chunk 7 (pwa.js): the user guide, guide/<language>.html. -->
+  <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
+    <form method="dialog" class="dlg">
+      <header class="help-head">
+        <h2 id="help-title" data-i18n="help.title">Slik bruker du Kvale</h2>
+        <a class="btn ghost" id="help-newtab" href="guide/nb.html" target="_blank" rel="noopener" data-i18n="help.newTab">Åpne i egen fane</a>
+        <button class="btn ghost icon-only" value="close" id="help-close" data-i18n-title="help.close" data-i18n-aria-label="help.close"><svg class="icon"><use href="#i-x"/></svg></button>
+      </header>
+      <iframe class="help-frame" id="help-frame" data-i18n-title="help.title"></iframe>
+    </form>
+  </dialog>
   <!-- chunk 5: colour slot and its sequence (dialog.*). -->
   <dialog id="colour-dialog" aria-labelledby="colour-dialog-title">
     <form method="dialog" class="dlg">

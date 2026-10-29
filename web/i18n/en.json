@@ -249,10 +249,20 @@
   "canvas.hint.minimal": "You only stitch in the outlined part – the rest is mirrored automatically.",
   "file.untitled": "New pattern",
   "file.unsaved": "Changes not saved to a file",
+  "file.saveAs.hint": "Ctrl+Shift+S: save a copy under a new name",
   "file.confirmDiscard": "Changes that are not saved to a file will be lost. Continue?",
   "file.export.preparing": "Preparing the image …",
   "file.error.notPattern": "This file is not a Kvale pattern.",
   "file.error.tooNew": "This pattern was made with a newer version of Kvale. Reload the page and try again.",
   "file.error.fetch": "Could not find the pattern in the link.",
-  "file.error.export": "Could not make the image. Please try again."
+  "file.error.export": "Could not make the image. Please try again.",
+  "help.open": "Help",
+  "help.open.hint": "Read how to use Kvale",
+  "help.title": "How to use Kvale",
+  "help.newTab": "Open in its own tab",
+  "help.close": "Close",
+  "pwa.install": "Install app",
+  "pwa.install.hint": "Add Kvale to your device so it also works offline.",
+  "pwa.update": "A new version of Kvale is ready.",
+  "pwa.reload": "Reload"
 }

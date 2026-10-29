@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Come si usa Kvale</title>
+  <script>
+    (function () {
+      var root = document.documentElement, theme = null;
+      try { theme = localStorage.getItem("kvale-theme"); } catch (e) {}
+      if (theme === "light" || theme === "dark") root.dataset.theme = theme;
+      if (window.self !== window.top) root.classList.add("in-app");
+    })();
+  </script>
+  <link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body>
+  <header class="guide-top">
+    <a class="brand" href="../" target="_top">
+      <svg class="logo" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l16 16M25 9L9 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <span class="wordmark">Kvale</span>
+    </a>
+    <nav class="langs" aria-label="Lingua">
+      <a href="nb.html" lang="nb" hreflang="nb">Norsk</a>
+      <a href="en.html" lang="en" hreflang="en">English</a>
+      <a href="it.html" lang="it" hreflang="it" aria-current="page">Italiano</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <h1>Come si usa Kvale</h1>
+    <p class="lead">Kvale ti aiuta a disegnare bordure a punto croce per il bunad. Tu ricami una piccola parte, e Kvale la specchia e la ripete fino a formare tutta la bordura.</p>
+
+    <nav class="toc" aria-label="Indice">
+      <ol>
+        <li><a href="#start">Per cominciare</a></li>
+        <li><a href="#draw">Disegnare nella parte evidenziata</a></li>
+        <li><a href="#symmetry">Simmetria</a></li>
+        <li><a href="#ends">Estremità e angoli</a></li>
+        <li><a href="#backstitch">Punto scritto</a></li>
+        <li><a href="#colours">Colori e filati DMC</a></li>
+        <li><a href="#lines">Righe e colonne</a></li>
+        <li><a href="#files">Salvare, aprire e immagini</a></li>
+        <li><a href="#autosave">Si salva da solo</a></li>
+        <li><a href="#install">Installare e usare senza rete</a></li>
+      </ol>
+    </nav>
+
+    <section id="start">
+      <h2>Per cominciare</h2>
+      <p>Kvale funziona nel browser. La prima volta ci vuole qualche secondo perché sia pronto; poi sarà più veloce.</p>
+      <ul>
+        <li>Al centro c’è il <span class="ui">modulo</span>: il riquadro in cui disegni. Si ripete lungo la bordura.</li>
+        <li>A destra ci sono <span class="ui">Colori</span>, <span class="ui">Simmetria</span> e <span class="ui">Modulo e misure</span>.</li>
+        <li>In alto ci sono <span class="ui">Nuovo</span>, <span class="ui">Apri</span>, <span class="ui">Salva</span> e <span class="ui">Salva immagine</span>, la lingua, l’aspetto chiaro o scuro, e <span class="ui">Aiuto</span> (<span class="ui">?</span>), che apre questa guida.</li>
+        <li><span class="ui">Disegna</span> e <span class="ui">Bordura intera</span> passano dal disegno alla bordura finita.</li>
+      </ul>
+      <figure>
+        <img src="img/it-draw.webp" width="880" height="591" alt="Kvale con una bordura a fiori: il modulo con la parte evidenziata a sinistra, i colori a destra.">
+        <figcaption>Il disegno. Ricami solo nella parte evidenziata – il resto si specchia da solo.</figcaption>
+      </figure>
+    </section>
+
+    <section id="draw">
+      <h2>Disegnare nella parte evidenziata</h2>
+      <p>Scegli <span class="ui">Punto croce</span> e un colore, poi tocca o trascina sui quadretti per ricamare.</p>
+      <ul>
+        <li>Quando una simmetria è attiva, una parte del modulo è evidenziata. Ricami solo lì – il resto si specchia da solo.</li>
+        <li>I punti ricamati da te hanno una cornice. I punti specchiati dai tuoi sono pieni.</li>
+        <li>Per togliere dei punti scegli <span class="ui">Scuci</span> e toccali. Col mouse puoi anche usare il clic destro.</li>
+        <li><span class="ui">Annulla</span> e <span class="ui">Ripeti</span> sono le frecce curve (<kbd>Ctrl</kbd>+<kbd>Z</kbd> e <kbd>Ctrl</kbd>+<kbd>Y</kbd>).</li>
+        <li>Ingrandisci e riduci con le lenti. <span class="ui">Adatta</span> mostra tutto lo schema sullo schermo.</li>
+      </ul>
+      <p class="tip">La piccola bordura sotto la legenda ti mostra come sarà la bordura mentre disegni.</p>
+    </section>
+
+    <section id="symmetry">
+      <h2>Simmetria</h2>
+      <p>In <span class="ui">Simmetria</span> scegli come i tuoi punti si specchiano nel modulo. Puoi attivarne più d’una: lavorano insieme.</p>
+      <ul>
+        <li><span class="ui">Come lo ricami</span> è sempre attivo.</li>
+        <li><span class="ui">Specchia destra–sinistra</span> e <span class="ui">Specchia sopra–sotto</span> copiano i tuoi punti dall’altra parte.</li>
+        <li><span class="ui">Ruota di 180°</span> li gira attorno al centro.</li>
+        <li><span class="ui">Ruota di 90°</span>, <span class="ui">Ruota di 270°</span> e gli specchi in diagonale richiedono un modulo quadrato. Se il modulo non è quadrato, Kvale ti offre un pulsante per renderlo tale.</li>
+      </ul>
+      <p>In <span class="ui">Dove i moduli si toccano</span> (dentro <span class="ui">Modulo e misure</span>) scegli se una riga o colonna esterna si ricama in ogni modulo o se due moduli vicini la condividono.</p>
+    </section>
+
+    <section id="ends">
+      <h2>Estremità e angoli</h2>
+      <p>Spesso una bordura ha una chiusura diversa alle estremità. Scegli la parte nella barra <span class="ui">Stai disegnando</span> (<span class="ui">Estremità sinistra</span>, <span class="ui">Estremità destra</span>, <span class="ui">Bordo in alto</span>, <span class="ui">Bordo in basso</span>) oppure toccala nella piccola bordura.</p>
+      <ul>
+        <li>Quello che ricami o scuci lì vale solo per quella parte. Il resto della bordura segue il modulo.</li>
+        <li>La parte sbiadita è il modulo vicino: così vedi come la chiusura si unisce al resto della bordura.</li>
+        <li><span class="ui">Colonne in più all’esterno</span> o <span class="ui">Righe in più all’esterno</span> lasciano spazio per una chiusura fuori dal modulo.</li>
+        <li><span class="ui">Fatto</span> ti riporta al modulo. <span class="ui">Ripristina</span> toglie tutte le modifiche di quella parte – te lo chiede prima, e puoi annullare dopo.</li>
+      </ul>
+      <figure>
+        <img src="img/it-end.webp" width="700" height="674" alt="L’estremità destra aperta per la modifica, con il modulo vicino sbiadito accanto.">
+        <figcaption>L’estremità destra. Le parti e gli angoli modificati hanno un puntino nella barra.</figcaption>
+      </figure>
+      <h3>Angoli</h3>
+      <p>Dove due parti si incontrano c’è un angolo (<span class="ui">In alto a sinistra</span>, <span class="ui">In alto a destra</span>, <span class="ui">In basso a sinistra</span>, <span class="ui">In basso a destra</span>). L’angolo parte da come lo fanno le due parti vicine, poi puoi dargli una chiusura diversa. La sua misura segue le righe e le colonne in più delle due parti accanto.</p>
+    </section>
+
+    <section id="backstitch">
+      <h2>Punto scritto</h2>
+      <ol>
+        <li>Scegli <span class="ui">Punto scritto</span>.</li>
+        <li>Tocca l’angolo di un quadretto per cominciare, poi l’angolo successivo per ricamare una linea.</li>
+        <li>La linea riparte dall’ultimo punto, così puoi ricamare più linee una dopo l’altra.</li>
+        <li>Per fermarti: premi <kbd>Esc</kbd>, tocca di nuovo l’ultimo punto, oppure scegli un altro punto.</li>
+      </ol>
+      <p>Per togliere una linea scegli <span class="ui">Scuci</span> e toccala. Il punto scritto si specchia come il punto croce, e puoi usarlo anche nelle estremità e negli angoli.</p>
+    </section>
+
+    <section id="colours">
+      <h2>Colori e filati DMC</h2>
+      <p>In <span class="ui">Colori</span> tocca un colore per ricamare con quello (oppure premi <kbd>1</kbd>–<kbd>9</kbd>). La matita apre il colore per modificarlo. <span class="ui">Aggiungi colore</span> ne aggiunge uno nuovo.</p>
+      <ul>
+        <li><span class="ui">Cerca un filato …</span> ti fa cercare i filati DMC per numero o nome, per esempio 321. Il filato si vede sempre con la sua marca, come «DMC 321».</li>
+        <li><span class="ui">Colore libero …</span> ti fa scegliere qualsiasi colore.</li>
+        <li>I colori sullo schermo sono indicativi. Controlla su una cartella colori quando la tinta deve essere esatta.</li>
+      </ul>
+      <h3>Colori che cambiano da un modulo all’altro</h3>
+      <p>Un colore può avere più fili che si alternano lungo la bordura. Aumenta <span class="ui">Quanti colori</span> e tocca ogni parte per sceglierne il colore. Attiva <span class="ui">Cambia colore da un modulo all’altro</span> per usarli; se è spento, si usa solo il primo.</p>
+      <figure>
+        <img src="img/it-colour.webp" width="560" height="736" alt="La finestra del colore 1, con il numero di colori, le parti e i colori da scegliere.">
+        <figcaption>Un colore con le sue parti e i filati da scegliere.</figcaption>
+      </figure>
+      <p><span class="ui">Tela</span> è il colore di fondo dello schema.</p>
+    </section>
+
+    <section id="lines">
+      <h2>Righe e colonne</h2>
+      <ul>
+        <li>Tocca un numero sul bordo della griglia per aggiungere una riga o una colonna accanto, o per toglierla.</li>
+        <li>Oppure usa <span class="ui">Aggiungi o togli righe/colonne …</span> in <span class="ui">Modulo e misure</span>.</li>
+        <li>Con una simmetria attiva, Kvale può cambiarne più di una, così il motivo resta uguale. Te lo dice prima che tu confermi.</li>
+        <li><span class="ui">Larghezza</span> e <span class="ui">Altezza</span> danno la misura del modulo; <span class="ui">Quanti moduli</span> dice quante volte si ripete in larghezza e in altezza.</li>
+      </ul>
+    </section>
+
+    <section id="files">
+      <h2>Salvare, aprire e immagini</h2>
+      <ul>
+        <li><span class="ui">Salva</span> scarica lo schema come file (.json), da conservare e riaprire in seguito (<kbd>Ctrl</kbd>+<kbd>S</kbd>).</li>
+        <li><span class="ui">Apri</span> apre un file così (<kbd>Ctrl</kbd>+<kbd>O</kbd>).</li>
+        <li><span class="ui">Nuovo</span> inizia un nuovo schema. Se ci sono modifiche non salvate in un file, Kvale te lo chiede prima.</li>
+        <li><span class="ui">Salva immagine</span> scarica tutta la bordura come immagine (PNG), con punto scritto, estremità e l’elenco dei filati.</li>
+      </ul>
+      <figure>
+        <img src="img/it-band.webp" width="700" height="497" alt="La bordura intera, con sotto l’elenco dei filati dello schema.">
+        <figcaption><span class="ui">Bordura intera</span> mostra la bordura finita e i filati che usa.</figcaption>
+      </figure>
+    </section>
+
+    <section id="autosave">
+      <h2>Si salva da solo</h2>
+      <p>Il lavoro si salva da solo qui nel browser, e lo schema si riapre la prossima volta che torni. In alto vedi quando è stato salvato l’ultima volta.</p>
+      <p class="tip">La copia nel browser esiste solo in questo browser su questo dispositivo, e sparisce se cancelli i dati del browser. Premi <span class="ui">Salva</span> per avere un file da conservare.</p>
+    </section>
+
+    <section id="install">
+      <h2>Installare e usare senza rete</h2>
+      <p>Dopo la prima visita Kvale funziona anche senza internet: tutto ciò che gli serve resta nel browser. Puoi installarlo, così si apre come un’app:</p>
+      <ul>
+        <li><strong>Chrome o Edge</strong> (computer o Android): premi <span class="ui">Installa l’app</span> in alto, oppure usa l’icona di installazione nella barra degli indirizzi o nel menu.</li>
+        <li><strong>iPhone e iPad</strong> (Safari): tocca Condividi, poi «Aggiungi alla schermata Home».</li>
+        <li><strong>Safari su Mac</strong>: File → «Aggiungi al Dock».</li>
+      </ul>
+      <p>Quando è pronta una nuova versione di Kvale, compare un messaggio. Premi <span class="ui">Ricarica</span> per usarla; il tuo lavoro resta.</p>
+    </section>
+
+    <a class="back-top" href="#top">Torna su</a>
+  </main>
+</body>
+</html>

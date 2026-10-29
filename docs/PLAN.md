@@ -16,6 +16,8 @@ features and leaving room for new ones.
 ## Feature checklist
 
 Every item must work in the new app before the Tkinter interface is removed.
+`docs/FEATURE_CHECK.md` compares every behaviour of the Tkinter app with the
+web app, item by item (chunk 8).
 
 - [x] Unit width/height and repeats across/down (1–100)
 - [x] Toggles for whether the outer left/right column and top/bottom row repeat
@@ -31,8 +33,8 @@ Every item must work in the new app before the Tkinter interface is removed.
 - [x] Colour dialog with RGB/hex entry, and a searchable DMC floss colour picker
 - [x] Open/save JSON in the current format (format_version 4; older files still open); PNG export
 - [x] Open a pattern given at start (`kvale path.json` today; in the browser `?file=<url>`, `?example=<name>` or `#data=<compressed JSON>`)
-- [x] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app)
-- [ ] Undo/redo (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z), Edit menu entries disabled when there is nothing to undo/redo
+- [x] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app); Save as is Ctrl+Shift+S (chunk 8)
+- [x] Undo/redo (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z, Cmd on a Mac), Edit menu entries disabled when there is nothing to undo/redo (web: the Undo/Redo buttons; "Undone."/"Redone." messages; shortcuts wait while a dialog is open)
 - [x] New: control for the background colour (already stored in the file)
 
 Added by the approved design (`docs/design/strings.md`, "Owner-approved design decisions"):
@@ -41,9 +43,10 @@ Added by the approved design (`docs/design/strings.md`, "Owner-approved design d
 - [x] Thread brand + code: a colour is a (brand, code) pair or an own colour, always shown as «DMC 321»; the picker has a brand selector (DMC now, Anchor and Madeira "coming later")
 - [x] Confirm reset: resetting an end piece or a corner asks first and lists what will be lost; undo can still bring it back
 - [x] Backstitch chaining: the next line starts where the last one ended, until Esc, a tap on the last point, or another tool
-- [x] Thread list under the whole band (and in the saved image: chunk 6 reuses `thread_rows`)
+- [x] Thread list under the whole band, and in the saved image («DMC 321 – Red» or an own colour with its hex; `core.renderer.render_image_with_key`, chunk 8)
 - [x] Web: light/dark theme, nb/en/it switch, layout of the design (chunk 3)
 - [x] Web: autosave in the browser, restored on the next visit; the file name with an unsaved-changes marker; a warning before leaving with unsaved changes (chunk 6)
+- [x] Web: installable app that works offline after one visit, with a "new version" toast; a user guide in nb/en/it behind a help button (chunk 7)
 
 ## Chunks
 
@@ -58,8 +61,8 @@ Each chunk is one pull request.
 | 4 | ✅ Drawing grid: paint/erase (click, drag, touch), seed vs generated marking, row/column insert/remove, zoom | 1, 3 |
 | 5 | ✅ Side panels: grid settings, symmetry, colour slots, sequence editor | 1, 3 |
 | 6 | ✅ Files: open/save JSON, PNG export, autosave in the browser | 1, 2 |
-| 7 | Installable/offline (PWA) and a short user guide in nb/en/it | 4–6 |
-| 8 | Feature check against the checklist; remove the Tkinter interface | 7 |
+| 7 | ✅ Installable/offline (PWA) and a short user guide in nb/en/it | 4–6 |
+| 8 | Feature check against the checklist (done: `docs/FEATURE_CHECK.md`); remove the Tkinter interface | 7 |
 
 Rounds: 0+1, then 2+3, then 4+5+6, then 7+8. Pull requests are reviewed after
 each round before the next one starts.

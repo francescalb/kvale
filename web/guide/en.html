@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to use Kvale</title>
+  <script>
+    (function () {
+      var root = document.documentElement, theme = null;
+      try { theme = localStorage.getItem("kvale-theme"); } catch (e) {}
+      if (theme === "light" || theme === "dark") root.dataset.theme = theme;
+      if (window.self !== window.top) root.classList.add("in-app");
+    })();
+  </script>
+  <link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body>
+  <header class="guide-top">
+    <a class="brand" href="../" target="_top">
+      <svg class="logo" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l16 16M25 9L9 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <span class="wordmark">Kvale</span>
+    </a>
+    <nav class="langs" aria-label="Language">
+      <a href="nb.html" lang="nb" hreflang="nb">Norsk</a>
+      <a href="en.html" lang="en" hreflang="en" aria-current="page">English</a>
+      <a href="it.html" lang="it" hreflang="it">Italiano</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <h1>How to use Kvale</h1>
+    <p class="lead">Kvale helps you draw cross-stitch bands for the bunad. You stitch a small part, and Kvale mirrors it and repeats it into a whole band.</p>
+
+    <nav class="toc" aria-label="Contents">
+      <ol>
+        <li><a href="#start">Getting started</a></li>
+        <li><a href="#draw">Drawing in the outlined part</a></li>
+        <li><a href="#symmetry">Symmetry</a></li>
+        <li><a href="#ends">Ends and corners</a></li>
+        <li><a href="#backstitch">Backstitch</a></li>
+        <li><a href="#colours">Colours and DMC threads</a></li>
+        <li><a href="#lines">Rows and columns</a></li>
+        <li><a href="#files">Saving, opening and images</a></li>
+        <li><a href="#autosave">Saved by itself</a></li>
+        <li><a href="#install">Install and use offline</a></li>
+      </ol>
+    </nav>
+
+    <section id="start">
+      <h2>Getting started</h2>
+      <p>Kvale runs in your web browser. The first time it takes a few seconds to get ready; after that it is quicker.</p>
+      <ul>
+        <li>In the middle is the <span class="ui">repeat</span>: the area you draw in. It repeats across and down the band.</li>
+        <li>On the right are <span class="ui">Colours</span>, <span class="ui">Symmetry</span> and <span class="ui">Repeat and size</span>.</li>
+        <li>At the top are <span class="ui">New</span>, <span class="ui">Open</span>, <span class="ui">Save</span> and <span class="ui">Save image</span>, the language and light or dark look, and <span class="ui">Help</span> (<span class="ui">?</span>), which opens this guide.</li>
+        <li><span class="ui">Draw</span> and <span class="ui">Whole band</span> switch between drawing and seeing the finished band.</li>
+      </ul>
+      <figure>
+        <img src="img/en-draw.webp" width="880" height="591" alt="Kvale with a flower band: the repeat with the outlined part on the left, colours on the right.">
+        <figcaption>Drawing. You only stitch inside the outlined part; the rest is mirrored for you.</figcaption>
+      </figure>
+    </section>
+
+    <section id="draw">
+      <h2>Drawing in the outlined part</h2>
+      <p>Choose <span class="ui">Cross stitch</span> and a colour, then tap or drag across the squares to stitch.</p>
+      <ul>
+        <li>When a symmetry is on, a part of the repeat is outlined. You only stitch there – the rest is mirrored automatically.</li>
+        <li>Stitches you made have a frame. Stitches mirrored from yours are filled in.</li>
+        <li>To remove stitches, choose <span class="ui">Unpick</span> and tap them. With a mouse you can also right-click.</li>
+        <li><span class="ui">Undo</span> and <span class="ui">Redo</span> are the curved arrows (<kbd>Ctrl</kbd>+<kbd>Z</kbd> and <kbd>Ctrl</kbd>+<kbd>Y</kbd>).</li>
+        <li>Zoom with the magnifying glasses. <span class="ui">Fit</span> shows the whole pattern on screen.</li>
+      </ul>
+      <p class="tip">The small band under the legend shows how the band will look while you draw.</p>
+    </section>
+
+    <section id="symmetry">
+      <h2>Symmetry</h2>
+      <p>Under <span class="ui">Symmetry</span> you choose how your stitches are mirrored in the repeat. You can switch on several at once; they work together.</p>
+      <ul>
+        <li><span class="ui">As you stitch it</span> is always on.</li>
+        <li><span class="ui">Mirror left–right</span> and <span class="ui">Mirror top–bottom</span> copy your stitches to the other side.</li>
+        <li><span class="ui">Turn 180°</span> turns them around the middle.</li>
+        <li><span class="ui">Turn 90°</span>, <span class="ui">Turn 270°</span> and the diagonal mirrors need a square repeat. If the repeat is not square, Kvale offers a button to make it square.</li>
+      </ul>
+      <p>Under <span class="ui">Where repeats meet</span> (in <span class="ui">Repeat and size</span>) you choose whether an outer row or column is stitched in every repeat or shared by two neighbouring repeats.</p>
+    </section>
+
+    <section id="ends">
+      <h2>Ends and corners</h2>
+      <p>A band often has its own finish at the ends. Choose the end in the <span class="ui">Drawing in</span> bar (<span class="ui">Left end</span>, <span class="ui">Right end</span>, <span class="ui">Top edge</span>, <span class="ui">Bottom edge</span>) or tap it in the small band.</p>
+      <ul>
+        <li>What you stitch or unpick there only changes that end. The rest of the band follows the repeat.</li>
+        <li>The faded part is the next repeat, so you can see how the end meets the rest of the band.</li>
+        <li><span class="ui">Extra columns outside</span> or <span class="ui">Extra rows outside</span> make room for a border outside the repeat.</li>
+        <li><span class="ui">Done</span> takes you back to the repeat. <span class="ui">Reset</span> removes every change in that end – it asks first, and you can undo it.</li>
+      </ul>
+      <figure>
+        <img src="img/en-end.webp" width="700" height="674" alt="The right end open for editing, with the next repeat faded beside it.">
+        <figcaption>The right end. Changed ends and corners get a dot in the bar.</figcaption>
+      </figure>
+      <h3>Corners</h3>
+      <p>Where two ends meet there is a corner (<span class="ui">Top left</span>, <span class="ui">Top right</span>, <span class="ui">Bottom left</span>, <span class="ui">Bottom right</span>). A corner starts out as its two ends make it, and then you can give it its own finish. Its size follows the extra rows and columns of the ends beside it.</p>
+    </section>
+
+    <section id="backstitch">
+      <h2>Backstitch</h2>
+      <ol>
+        <li>Choose <span class="ui">Backstitch</span>.</li>
+        <li>Tap a corner of a square to start, then the next corner to stitch a line.</li>
+        <li>The line carries on from the last point, so you can stitch several lines one after the other.</li>
+        <li>To stop: press <kbd>Esc</kbd>, tap the last point again, or choose another stitch.</li>
+      </ol>
+      <p>To remove a backstitch line, choose <span class="ui">Unpick</span> and tap the line. Backstitch is mirrored like cross stitch, and you can also use it in ends and corners.</p>
+    </section>
+
+    <section id="colours">
+      <h2>Colours and DMC threads</h2>
+      <p>Under <span class="ui">Colours</span>, tap a colour to stitch with it (or press <kbd>1</kbd>–<kbd>9</kbd>). The pencil opens the colour so you can change it. <span class="ui">Add colour</span> adds a new one.</p>
+      <ul>
+        <li><span class="ui">Find a thread …</span> lets you search DMC threads by number or name, for example 321. Threads are always shown with their brand, as “DMC 321”.</li>
+        <li><span class="ui">Own colour …</span> lets you choose any colour.</li>
+        <li>Screen colours are approximate. Check against a shade card when the colour must match.</li>
+      </ul>
+      <h3>Colours that change from repeat to repeat</h3>
+      <p>One colour can have several thread colours that take turns along the band. Raise <span class="ui">Number of thread colours</span> and tap each part to choose its colour. Switch on <span class="ui">Change colour from repeat to repeat</span> to use them; when it is off, only the first is used.</p>
+      <figure>
+        <img src="img/en-colour.webp" width="560" height="736" alt="The dialog for colour 1, with the number of thread colours, the parts and the colour choices.">
+        <figcaption>A colour with its parts and the threads to choose from.</figcaption>
+      </figure>
+      <p><span class="ui">Fabric</span> is the background colour of the pattern.</p>
+    </section>
+
+    <section id="lines">
+      <h2>Rows and columns</h2>
+      <ul>
+        <li>Tap a number along the edge of the grid to add a row or column next to it, or to remove it.</li>
+        <li>Or use <span class="ui">Add or remove a row/column …</span> under <span class="ui">Repeat and size</span>.</li>
+        <li>With a symmetry on, Kvale may change more than the one you chose, so the pattern stays the same. It tells you before you apply.</li>
+        <li><span class="ui">Width</span> and <span class="ui">Height</span> set the size of the repeat; <span class="ui">Number of repeats</span> sets how many times it repeats across and down.</li>
+      </ul>
+    </section>
+
+    <section id="files">
+      <h2>Saving, opening and images</h2>
+      <ul>
+        <li><span class="ui">Save</span> downloads the pattern as a file (.json) that you can keep and open again (<kbd>Ctrl</kbd>+<kbd>S</kbd>).</li>
+        <li><span class="ui">Open</span> opens such a file (<kbd>Ctrl</kbd>+<kbd>O</kbd>).</li>
+        <li><span class="ui">New</span> starts a new pattern. If there are changes not saved to a file, Kvale asks first.</li>
+        <li><span class="ui">Save image</span> downloads the whole band as a picture (PNG), with backstitch, ends and the list of threads.</li>
+      </ul>
+      <figure>
+        <img src="img/en-band.webp" width="700" height="497" alt="The whole band, with the threads in the pattern listed below.">
+        <figcaption><span class="ui">Whole band</span> shows the finished band and the threads it uses.</figcaption>
+      </figure>
+    </section>
+
+    <section id="autosave">
+      <h2>Saved by itself</h2>
+      <p>Your work is saved automatically here in the browser, and the pattern opens again the next time you come back. At the top it says when it was last saved.</p>
+      <p class="tip">The browser copy only lives in this browser on this device, and it disappears if the browser data is cleared. Press <span class="ui">Save</span> to get a file you can keep.</p>
+    </section>
+
+    <section id="install">
+      <h2>Install and use offline</h2>
+      <p>After your first visit Kvale also works without the internet – everything it needs is kept in the browser. You can install it so it opens like an app:</p>
+      <ul>
+        <li><strong>Chrome or Edge</strong> (computer or Android): press <span class="ui">Install app</span> at the top, or use the install icon in the address bar or the browser menu.</li>
+        <li><strong>iPhone and iPad</strong> (Safari): tap Share, then “Add to Home Screen”.</li>
+        <li><strong>Safari on a Mac</strong>: File → “Add to Dock”.</li>
+      </ul>
+      <p>When a new version of Kvale is ready, a message says so. Press <span class="ui">Reload</span> to use it; your work is kept.</p>
+    </section>
+
+    <a class="back-top" href="#top">Back to the top</a>
+  </main>
+</body>
+</html>

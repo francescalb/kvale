@@ -9,14 +9,23 @@ The site is ``web/`` plus the browser-safe part of ``src/kvale`` (the package
 ``examples/*.json`` (opened with ``?example=<name>``). The ``[files]`` table of
 ``pyscript.toml`` is generated from the Python files found plus the package data
 of ``kvale`` (such as ``kvale/core/dmc_palette.json``), so it never needs editing
-by hand. Only the standard library is used.
+by hand.
+
+For the installable, offline app (chunk 7) the build also writes
+``manifest.webmanifest`` (colours from ``tokens.css``) and fills in ``sw.js``:
+the list of site files to cache and a version (a hash of those files), so a
+deploy that changes anything installs a new service worker. Only the standard
+library is used.
 """
 
 from __future__ import annotations
 
 import argparse
 import functools
+import hashlib
 import http.server
+import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -30,6 +39,13 @@ DEFAULT_OUT = ROOT / "_site"
 # Parts of src/ that run in the browser.
 CORE_SOURCES = ("kvale/__init__.py", "kvale/core")
 IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".mypy_cache", ".ruff_cache")
+# Files in the site that the service worker does not cache (sw.js is the worker).
+NOT_CACHED = {"sw.js", ".nojekyll", "README.md"}
+MANIFEST = "manifest.webmanifest"
+# Placeholders in web/sw.js.
+SW_VERSION = "__KVALE_VERSION__"
+SW_PRECACHE = "__KVALE_PRECACHE__"
+SW_CDN_CACHE = "__KVALE_CDN_CACHE__"
 
 
 def _python_files(out: Path) -> list[str]:
@@ -51,6 +67,102 @@ def files_table(paths: list[str]) -> str:
     ]
     lines += [f'"{path}" = "./{path}"' for path in paths]
     return "\n".join(lines) + "\n"
+
+
+def token_colours(css: str) -> dict[str, str]:
+    """The light-theme value of each colour token (the first one in ``tokens.css``)."""
+    colours: dict[str, str] = {}
+    for name, value in re.findall(r"--([a-z0-9-]+):\s*(#[0-9a-fA-F]{3,8})\b", css):
+        colours.setdefault(name, value.lower())
+    return colours
+
+
+def manifest(colours: dict[str, str]) -> dict[str, object]:
+    """The web app manifest. Paths are relative to it, so it works under /kvale/."""
+    icons: list[dict[str, str]] = [
+        {"src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+    ]
+    for size in (192, 512):
+        icons.append(
+            {
+                "src": f"icons/icon-{size}.png",
+                "sizes": f"{size}x{size}",
+                "type": "image/png",
+                "purpose": "any",
+            }
+        )
+        icons.append(
+            {
+                "src": f"icons/maskable-{size}.png",
+                "sizes": f"{size}x{size}",
+                "type": "image/png",
+                "purpose": "maskable",
+            }
+        )
+    return {
+        "id": "./",
+        "name": "Kvale",
+        "short_name": "Kvale",
+        "description": "Et lite program som gjør det lettere å designe kvaler. "
+        "A small app for designing cross-stitch bands for the bunad.",
+        "lang": "nb",
+        "start_url": "./",
+        "scope": "./",
+        "display": "standalone",
+        "background_color": colours["bg"],
+        "theme_color": colours["surface"],
+        "categories": ["design", "lifestyle"],
+        "icons": icons,
+    }
+
+
+def pyscript_release(index_html: str) -> str:
+    """The PyScript release that index.html loads, such as ``2026.7.3``."""
+    match = re.search(r"pyscript\.net/releases/([^/\"]+)/core\.js", index_html)
+    if not match:
+        raise SystemExit("index.html does not load PyScript's core.js")
+    return match.group(1)
+
+
+def precache_paths(out: Path) -> list[str]:
+    """Every site file the service worker caches, relative to ``out``."""
+    return sorted(
+        path.relative_to(out).as_posix()
+        for path in out.rglob("*")
+        if path.is_file() and path.relative_to(out).as_posix() not in NOT_CACHED
+    )
+
+
+def site_version(out: Path, paths: list[str], worker: str = "") -> str:
+    """A short hash of the cached files and the worker's code: it changes
+    whenever any of them does."""
+    digest = hashlib.sha256(worker.encode("utf-8"))
+    for path in paths:
+        digest.update(path.encode("utf-8") + b"\0" + (out / path).read_bytes() + b"\0")
+    return digest.hexdigest()[:16]
+
+
+def write_service_worker(out: Path) -> str:
+    """Write the manifest and fill in sw.js; return the version."""
+    colours = token_colours((out / "tokens.css").read_text(encoding="utf-8"))
+    (out / MANIFEST).write_text(
+        json.dumps(manifest(colours), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    paths = precache_paths(out)
+    worker = out / "sw.js"
+    text = worker.read_text(encoding="utf-8")
+    version = site_version(out, paths, text)
+    release = pyscript_release((out / "index.html").read_text(encoding="utf-8"))
+    for placeholder in (SW_VERSION, SW_PRECACHE, SW_CDN_CACHE):
+        if placeholder not in text:
+            raise SystemExit(f"{placeholder} is missing from web/sw.js")
+    text = (
+        text.replace(SW_VERSION, version)
+        .replace(SW_PRECACHE, json.dumps(paths, indent=2))
+        .replace(SW_CDN_CACHE, f"kvale-cdn-{release}")
+    )
+    worker.write_text(text, encoding="utf-8")
+    return version
 
 
 def build(out: Path = DEFAULT_OUT) -> Path:
@@ -79,6 +191,8 @@ def build(out: Path = DEFAULT_OUT) -> Path:
     )
     # GitHub Pages: serve files as they are (no Jekyll processing).
     (out / ".nojekyll").touch()
+    # Last, so the version covers every other file.
+    write_service_worker(out)
     return out
 
 

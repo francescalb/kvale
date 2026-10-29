@@ -26,12 +26,23 @@ APP_ONLY_KEYS = {
     # Files (chunk 6)
     "file.untitled",
     "file.unsaved",
+    "file.saveAs.hint",  # feature check (chunk 8): "Save as" of the Tkinter app
     "file.confirmDiscard",
     "file.export.preparing",
     "file.error.notPattern",
     "file.error.tooNew",
     "file.error.fetch",
     "file.error.export",
+    # Install, offline and the guide (chunk 7)
+    "help.open",
+    "help.open.hint",
+    "help.title",
+    "help.newTab",
+    "help.close",
+    "pwa.install",
+    "pwa.install.hint",
+    "pwa.update",
+    "pwa.reload",
 }
 
 

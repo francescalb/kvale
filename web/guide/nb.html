@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slik bruker du Kvale</title>
+  <script>
+    (function () {
+      var root = document.documentElement, theme = null;
+      try { theme = localStorage.getItem("kvale-theme"); } catch (e) {}
+      if (theme === "light" || theme === "dark") root.dataset.theme = theme;
+      if (window.self !== window.top) root.classList.add("in-app");
+    })();
+  </script>
+  <link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body>
+  <header class="guide-top">
+    <a class="brand" href="../" target="_top">
+      <svg class="logo" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l16 16M25 9L9 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <span class="wordmark">Kvale</span>
+    </a>
+    <nav class="langs" aria-label="Språk">
+      <a href="nb.html" lang="nb" hreflang="nb" aria-current="page">Norsk</a>
+      <a href="en.html" lang="en" hreflang="en">English</a>
+      <a href="it.html" lang="it" hreflang="it">Italiano</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <h1>Slik bruker du Kvale</h1>
+    <p class="lead">Kvale hjelper deg å tegne bunadsborder i korssting. Du syr en liten del, og Kvale speiler den og gjentar den til en hel bord.</p>
+
+    <nav class="toc" aria-label="Innhold">
+      <ol>
+        <li><a href="#start">Kom i gang</a></li>
+        <li><a href="#draw">Tegn i den markerte delen</a></li>
+        <li><a href="#symmetry">Symmetri</a></li>
+        <li><a href="#ends">Endestykker og hjørner</a></li>
+        <li><a href="#backstitch">Attersting</a></li>
+        <li><a href="#colours">Farger og DMC-garn</a></li>
+        <li><a href="#lines">Rader og kolonner</a></li>
+        <li><a href="#files">Lagre, åpne og bilde</a></li>
+        <li><a href="#autosave">Lagres av seg selv</a></li>
+        <li><a href="#install">Installer og bruk uten nett</a></li>
+      </ol>
+    </nav>
+
+    <section id="start">
+      <h2>Kom i gang</h2>
+      <p>Kvale går i nettleseren. Første gang tar det noen sekunder før den er klar; etterpå går det fortere.</p>
+      <ul>
+        <li>I midten er <span class="ui">rapporten</span>: feltet du tegner i. Den gjentas bortover og nedover borden.</li>
+        <li>Til høyre er <span class="ui">Farger</span>, <span class="ui">Symmetri</span> og <span class="ui">Rapport og størrelse</span>.</li>
+        <li>Øverst er <span class="ui">Ny</span>, <span class="ui">Åpne</span>, <span class="ui">Lagre</span> og <span class="ui">Lagre bilde</span>, språk og lyst eller mørkt utseende, og <span class="ui">Hjelp</span> (<span class="ui">?</span>), som åpner denne veiledningen.</li>
+        <li><span class="ui">Tegn</span> og <span class="ui">Hele borden</span> bytter mellom å tegne og å se den ferdige borden.</li>
+      </ul>
+      <figure>
+        <img src="img/nb-draw.webp" width="880" height="591" alt="Kvale med en blomsterbord: rapporten med den markerte delen til venstre, fargene til høyre.">
+        <figcaption>Tegning. Du syr bare i den markerte delen – resten speiles av seg selv.</figcaption>
+      </figure>
+    </section>
+
+    <section id="draw">
+      <h2>Tegn i den markerte delen</h2>
+      <p>Velg <span class="ui">Korssting</span> og en farge, og trykk eller dra over rutene for å sy.</p>
+      <ul>
+        <li>Når en symmetri er slått på, er en del av rapporten markert. Du syr bare der – resten speiles av seg selv.</li>
+        <li>Sting du har sydd, har en ramme. Sting som er speilet fra dine, er fylt ut.</li>
+        <li>For å fjerne sting velger du <span class="ui">Sprett opp</span> og trykker på dem. Med mus kan du også høyreklikke.</li>
+        <li><span class="ui">Angre</span> og <span class="ui">Gjør om</span> er de buede pilene (<kbd>Ctrl</kbd>+<kbd>Z</kbd> og <kbd>Ctrl</kbd>+<kbd>Y</kbd>).</li>
+        <li>Zoom med forstørrelsesglassene. <span class="ui">Tilpass</span> viser hele mønsteret på skjermen.</li>
+      </ul>
+      <p class="tip">Den lille borden under tegnforklaringen viser hvordan borden blir mens du tegner.</p>
+    </section>
+
+    <section id="symmetry">
+      <h2>Symmetri</h2>
+      <p>Under <span class="ui">Symmetri</span> velger du hvordan stingene dine speiles i rapporten. Du kan slå på flere samtidig; de virker sammen.</p>
+      <ul>
+        <li><span class="ui">Slik du syr</span> er alltid med.</li>
+        <li><span class="ui">Speil venstre–høyre</span> og <span class="ui">Speil opp–ned</span> kopierer stingene til den andre siden.</li>
+        <li><span class="ui">Drei 180°</span> dreier dem rundt midten.</li>
+        <li><span class="ui">Drei 90°</span>, <span class="ui">Drei 270°</span> og speiling på skrå krever kvadratisk rapport. Er rapporten ikke kvadratisk, får du en knapp som gjør den det.</li>
+      </ul>
+      <p>Under <span class="ui">Kanten mellom rapportene</span> (i <span class="ui">Rapport og størrelse</span>) velger du om en ytterste rad eller kolonne skal sys i hver rapport eller deles av to naborapporter.</p>
+    </section>
+
+    <section id="ends">
+      <h2>Endestykker og hjørner</h2>
+      <p>En bord har ofte en egen avslutning i endene. Velg endestykket i linjen <span class="ui">Du tegner i</span> (<span class="ui">Venstre ende</span>, <span class="ui">Høyre ende</span>, <span class="ui">Øvre kant</span>, <span class="ui">Nedre kant</span>), eller trykk på det i den lille borden.</p>
+      <ul>
+        <li>Det du syr eller spretter opp der, gjelder bare denne enden. Resten av borden følger rapporten.</li>
+        <li>Det svake feltet er neste rapport, så du ser hvordan enden møter resten av borden.</li>
+        <li><span class="ui">Ekstra kolonner utenfor</span> eller <span class="ui">Ekstra rader utenfor</span> gir plass til en kant utenfor rapporten.</li>
+        <li><span class="ui">Ferdig</span> tar deg tilbake til rapporten. <span class="ui">Tilbakestill</span> fjerner alle endringer i enden – du blir spurt først, og du kan angre etterpå.</li>
+      </ul>
+      <figure>
+        <img src="img/nb-end.webp" width="700" height="674" alt="Høyre endestykke åpnet for redigering, med neste rapport svakt ved siden av.">
+        <figcaption>Høyre endestykke. Endestykker og hjørner som er endret, får en prikk i linjen.</figcaption>
+      </figure>
+      <h3>Hjørner</h3>
+      <p>Der to endestykker møtes, er det et hjørne (<span class="ui">Oppe til venstre</span>, <span class="ui">Oppe til høyre</span>, <span class="ui">Nede til venstre</span>, <span class="ui">Nede til høyre</span>). Hjørnet begynner slik de to endestykkene gjør det, og så kan du gi det en egen avslutning. Størrelsen følger de ekstra radene og kolonnene i endestykkene ved siden av.</p>
+    </section>
+
+    <section id="backstitch">
+      <h2>Attersting</h2>
+      <ol>
+        <li>Velg <span class="ui">Attersting</span>.</li>
+        <li>Trykk på et hjørne av en rute for å begynne, og på neste hjørne for å sy en linje.</li>
+        <li>Linjen fortsetter fra det siste punktet, så du kan sy flere linjer etter hverandre.</li>
+        <li>For å slutte: trykk <kbd>Esc</kbd>, trykk på det siste punktet en gang til, eller velg et annet sting.</li>
+      </ol>
+      <p>For å fjerne en attersting velger du <span class="ui">Sprett opp</span> og trykker på linjen. Attersting speiles som korssting, og du kan bruke den i endestykker og hjørner også.</p>
+    </section>
+
+    <section id="colours">
+      <h2>Farger og DMC-garn</h2>
+      <p>Under <span class="ui">Farger</span> trykker du på en farge for å sy med den (eller trykk <kbd>1</kbd>–<kbd>9</kbd>). Blyanten åpner fargen så du kan endre den. <span class="ui">Legg til farge</span> gir deg en ny.</p>
+      <ul>
+        <li><span class="ui">Finn garn …</span> lar deg søke i DMC-garn med nummer eller navn, for eksempel 321. Garnet vises alltid med garnprodusent, som «DMC 321».</li>
+        <li><span class="ui">Egen farge …</span> lar deg velge hvilken som helst farge.</li>
+        <li>Fargene på skjermen er omtrentlige. Sjekk mot et fargekart når fargen må stemme.</li>
+      </ul>
+      <h3>Farger som skifter fra rapport til rapport</h3>
+      <p>Én farge kan ha flere trådfarger som skifter bortover borden. Øk <span class="ui">Antall trådfarger</span> og trykk på hver del for å velge farge. Slå på <span class="ui">Skift farge fra rapport til rapport</span> for å bruke dem; er den av, brukes bare den første.</p>
+      <figure>
+        <img src="img/nb-colour.webp" width="560" height="736" alt="Vinduet for farge 1, med antall trådfarger, delene og fargevalgene.">
+        <figcaption>En farge med delene sine og garnet du kan velge mellom.</figcaption>
+      </figure>
+      <p><span class="ui">Stoffet</span> er bakgrunnsfargen i mønsteret.</p>
+    </section>
+
+    <section id="lines">
+      <h2>Rader og kolonner</h2>
+      <ul>
+        <li>Trykk på et tall langs kanten av rutenettet for å legge til en rad eller kolonne ved siden av, eller for å fjerne den.</li>
+        <li>Eller bruk <span class="ui">Legg til eller fjern rad/kolonne …</span> under <span class="ui">Rapport og størrelse</span>.</li>
+        <li>Med symmetri på kan Kvale ta med flere enn den du valgte, så mønsteret holder seg likt. Det står hva som skjer før du bekrefter.</li>
+        <li><span class="ui">Bredde</span> og <span class="ui">Høyde</span> bestemmer størrelsen på rapporten; <span class="ui">Antall rapporter</span> bestemmer hvor mange ganger den gjentas bortover og nedover.</li>
+      </ul>
+    </section>
+
+    <section id="files">
+      <h2>Lagre, åpne og bilde</h2>
+      <ul>
+        <li><span class="ui">Lagre</span> laster ned mønsteret som en fil (.json) som du kan ta vare på og åpne igjen (<kbd>Ctrl</kbd>+<kbd>S</kbd>).</li>
+        <li><span class="ui">Åpne</span> åpner en slik fil (<kbd>Ctrl</kbd>+<kbd>O</kbd>).</li>
+        <li><span class="ui">Ny</span> begynner på et nytt mønster. Har du endringer som ikke er lagret i en fil, blir du spurt først.</li>
+        <li><span class="ui">Lagre bilde</span> laster ned hele borden som bilde (PNG), med attersting, endestykker og lista over garn.</li>
+      </ul>
+      <figure>
+        <img src="img/nb-band.webp" width="700" height="497" alt="Hele borden, med garnet i mønsteret listet under.">
+        <figcaption><span class="ui">Hele borden</span> viser den ferdige borden og garnet den bruker.</figcaption>
+      </figure>
+    </section>
+
+    <section id="autosave">
+      <h2>Lagres av seg selv</h2>
+      <p>Arbeidet lagres av seg selv her i nettleseren, og mønsteret åpnes igjen neste gang du kommer tilbake. Øverst står det når det sist ble lagret.</p>
+      <p class="tip">Kopien i nettleseren finnes bare i denne nettleseren på denne enheten, og den blir borte hvis nettleserdataene slettes. Trykk <span class="ui">Lagre</span> for å få en fil du kan ta vare på.</p>
+    </section>
+
+    <section id="install">
+      <h2>Installer og bruk uten nett</h2>
+      <p>Etter første besøk virker Kvale også uten internett – alt den trenger, ligger i nettleseren. Du kan installere den, så den åpnes som en app:</p>
+      <ul>
+        <li><strong>Chrome eller Edge</strong> (datamaskin eller Android): trykk <span class="ui">Installer appen</span> øverst, eller bruk installer-ikonet i adressefeltet eller i menyen.</li>
+        <li><strong>iPhone og iPad</strong> (Safari): trykk Del, og så «Legg til på Hjem-skjerm».</li>
+        <li><strong>Safari på Mac</strong>: Arkiv → «Legg til i Dock».</li>
+      </ul>
+      <p>Når en ny versjon av Kvale er klar, kommer det en melding om det. Trykk <span class="ui">Last inn på nytt</span> for å ta den i bruk; arbeidet ditt blir tatt vare på.</p>
+    </section>
+
+    <a class="back-top" href="#top">Til toppen</a>
+  </main>
+</body>
+</html>

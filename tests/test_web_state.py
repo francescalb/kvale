@@ -123,6 +123,20 @@ def test_tool_changes_notify_view_and_close_the_stroke() -> None:
         state.set_tool("needle")  # type: ignore[arg-type]
 
 
+def test_choosing_a_tool_goes_back_to_drawing() -> None:
+    # As in the Tkinter app: a stitch tool chosen while viewing the whole band
+    # switches back to edit mode, even when it is the tool already chosen.
+    state = AppState()
+    state.set_mode("preview")
+    seen = recorder(state, VIEW)
+    state.set_tool("cross")
+    assert (state.mode, state.tool) == ("edit", "cross")
+    assert seen == [VIEW]
+    state.set_mode("preview")
+    state.set_tool("back")
+    assert (state.mode, state.tool) == ("edit", "back")
+
+
 def test_mode_is_checked() -> None:
     state = AppState()
     state.set_mode("preview")

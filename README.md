@@ -11,6 +11,20 @@ The first version uses Tkinter for the GUI, Pillow for PNG export, JSON for edit
 project files, and a small dependency-free core that can later be reused by a web UI,
 CLI, SVG exporter or embroidery-format plugin.
 
+## Use it
+
+Open **<https://francescalb.github.io/kvale/>** in a browser – nothing to download.
+The first start takes a few seconds; after one visit the app also works offline.
+
+To install it as an app: in Chrome or Edge press **Install app** in the top bar
+(or the install icon in the address bar); on iPhone or iPad tap Share →
+**Add to Home Screen**. When a new version is out, the app offers to reload.
+
+The **?** button in the app opens the user guide:
+[English](https://francescalb.github.io/kvale/guide/en.html) ·
+[norsk](https://francescalb.github.io/kvale/guide/nb.html) ·
+[italiano](https://francescalb.github.io/kvale/guide/it.html).
+
 ## Features
 
 - Click-to-paint editor for a recurring grid unit
@@ -34,7 +48,8 @@ CLI, SVG exporter or embroidery-format plugin.
 - Colours from an RGB/hex dialog or a searchable DMC floss colour picker
 - Undo/redo (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z)
 - JSON save/load; `kvale path/to/pattern.json` opens a file at start
-- PNG export (including backstitches and end pieces)
+- PNG export (including backstitches and end pieces; the web app lists the
+  threads under the band)
 - Unit tests and GitHub Actions
 - `src/` package layout suitable for publishing
 
@@ -65,6 +80,9 @@ web/                      # browser app (PyScript), published to GitHub Pages
 ├── pyscript.toml         # PyScript config ([files] is added by the build)
 ├── main.py               # entry point: runs kvale_web.app.start()
 ├── i18n/{nb,en,it}.json  # interface strings
+├── pwa.js, sw.js         # install button, update toast, offline service worker
+├── guide/                # user guide in nb, en and it, with screenshots
+├── icons/                # app icons (tools/make_icons.py)
 └── kvale_web/            # UI package: app, state, i18n, dom, shortcuts,
                           # toolbar, canvas, panels, files
 tools/build_site.py       # builds _site/ from web/ and kvale.core
