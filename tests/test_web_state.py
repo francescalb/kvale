@@ -7,8 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from kvale.core import Editor, PatternDocument, build_colour_grid
+from kvale.core import Editor, Mark, PatternDocument, build_colour_grid
 from kvale.core.serialization import load_document
+from kvale.core.symmetry import expand_marks
 from kvale_web.state import DOCUMENT, HISTORY_LIMIT, STATUS, VIEW, AppState
 
 EXAMPLE = Path(__file__).resolve().parent.parent / "examples" / "flower-band.json"
@@ -137,3 +138,52 @@ def test_load_example_then_edit_and_undo() -> None:
 def _first_seed(state: AppState) -> tuple[int, int]:
     mark = state.document.motif[0]
     return mark.x, mark.y
+
+
+def _expanded(state: AppState) -> set[tuple[int, int]]:
+    doc = state.document
+    return {
+        (mark.x, mark.y)
+        for mark in expand_marks(doc.motif, doc.unit_width, doc.unit_height, doc.symmetry)
+    }
+
+
+def test_click_outside_minimal_cell_does_nothing() -> None:
+    state = AppState()
+    state.edit(lambda editor: editor.set_symmetry(["mirror_x"]))
+    seen = recorder(state, DOCUMENT)
+    assert not state.paint_cell(10, 1).changed  # right half: a mirror copy
+    assert state.document.motif == []
+    assert seen == []
+
+    assert state.paint_cell(1, 1).changed
+    assert _expanded(state) == {(1, 1), (10, 1)}  # mirrored automatically
+    assert not state.erase_cell(10, 1).changed  # erasing the copy does nothing too
+    assert _expanded(state) == {(1, 1), (10, 1)}
+    assert state.erase_cell(1, 1).changed
+    assert state.document.motif == []
+    assert seen == [DOCUMENT, DOCUMENT]
+
+
+def test_minimal_cell_follows_symmetry_and_unit_size() -> None:
+    state = AppState()
+    assert len(state.editable_cells) == 12 * 12  # identity: the whole unit
+    state.edit(lambda editor: editor.set_symmetry(["mirror_x", "mirror_y"]))
+    assert state.editable_cells == {(x, y) for x in range(6) for y in range(6)}
+    state.edit(lambda editor: editor.set_grid(unit_width=7))
+    assert state.editable_cells == {(x, y) for x in range(4) for y in range(6)}
+    state.undo()
+    state.undo()
+    assert len(state.editable_cells) == 12 * 12
+
+
+def test_marks_outside_minimal_cell_are_kept() -> None:
+    # A file made before the restriction may have marks outside the minimal cell.
+    state = AppState()
+    state.edit(lambda editor: editor.paint(10, 1, 0))
+    state.edit(lambda editor: editor.set_symmetry(["mirror_x"]))
+    assert (10, 1) not in state.editable_cells
+    assert state.document.motif == [Mark(10, 1, 0)]
+    assert _expanded(state) == {(1, 1), (10, 1)}
+    assert not state.erase_cell(10, 1).changed
+    assert not state.paint_cell(1, 1).changed  # the copy already has this colour

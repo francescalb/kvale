@@ -19,5 +19,6 @@
   "diag_main": "Diagonale principale",
   "diag_anti": "Antidiagonale",
   "hint": "Clic sinistro dipinge, clic destro cancella. Trascina per dipingere più celle.",
-  "symmetry_removed": "Disattivate perché l'unità non è quadrata: {operations}"
+  "symmetry_removed": "Disattivate perché l'unità non è quadrata: {operations}",
+  "minimal_cell_hint": "Disegni nella cella più piccola; il resto viene specchiato automaticamente."
 }

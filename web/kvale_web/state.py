@@ -4,6 +4,8 @@
 and adds the UI-only state (active colour slot, edit/preview mode, eraser,
 status message). Views never change the document directly: they call
 ``state.edit(...)``, ``state.undo()`` and so on, and re-render when notified.
+Pointer input on the unit goes through ``paint_cell``/``erase_cell``, which
+only accept cells in the minimal cell (``editable_cells``).
 
 This module does not import ``js`` or ``pyscript``, so it runs and is tested in
 normal CPython (see ``tests/test_web_state.py``).
@@ -23,6 +25,7 @@ from collections.abc import Callable
 from typing import Literal
 
 from kvale.core import Editor, EditResult, PatternDocument
+from kvale.core.symmetry import minimal_cell
 
 DOCUMENT = "document"
 VIEW = "view"
@@ -93,6 +96,29 @@ class AppState:
         if result.changed:
             self._after_document_change()
         return result
+
+    @property
+    def editable_cells(self) -> frozenset[tuple[int, int]]:
+        """The minimal cell: the unit cells the user may paint (see ``minimal_cell``).
+
+        The symmetry copies these cells onto the rest of the unit. It is cached
+        in core, so reading it on every render and pointer event is cheap.
+        """
+        doc = self.document
+        return minimal_cell(doc.unit_width, doc.unit_height, doc.symmetry)
+
+    def paint_cell(self, x: int, y: int) -> EditResult:
+        """Paint unit cell (x, y) with the active slot; cells outside the minimal cell do nothing."""
+        if (x, y) not in self.editable_cells:
+            return EditResult(False)
+        slot = self.active_slot
+        return self.edit(lambda editor: editor.paint(x, y, slot))
+
+    def erase_cell(self, x: int, y: int) -> EditResult:
+        """Erase unit cell (x, y); cells outside the minimal cell do nothing."""
+        if (x, y) not in self.editable_cells:
+            return EditResult(False)
+        return self.edit(lambda editor: editor.erase(x, y))
 
     def begin_stroke(self) -> None:
         """Start a group of edits that undo as one step (e.g. a drag-paint stroke)."""
