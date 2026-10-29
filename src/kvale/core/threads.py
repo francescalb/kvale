@@ -123,7 +123,8 @@ def brand_threads(brand_id: str) -> tuple[Thread, ...]:
         Thread(
             brand=brand.id,
             code=str(record["floss"]),
-            name=str(record["description"]),
+            # The bundled DMC card has "?" for a lost hyphen ("Orange?Red Bright").
+            name=str(record["description"]).replace("?", "-"),
             hex_colour=f"#{int(record['r']):02x}{int(record['g']):02x}{int(record['b']):02x}",
         )
         for record in records

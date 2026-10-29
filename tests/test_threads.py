@@ -47,6 +47,8 @@ def test_references() -> None:
     assert thread.ref == "dmc:321"
     assert find_thread("dmc:ecru") == find_thread("dmc:Ecru")
     assert find_thread("dmc:99999") is None
+    orange_red = find_thread("dmc:606")
+    assert orange_red is not None and orange_red.name == "Orange-Red Bright"
     assert find_thread(None) is None
     assert infer_thread(thread.hex_colour.upper()) == "dmc:321"
     assert infer_thread("#123457") is None
