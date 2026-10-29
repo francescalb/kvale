@@ -6,8 +6,9 @@
 
 The site is ``web/`` plus the browser-safe part of ``src/kvale`` (the package
 ``__init__`` and ``kvale.core``; not the Tkinter GUI). The ``[files]`` table of
-``pyscript.toml`` is generated from the Python files found, so it never needs
-editing by hand. Only the standard library is used.
+``pyscript.toml`` is generated from the Python files found plus the package data
+of ``kvale`` (such as ``kvale/core/dmc_palette.json``), so it never needs editing
+by hand. Only the standard library is used.
 """
 
 from __future__ import annotations
@@ -29,9 +30,14 @@ IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".mypy_cache", ".ruff_ca
 
 
 def _python_files(out: Path) -> list[str]:
-    """Paths (relative to ``out``, with /) of the modules PyScript must fetch."""
-    files = sorted(path.relative_to(out).as_posix() for path in out.rglob("*.py"))
-    return [path for path in files if path != "main.py"]  # main.py is the <script src>
+    """Paths (relative to ``out``, with /) of the files PyScript must fetch.
+
+    These are every module (except ``main.py``, which is the ``<script src>``)
+    and every package data file under ``kvale/``, read with ``importlib.resources``.
+    """
+    modules = {path for path in out.rglob("*.py") if path != out / "main.py"}
+    package_data = {path for path in (out / "kvale").rglob("*") if path.is_file()}
+    return sorted(path.relative_to(out).as_posix() for path in modules | package_data)
 
 
 def files_table(paths: list[str]) -> str:
