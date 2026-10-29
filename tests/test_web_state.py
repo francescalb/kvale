@@ -10,7 +10,16 @@ import pytest
 from kvale.core import Editor, Mark, PatternDocument, build_colour_grid
 from kvale.core.serialization import load_document
 from kvale.core.symmetry import expand_marks
-from kvale_web.state import DOCUMENT, HISTORY_LIMIT, STATUS, VIEW, AppState
+from kvale.core.editing import CORNERS, EDGES, get_end_piece
+from kvale_web.state import (
+    DOCUMENT,
+    EDIT_TARGETS,
+    HISTORY_LIMIT,
+    STATUS,
+    TARGET_LABEL_KEYS,
+    VIEW,
+    AppState,
+)
 
 EXAMPLE = Path(__file__).resolve().parent.parent / "examples" / "flower-band.json"
 
@@ -82,13 +91,86 @@ def test_undo_clamps_active_slot() -> None:
     assert seen == [VIEW]
 
 
-def test_select_slot_turns_off_eraser_and_ignores_bad_index() -> None:
+def test_select_slot_leaves_unpick_and_ignores_bad_index() -> None:
     state = AppState()
-    state.set_erase_tool(True)
+    state.set_tool("unpick")
     state.select_slot(99)
     assert state.erase_tool
     state.select_slot(1)
-    assert (state.active_slot, state.erase_tool) == (1, False)
+    assert (state.active_slot, state.tool, state.erase_tool) == (1, "cross", False)
+
+
+def test_select_slot_keeps_backstitch() -> None:
+    state = AppState()
+    state.set_tool("back")
+    state.select_slot(2)
+    assert (state.active_slot, state.tool) == (2, "back")
+
+
+def test_tool_changes_notify_view_and_close_the_stroke() -> None:
+    state = AppState()
+    assert state.tool == "cross"
+    seen = recorder(state, VIEW)
+    state.begin_stroke()
+    state.paint_cell(0, 0)
+    state.set_tool("unpick")
+    state.set_tool("unpick")  # unchanged: no notification
+    assert seen == [VIEW]
+    assert state.editor.can_undo  # the stroke was closed
+    state.erase_cell(0, 0)
+    assert state.document.motif == []
+    with pytest.raises(ValueError, match="Unknown tool"):
+        state.set_tool("needle")  # type: ignore[arg-type]
+
+
+def test_mode_is_checked() -> None:
+    state = AppState()
+    state.set_mode("preview")
+    assert state.mode == "preview"
+    with pytest.raises(ValueError, match="Unknown mode"):
+        state.set_mode("print")  # type: ignore[arg-type]
+
+
+def test_edit_targets_cover_core_end_pieces_and_have_labels() -> None:
+    assert EDIT_TARGETS == ("unit", *EDGES, *CORNERS)
+    assert set(TARGET_LABEL_KEYS) == set(EDIT_TARGETS)
+
+
+def test_set_edit_target_switches_to_edit_mode() -> None:
+    state = AppState()
+    state.set_mode("preview")
+    seen = recorder(state, VIEW)
+    state.set_edit_target("top_right")
+    assert (state.edit_target, state.mode) == ("top_right", "edit")
+    state.set_edit_target("top_right")  # unchanged: no notification
+    assert seen == [VIEW]
+    with pytest.raises(ValueError, match="Unknown edit target"):
+        state.set_edit_target("middle")  # type: ignore[arg-type]
+
+
+def test_paint_and_erase_follow_the_edit_target() -> None:
+    state = AppState()
+    state.edit(lambda editor: editor.set_symmetry(["mirror_x"]))
+    state.set_edit_target("right")
+    # Outside the minimal cell of the unit, but inside the right end piece.
+    assert state.paint_cell(10, 1).changed
+    assert state.document.motif == []  # the unit is untouched
+    piece = get_end_piece(state.document, "right")
+    assert piece is not None and [(m.x, m.y) for m in piece.added_marks] == [(10, 1)]
+    assert state.erase_cell(10, 1).changed
+    assert not state.paint_cell(99, 99).changed  # outside the end piece
+
+    state.set_edit_target("unit")
+    assert not state.paint_cell(10, 1).changed  # back to the minimal cell
+
+
+def test_load_returns_to_the_unit() -> None:
+    state = AppState()
+    state.set_edit_target("bottom_left")
+    seen = recorder(state, VIEW, DOCUMENT)
+    state.load(PatternDocument())
+    assert state.edit_target == "unit"
+    assert seen == [VIEW, DOCUMENT]
 
 
 def test_removed_symmetry_sets_status() -> None:
@@ -97,7 +179,7 @@ def test_removed_symmetry_sets_status() -> None:
     seen = recorder(state, STATUS)
     state.edit(lambda editor: editor.set_grid(unit_width=5))
     assert seen == [STATUS]
-    assert state.status == ("symmetry_removed", {"operations": ("rotate_90",)})
+    assert state.status == ("symmetry.switchedOff", {})
 
 
 def test_load_resets_history() -> None:

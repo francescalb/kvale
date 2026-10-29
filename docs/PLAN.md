@@ -35,6 +35,15 @@ Every item must work in the new app before the Tkinter interface is removed.
 - [ ] Undo/redo (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z), Edit menu entries disabled when there is nothing to undo/redo
 - [ ] New: control for the background colour (already stored in the file)
 
+Added by the approved design (`docs/design/strings.md`, "Owner-approved design decisions"):
+
+- [ ] Corners: the four corners where two end pieces meet are edited on their own (in the "Drawing in" bar and the mini band), with a dot when changed; applied after the end pieces
+- [ ] Thread brand + code: a colour is a (brand, code) pair or an own colour, always shown as «DMC 321»; the picker has a brand selector (DMC now, Anchor and Madeira "coming later")
+- [ ] Confirm reset: resetting an end piece or a corner asks first and lists what will be lost; undo can still bring it back
+- [ ] Backstitch chaining: the next line starts where the last one ended, until Esc, a tap on the last point, or another tool
+- [ ] Thread list under the whole band (and in the saved image)
+- [x] Web: light/dark theme, nb/en/it switch, layout of the design (chunk 3)
+
 ## Chunks
 
 Each chunk is one pull request.
@@ -44,7 +53,7 @@ Each chunk is one pull request.
 | 0 | ✅ Toolkit test: throwaway Flet and PyScript apps (branches `spike/flet`, `spike/pyscript`). PyScript chosen | – |
 | 1 | ✅ Strengthen the core: move row/column insert/remove, palette-sequence handling and symmetry rules from `gui/app.py` into `core/` with tests; add a single command layer with undo/redo; cleanup | – |
 | 2 | PyScript project skeleton (starting from the `spike/pyscript` prototype); GitHub Actions run tests and publish to GitHub Pages | 0 |
-| 3 | Look and languages: layout, light/dark, all UI text in nb/en/it files, language switch | 2 |
+| 3 | ✅ Look and languages: layout, light/dark, all UI text in nb/en/it files, language switch; a shared shell with one module, style sheet and set of containers per chunk 4–6 (see `web/README.md`) | 2 |
 | 4 | Drawing grid: paint/erase (click, drag, touch), seed vs generated marking, row/column insert/remove, zoom | 1, 3 |
 | 5 | Side panels: grid settings, symmetry, colour slots, sequence editor | 1, 3 |
 | 6 | Files: open/save JSON, PNG export, autosave in the browser | 1, 2 |
