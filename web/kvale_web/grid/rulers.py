@@ -254,8 +254,12 @@ class Rulers:
     def on_more(self, _event: Any) -> None:
         from kvale_web.panels import lines
 
+        selected = self.selected
         self.close()
-        lines.open_lines_dialog()
+        if selected is None:
+            lines.open_lines_dialog()
+        else:
+            lines.open_lines_dialog(*selected)
 
     def on_key(self, event: Any) -> None:
         if str(event.key) == "Escape":

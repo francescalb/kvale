@@ -246,5 +246,13 @@
   "lines.cancel": "Annulla",
   "lines.apply.add": "Aggiungi",
   "lines.apply.remove": "Togli",
-  "canvas.hint.minimal": "Ricami solo nella parte evidenziata – il resto si specchia da solo."
+  "canvas.hint.minimal": "Ricami solo nella parte evidenziata – il resto si specchia da solo.",
+  "file.untitled": "Nuovo schema",
+  "file.unsaved": "Modifiche non salvate in un file",
+  "file.confirmDiscard": "Le modifiche non salvate in un file andranno perse. Vuoi continuare?",
+  "file.export.preparing": "Preparo l’immagine …",
+  "file.error.notPattern": "Questo file non è uno schema di Kvale.",
+  "file.error.tooNew": "Questo schema è stato fatto con una versione più recente di Kvale. Ricarica la pagina e riprova.",
+  "file.error.fetch": "Non trovo lo schema nel link.",
+  "file.error.export": "Non sono riuscito a creare l’immagine. Riprova."
 }

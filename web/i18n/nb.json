@@ -246,5 +246,13 @@
   "lines.cancel": "Avbryt",
   "lines.apply.add": "Legg til",
   "lines.apply.remove": "Fjern",
-  "canvas.hint.minimal": "Du syr bare i den markerte delen – resten speiles av seg selv."
+  "canvas.hint.minimal": "Du syr bare i den markerte delen – resten speiles av seg selv.",
+  "file.untitled": "Nytt mønster",
+  "file.unsaved": "Endringer som ikke er lagret i en fil",
+  "file.confirmDiscard": "Endringene som ikke er lagret i en fil, blir borte. Vil du fortsette?",
+  "file.export.preparing": "Gjør klar bildet …",
+  "file.error.notPattern": "Denne filen er ikke et Kvale-mønster.",
+  "file.error.tooNew": "Mønsteret er laget med en nyere versjon av Kvale. Last inn siden på nytt og prøv igjen.",
+  "file.error.fetch": "Fant ikke mønsteret i lenken.",
+  "file.error.export": "Klarte ikke å lage bildet. Prøv igjen."
 }

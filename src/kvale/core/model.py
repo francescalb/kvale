@@ -168,6 +168,10 @@ class PatternDocument:
     top_right_repeat_override: RepeatOverride | None = None
     bottom_left_repeat_override: RepeatOverride | None = None
     bottom_right_repeat_override: RepeatOverride | None = None
+    # Thread reference ("dmc:321", see kvale.core.threads) of each colour in
+    # palette_sequences, None for an own colour. None as a whole for files
+    # saved before references were stored: see threads.slot_threads.
+    palette_threads: list[list[str | None]] | None = None
 
     @property
     def palette(self) -> list[str]:
@@ -183,6 +187,10 @@ class PatternDocument:
             raise ValueError("The palette must contain at least one colour")
         if not all(self.palette_sequences):
             raise ValueError("Each palette sequence must contain at least one colour")
+        if self.palette_threads is not None and [len(row) for row in self.palette_threads] != [
+            len(row) for row in self.palette_sequences
+        ]:
+            raise ValueError("palette_threads must have one entry per palette colour")
         for mark in self.motif:
             if not (0 <= mark.x < self.unit_width and 0 <= mark.y < self.unit_height):
                 raise ValueError(f"Mark outside recurring unit: {mark}")
@@ -302,6 +310,11 @@ class PatternDocument:
         for corner in CORNER_EDGES:
             if data[f"{corner}_repeat_override"] is None:
                 del data[f"{corner}_repeat_override"]
+        # Thread references are only written when known, so older documents
+        # are saved exactly as before. Readers that do not know the field
+        # ignore it and still get every colour from palette_sequences.
+        if data["palette_threads"] is None:
+            del data["palette_threads"]
         if self.has_corner_overrides():
             data["format_version"] = max(self.format_version, CORNER_FORMAT_VERSION)
         return data
@@ -320,6 +333,13 @@ class PatternDocument:
             if not row:
                 raise ValueError("Palette sequence entries must contain colours")
             palette_sequences.append(row)
+
+        palette_threads: list[list[str | None]] | None = None
+        raw_threads = data.get("palette_threads")
+        if raw_threads is not None:
+            if not isinstance(raw_threads, list) or not all(isinstance(row, list) for row in raw_threads):
+                raise ValueError("palette_threads must be a list of lists")
+            palette_threads = [[str(ref) if ref else None for ref in row] for row in raw_threads]
 
         version = data.get("format_version")
         if version is not None and int(version) > CORNER_FORMAT_VERSION:
@@ -401,6 +421,7 @@ class PatternDocument:
             top_right_repeat_override=parse_override(data.get("top_right_repeat_override")),
             bottom_left_repeat_override=parse_override(data.get("bottom_left_repeat_override")),
             bottom_right_repeat_override=parse_override(data.get("bottom_right_repeat_override")),
+            palette_threads=palette_threads,
         )
         document.validate()
         return document

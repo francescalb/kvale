@@ -179,7 +179,10 @@
             <!-- chunk 4: "{rx} × {ry} repeats · {w} × {h} stitches" (preview.caption). -->
             <p class="caption" id="preview-caption"></p>
             <!-- chunk 5: threads used in the band, as "DMC 321" (threads.title, thread.code). -->
-            <section class="threadkey" id="thread-key" hidden></section>
+            <section class="threadkey" id="thread-key" aria-labelledby="thread-key-title" hidden>
+              <h3 id="thread-key-title" data-i18n="threads.title">Garn i mønsteret</h3>
+              <ul id="thread-key-list"></ul>
+            </section>
             <p class="hint" data-i18n="preview.hint">Her ser du hele borden. Gå til «Tegn» for å endre den.</p>
           </div>
         </div>
@@ -191,9 +194,21 @@
         <section class="card" id="colours-card" aria-labelledby="colours-title">
           <h2 id="colours-title" data-i18n="panel.colours">Farger</h2>
           <div class="slots" id="colour-slots"></div>
-          <div id="colour-actions"></div>
-          <div id="colour-sequence-toggle"></div>
-          <div id="background-row"></div>
+          <div class="colour-actions" id="colour-actions">
+            <button type="button" class="btn" id="add-colour"><svg class="icon"><use href="#i-add"/></svg><span data-i18n="colours.add">Legg til farge</span></button>
+          </div>
+          <div class="toggle-row" id="colour-sequence-toggle">
+            <div class="text"><strong id="use-sequence-label" data-i18n="colours.useSeq">Skift farge fra rapport til rapport</strong><span data-i18n="colours.useSeq.hint">Gjelder farger med flere trådfarger. Av: bare den første brukes.</span></div>
+            <div class="switch-wrap"><button type="button" class="switch" role="switch" id="use-sequence" aria-checked="false" aria-labelledby="use-sequence-label"></button></div>
+          </div>
+          <div class="bg-row" id="background-row">
+            <div class="bg-swatch" id="background-swatch"></div>
+            <div class="text"><strong data-i18n="colours.background">Stoffet</strong><span data-i18n="colours.background.hint">Bakgrunnsfargen i mønsteret</span><span id="background-hex"></span></div>
+            <label class="btn">
+              <svg class="icon"><use href="#i-pencil"/></svg><span data-i18n="colours.change">Endre</span>
+              <input type="color" class="visually-hidden-input" id="background-input" value="#ffffff" data-i18n-aria-label="colours.background.hint">
+            </label>
+          </div>
         </section>
 
         <!-- chunk 5: symmetry buttons and the square notice (symmetry.*, sym.*). -->
@@ -201,21 +216,53 @@
           <h2 id="symmetry-title" data-i18n="panel.symmetry">Symmetri</h2>
           <p class="intro" data-i18n="symmetry.intro">Velg hvordan stingene dine speiles i rapporten.</p>
           <div id="symmetry-options">
-            <label class="check"><input type="checkbox" class="sym" value="mirror_x"> <span data-i18n="sym.mirror_x">Speil venstre–høyre</span></label>
-            <label class="check"><input type="checkbox" class="sym" value="mirror_y"> <span data-i18n="sym.mirror_y">Speil opp–ned</span></label>
-            <label class="check"><input type="checkbox" class="sym" value="rotate_180"> <span data-i18n="sym.rotate_180">Drei 180°</span></label>
-            <label class="check"><input type="checkbox" class="sym" value="rotate_90"> <span data-i18n="sym.rotate_90">Drei 90°</span></label>
-            <label class="check"><input type="checkbox" class="sym" value="rotate_270"> <span data-i18n="sym.rotate_270">Drei 270°</span></label>
-            <label class="check"><input type="checkbox" class="sym" value="diag_main"> <span data-i18n="sym.diag_main">Speil på skrå ╲</span></label>
-            <label class="check"><input type="checkbox" class="sym" value="diag_anti"> <span data-i18n="sym.diag_anti">Speil på skrå ╱</span></label>
+            <div class="sym-grid" id="symmetry-any"></div>
+            <p class="subhead"><span data-i18n="symmetry.squareGroup">Krever kvadratisk rapport</span></p>
+            <div class="notice" id="square-notice" hidden>
+              <svg class="icon"><use href="#i-info"/></svg>
+              <div><span id="square-notice-text"></span><br><button type="button" class="btn" id="make-square"></button></div>
+            </div>
+            <div class="sym-grid" id="symmetry-square"></div>
           </div>
         </section>
 
         <!-- chunk 5: unit size, repeats, "add or remove a row/column", edge toggles (grid.*, edges.*). -->
         <section class="card" id="grid-card" aria-labelledby="grid-title" hidden>
           <h2 id="grid-title" data-i18n="panel.grid">Rapport og størrelse</h2>
-          <div id="grid-settings"></div>
-          <div class="edges" id="edge-toggles"></div>
+          <div id="grid-settings">
+            <p class="subhead"><span data-i18n="grid.unit">Rapporten</span><small data-i18n="grid.unit.hint">Feltet du tegner i. Det gjentas bortover og nedover borden.</small></p>
+            <div class="fieldgrid">
+              <div class="field"><label for="grid-unit_width" data-i18n="grid.width">Bredde</label>
+                <div class="stepper"><button type="button" data-field="unit_width" data-step="-1" data-i18n-aria-label="step.less">−</button><input id="grid-unit_width" data-field="unit_width" type="number" min="1" max="100" inputmode="numeric"><button type="button" data-field="unit_width" data-step="1" data-i18n-aria-label="step.more">+</button></div>
+                <div class="unit" data-i18n="grid.cells">sting</div></div>
+              <div class="field"><label for="grid-unit_height" data-i18n="grid.height">Høyde</label>
+                <div class="stepper"><button type="button" data-field="unit_height" data-step="-1" data-i18n-aria-label="step.less">−</button><input id="grid-unit_height" data-field="unit_height" type="number" min="1" max="100" inputmode="numeric"><button type="button" data-field="unit_height" data-step="1" data-i18n-aria-label="step.more">+</button></div>
+                <div class="unit" data-i18n="grid.cells">sting</div></div>
+            </div>
+            <button type="button" class="btn open-lines" id="open-lines"><svg class="icon"><use href="#i-rows"/></svg><span data-i18n="grid.lines">Legg til eller fjern rad/kolonne …</span></button>
+            <p class="subhead"><span data-i18n="grid.repeats">Antall rapporter</span><small data-i18n="grid.repeats.hint">Hvor mange ganger rapporten gjentas (1–100).</small></p>
+            <div class="fieldgrid">
+              <div class="field"><label for="grid-repeats_x" data-i18n="grid.across">Bortover</label>
+                <div class="stepper"><button type="button" data-field="repeats_x" data-step="-1" data-i18n-aria-label="step.less">−</button><input id="grid-repeats_x" data-field="repeats_x" type="number" min="1" max="100" inputmode="numeric"><button type="button" data-field="repeats_x" data-step="1" data-i18n-aria-label="step.more">+</button></div>
+                <div class="unit" data-i18n="grid.times">ganger</div></div>
+              <div class="field"><label for="grid-repeats_y" data-i18n="grid.down">Nedover</label>
+                <div class="stepper"><button type="button" data-field="repeats_y" data-step="-1" data-i18n-aria-label="step.less">−</button><input id="grid-repeats_y" data-field="repeats_y" type="number" min="1" max="100" inputmode="numeric"><button type="button" data-field="repeats_y" data-step="1" data-i18n-aria-label="step.more">+</button></div>
+                <div class="unit" data-i18n="grid.times">ganger</div></div>
+            </div>
+          </div>
+          <div class="edges" id="edge-toggles">
+            <p class="subhead"><span data-i18n="edges.title">Kanten mellom rapportene</span></p>
+            <p class="edges-explain" data-i18n="edges.explain">Ligger en speillinje helt ytterst i rapporten, blir den raden eller kolonnen dobbel der to rapporter møtes. Slå av for å la naborapportene dele den.</p>
+            <div class="edges-diagram">
+              <svg id="edge-diagram" aria-hidden="true"></svg>
+              <div class="diagram-key">
+                <span><i class="key-cols"></i><span data-i18n="edges.key.cols">Ytterste kolonner</span></span>
+                <span><i class="key-rows"></i><span data-i18n="edges.key.rows">Ytterste rader</span></span>
+              </div>
+              <span class="caption" data-i18n="edges.diagramCaption">Eksempel: 3 × 2 rapporter</span>
+            </div>
+            <div class="edge-list" id="edge-list"></div>
+          </div>
         </section>
       </aside>
     </main>
@@ -227,11 +274,117 @@
 
   <!-- Dialogs: empty until their owner fills them. -->
   <!-- chunk 5: colour slot and its sequence (dialog.*). -->
-  <dialog id="colour-dialog"></dialog>
+  <dialog id="colour-dialog" aria-labelledby="colour-dialog-title">
+    <form method="dialog" class="dlg">
+      <header>
+        <h2 id="colour-dialog-title"></h2>
+        <p data-i18n="dialog.intro">Én trådfarge, eller flere som skifter fra rapport til rapport.</p>
+      </header>
+      <div class="content">
+        <div class="bigbar" id="colour-dialog-bar"></div>
+        <div>
+          <p class="label"><label for="colour-dialog-count" data-i18n="dialog.count">Antall trådfarger</label> <span class="caption">(1–24)</span></p>
+          <div class="stepper"><button type="button" id="colour-dialog-less" data-i18n-aria-label="step.less">−</button><input id="colour-dialog-count" type="number" min="1" max="24" value="1" inputmode="numeric"><button type="button" id="colour-dialog-more" data-i18n-aria-label="step.more">+</button></div>
+        </div>
+        <div>
+          <p class="label" data-i18n="dialog.parts">Trykk på en del for å velge farge</p>
+          <div class="parts" id="colour-dialog-parts"></div>
+        </div>
+        <div>
+          <p class="label" id="colour-dialog-pick-label"></p>
+          <div class="threads" id="colour-dialog-threads"></div>
+          <div class="row-btns">
+            <button type="button" class="btn" id="colour-dialog-find"><svg class="icon"><use href="#i-search"/></svg><span data-i18n="dialog.thread">Finn garn …</span></button>
+            <label class="btn">
+              <span class="chip" id="colour-dialog-custom-chip"></span><span data-i18n="dialog.custom">Egen farge …</span>
+              <input type="color" class="visually-hidden-input" id="colour-dialog-custom" value="#808080">
+            </label>
+            <input type="text" class="hexinput" id="colour-dialog-hex" maxlength="20" spellcheck="false" autocomplete="off" placeholder="#rrggbb" data-i18n-aria-label="dialog.custom">
+          </div>
+        </div>
+        <div>
+          <p class="label" data-i18n="dialog.howItRepeats">Slik skifter fargen bortover borden:</p>
+          <div class="repeats-row" id="colour-dialog-repeats"></div>
+          <p class="caption" id="colour-dialog-off-note" data-i18n="dialog.offNote" hidden>Fargeskift er slått av – bare del 1 brukes nå.</p>
+        </div>
+      </div>
+      <footer>
+        <button class="btn" value="cancel" id="colour-dialog-cancel" data-i18n="dialog.cancel">Avbryt</button>
+        <button class="btn primary" value="ok" id="colour-dialog-ok" data-i18n="dialog.ok">Bruk</button>
+      </footer>
+    </form>
+  </dialog>
   <!-- chunk 5: thread picker with brand selector (thread.*). -->
-  <dialog id="thread-dialog"></dialog>
-  <!-- chunk 5: rows and columns (lines.*). -->
-  <dialog id="lines-dialog"></dialog>
+  <dialog id="thread-dialog" aria-labelledby="thread-dialog-title">
+    <form method="dialog" class="dlg">
+      <header>
+        <h2 id="thread-dialog-title" data-i18n="thread.title">Velg garn</h2>
+        <p id="thread-system-note"></p>
+      </header>
+      <div class="content">
+        <div class="sysrow">
+          <label for="thread-system" data-i18n="thread.system">Garnprodusent</label>
+          <select id="thread-system" class="sysselect"></select>
+        </div>
+        <div>
+          <label class="sr-only" for="thread-search" data-i18n="thread.search">Søk</label>
+          <input class="searchbox" id="thread-search" type="search" autocomplete="off">
+        </div>
+        <div class="chips" id="thread-families"></div>
+        <div>
+          <div class="dmc-meta"><span id="thread-count"></span></div>
+          <div class="dmc-list" id="thread-list" role="listbox" aria-labelledby="thread-dialog-title"></div>
+        </div>
+        <div class="dmc-detail"><span class="dmc-big" id="thread-big"></span><span id="thread-detail"></span></div>
+        <p class="caption flush" id="thread-names-note"></p>
+        <p class="caption flush" data-i18n="thread.approx">Fargene på skjermen er omtrentlige. Sjekk mot et fargekart når fargen må stemme.</p>
+      </div>
+      <footer>
+        <label class="btn left">
+          <span class="chip" id="thread-own-chip"></span><span data-i18n="thread.own">Egen farge …</span>
+          <input type="color" class="visually-hidden-input" id="thread-own" value="#808080">
+        </label>
+        <button class="btn" value="cancel" id="thread-cancel" data-i18n="thread.cancel">Avbryt</button>
+        <button class="btn primary" value="ok" id="thread-choose" data-i18n="thread.choose" disabled>Velg</button>
+      </footer>
+    </form>
+  </dialog>
+  <!-- chunk 5: rows and columns (lines.*). Opened with kvale_web.panels.lines.open_lines_dialog(). -->
+  <dialog id="lines-dialog" aria-labelledby="lines-title">
+    <form method="dialog" class="dlg">
+      <header><h2 id="lines-title" data-i18n="lines.title">Rader og kolonner</h2></header>
+      <div class="content">
+        <div>
+          <p class="label" data-i18n="lines.action">Hva vil du gjøre?</p>
+          <div class="seg accent" role="group" id="lines-action">
+            <button type="button" data-action="add" aria-pressed="true"><svg class="icon"><use href="#i-add"/></svg><span data-i18n="lines.add">Legge til</span></button>
+            <button type="button" data-action="remove" aria-pressed="false"><svg class="icon"><use href="#i-trash"/></svg><span data-i18n="lines.remove">Fjerne</span></button>
+          </div>
+        </div>
+        <div>
+          <p class="label" data-i18n="lines.where">Hvor?</p>
+          <div class="optgrid" id="lines-places">
+            <button type="button" class="opt" data-place="top_row" data-i18n="lines.place.top">Øverst</button>
+            <button type="button" class="opt" data-place="bottom_row" data-i18n="lines.place.bottom">Nederst</button>
+            <button type="button" class="opt" data-place="first_column" data-i18n="lines.place.first">Lengst til venstre</button>
+            <button type="button" class="opt" data-place="last_column" data-i18n="lines.place.last">Lengst til høyre</button>
+            <button type="button" class="opt" data-place="row" data-i18n="lines.place.row">Rad nummer …</button>
+            <button type="button" class="opt" data-place="column" data-i18n="lines.place.col">Kolonne nummer …</button>
+          </div>
+        </div>
+        <div id="lines-number-wrap">
+          <p class="label"><label for="lines-number" data-i18n="lines.number">Nummer</label> <span class="caption" id="lines-number-range"></span></p>
+          <div class="stepper"><button type="button" id="lines-less" data-i18n-aria-label="step.less">−</button><input id="lines-number" type="number" min="1" value="1" inputmode="numeric"><button type="button" id="lines-more" data-i18n-aria-label="step.more">+</button></div>
+        </div>
+        <div class="lines-preview"><svg id="lines-preview" aria-hidden="true"></svg></div>
+        <p class="effect" id="lines-effect" aria-live="polite"></p>
+      </div>
+      <footer>
+        <button class="btn" value="cancel" id="lines-cancel" data-i18n="lines.cancel">Avbryt</button>
+        <button class="btn primary" value="ok" id="lines-apply"></button>
+      </footer>
+    </form>
+  </dialog>
   <!-- chunk 4: "Reset this end/corner?" confirm (end.confirm.*, corner.confirm.*). -->
   <dialog id="reset-dialog"></dialog>
 

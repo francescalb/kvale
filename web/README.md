@@ -13,7 +13,7 @@ they should rarely touch the same file.
 
 | | Chunk 4: grid and tools | Chunk 5: side panels | Chunk 6: files |
 |---|---|---|---|
-| Python | `kvale_web/grid/` (`canvas`, `tools`, `target`, `zoom`, `rulers`, `overview`) | `kvale_web/panels/` (`colours`, `symmetry`, `grid_settings`, `colour_dialog`, `thread_picker`, `lines`, `thread_key`) | `kvale_web/files.py` (may become `files/`) |
+| Python | `kvale_web/grid/` (`canvas`, `tools`, `target`, `zoom`, `rulers`, `overview`) | `kvale_web/panels/` (`colours`, `symmetry`, `grid_settings`, `colour_dialog`, `thread_picker`, `lines`, `thread_key`) | `kvale_web/files/` (`logic`, `browser`, `views`) |
 | CSS | `grid.css` | `panels.css` | `files.css` |
 | Containers | `#tool-seg`, `#zoom-controls`, `#target-bar` (`#target-seg`, `#corner-seg`), `#end-panel`, `#editor` (`#ruler-top`, `#ruler-left`, `#grid`, `#edge-popover`), `#legend`, `#canvas-hint`, `#minimal-cell-hint`, `#mini-band`, `#preview-caption`, `<dialog id="reset-dialog">` | `#colours-card` (`#colour-slots`, `#colour-actions`, `#colour-sequence-toggle`, `#background-row`), `#symmetry-card` (`#symmetry-options`), `#grid-card` (`#grid-settings`, `#edge-toggles`), `#thread-key`, `<dialog>`s `#colour-dialog`, `#thread-dialog`, `#lines-dialog` | `#file-actions`, `#doc-info`, `#boot-restore` |
 | Strings | `tool.*`, `zoom.*`, `target.*`, `end.*`, `corner.*`, `legend.*`, `canvas.*`, `band.*`, `preview.*`, `edge.*`, `grid.colN`/`rowN`/`newColN`/`newRowN`, `list.and` | `panel.*`, `colours.*`, `symmetry.*`, `sym.*`, `grid.*`, `edges.*`, `step.*`, `dialog.*`, `thread.*`, `threads.*`, `lines.*` | `file.*`, `autosave.*`, `loading.restore` |
@@ -49,9 +49,21 @@ notifies listeners (`state.subscribe(listener, *topics)`) by topic:
 - `set_tool`, `set_edit_target` (also switches to edit mode), `set_mode`,
   `select_slot` and `set_status` change UI state. The labels of edit targets
   are in `state.TARGET_LABEL_KEYS`.
-- Calls across chunks that are not state: `panels.lines.open_lines_dialog()`
-  (from chunk 4's ruler popover), and chunk 5's thread list building in
-  `panels/thread_key.py`, reused by chunk 6 for the PNG.
+- Calls across chunks that are not state:
+  - `kvale_web.panels.lines.open_lines_dialog(axis=None, index=None, *, remove=False)`
+    opens the rows and columns dialog (chunk 4's ruler popover "More options …").
+    `open_lines_dialog("row", 4)` preselects row 5 (0-based `index`; for adding,
+    the gap before which the new row goes) on "Add";
+    `open_lines_dialog("column", 0, remove=True)` preselects column 1 on "Remove".
+    Without arguments it opens as last used.
+  - The thread list for the PNG (chunk 6): `thread_rows(document)` from
+    `kvale_web.panels.colour_model` (no DOM; one `ColourInfo` per thread or own
+    colour that the stitches use) and `row_text(info)` from
+    `kvale_web.panels.thread_key` (`("DMC 321", "Red")` in the current language).
+- Thread colours: a colour is a thread reference (`"dmc:321"`) or an own
+  colour; brands are data in `kvale.core.threads` and the references are
+  stored in `PatternDocument.palette_threads` (optional, see that module).
+  Never show a bare code: use `thread.code` ("DMC 321").
 - `#stage` carries `data-mode` and `data-target`; CSS hides `.edit-only` and
   `.preview-only` parts by mode.
 - Keyboard shortcuts: `shortcuts.register("ctrl+s", handler)` in your own module.

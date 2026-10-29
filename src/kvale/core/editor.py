@@ -287,17 +287,25 @@ class Editor:
 
     # Colours -----------------------------------------------------------
 
-    def add_colour(self, colour: str) -> EditResult:
-        """Add a colour slot at the end of the palette."""
+    def add_colour(self, colour: str, threads: Sequence[str | None] | None = None) -> EditResult:
+        """Add a colour slot at the end of the palette.
+
+        ``threads`` is ``[reference]`` ("dmc:321") or ``[None]`` for an own
+        colour; see ``editing.set_palette_sequence``.
+        """
 
         def edit(document: PatternDocument) -> None:
-            editing.add_palette_colour(document, colour)
+            editing.add_palette_colour(document, colour, threads)
 
         return self._apply(edit)
 
-    def set_colour_sequence(self, index: int, sequence: Sequence[str]) -> EditResult:
-        """Replace the colour sequence of one slot."""
-        return self._apply(lambda document: editing.set_palette_sequence(document, index, sequence))
+    def set_colour_sequence(
+        self, index: int, sequence: Sequence[str], threads: Sequence[str | None] | None = None
+    ) -> EditResult:
+        """Replace the colour sequence of one slot, with each colour's thread reference."""
+        return self._apply(
+            lambda document: editing.set_palette_sequence(document, index, sequence, threads)
+        )
 
     def set_use_palette_sequence(self, enabled: bool) -> EditResult:
         def edit(document: PatternDocument) -> None:
