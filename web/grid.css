@@ -20,19 +20,23 @@
   .stage[data-mode="edit"] .edit-side .hint { text-align: left; }
 }
 
-/* Grid with rulers. --ruler is 0 until chunk 4 fills the rulers. */
+/* Grid with rulers. The editor is as wide as the grid (centred), and the
+   stage body scrolls when zooming makes it wider than the stage.
+   --ruler is the ruler thickness; there are no rulers in the whole band. */
 .editor {
   --ruler: 0px;
-  position: relative; min-width: 0;
-  display: grid; grid-template-columns: var(--ruler) minmax(0, 1fr); grid-template-rows: var(--ruler) auto;
+  position: relative; min-width: 0; width: max-content; margin: 0 auto;
+  display: grid; grid-template-columns: var(--ruler) max-content; grid-template-rows: var(--ruler) auto;
 }
-.ruler { display: flex; }
+.stage[data-mode="edit"] .editor { --ruler: 30px; }
+.ruler { display: flex; overflow: hidden; }
 .ruler-top { grid-column: 2; grid-row: 1; }
 .ruler-left { grid-column: 1; grid-row: 2; flex-direction: column; }
 .ruler button {
-  flex: none; border: 0; background: transparent; padding: 0;
-  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  flex: none; border: 0; background: transparent; padding: 0; min-width: 0; min-height: 0;
+  font-size: 11px; font-weight: 700; color: var(--text-muted); line-height: 1;
   font-variant-numeric: tabular-nums; border-radius: 4px; position: relative;
+  overflow: visible; white-space: nowrap;
 }
 .ruler-top button { height: var(--ruler); }
 .ruler-left button { width: var(--ruler); }
@@ -43,9 +47,9 @@
 .ruler button:disabled:hover::after { content: none; }
 .ruler button.extra { color: var(--focus); }
 .ruler-corner { grid-column: 1; grid-row: 1; }
-.cloth-wrap { grid-column: 2; grid-row: 2; min-width: 0; display: flex; justify-content: center; }
+.cloth-wrap { grid-column: 2; grid-row: 2; min-width: 0; }
 .cloth {
-  display: block; border-radius: 2px; cursor: crosshair; user-select: none;
+  display: block; border-radius: 2px; cursor: crosshair; user-select: none; box-shadow: var(--shadow);
   touch-action: none; /* pointer events drive stitching on touch screens */
 }
 
@@ -76,6 +80,9 @@
 .legend .k-removed::after { transform: rotate(-45deg); }
 .legend .k-extra { background: #e6e3e2; box-shadow: inset 0 0 0 2px rgba(47, 93, 158, .55); }
 .legend .k-nb { opacity: .35; }
+@media (min-width: 1280px) {
+  .stage[data-mode="edit"] .edit-side .legend { flex-direction: column; justify-content: flex-start; }
+}
 
 /* Mini band */
 .miniband {
@@ -130,5 +137,5 @@
   .endpanel { padding: var(--space-3); }
   .endpanel .actions { width: 100%; }
   .endpanel .actions .btn { flex: 1; }
-  .editor { --ruler: 0px; }
+  .stage[data-mode="edit"] .editor { --ruler: 24px; }
 }
