@@ -14,6 +14,12 @@ unit_height). An end piece (``RepeatOverride``) uses the unit's coordinates
 and may reach ``extension`` cells beyond the unit on its own side: negative
 coordinates for the top and left end pieces, coordinates from unit_width or
 unit_height upwards for the right and bottom ones.
+
+A corner end piece ("top_left", "top_right", "bottom_left", "bottom_right")
+changes only the corner unit of the band. It is applied after the edge end
+pieces, so its starting point is the unit with both neighbouring edge end
+pieces applied. It has no extension of its own: it covers the unit, the
+extensions of both neighbouring edges and the square where they cross.
 """
 
 from __future__ import annotations
@@ -23,13 +29,17 @@ from math import hypot
 from typing import Literal, cast
 
 from kvale.core.model import (
+    CORNER_EDGES,
     Backstitch,
     BackstitchKey,
     Cell,
     Mark,
     PatternDocument,
     RepeatOverride,
+    corner_cell_bounds,
+    edge_cell_bounds,
 )
+from kvale.core.renderer import unit_overrides
 from kvale.core.symmetry import (
     expand_backstitches,
     expand_marks,
@@ -41,11 +51,18 @@ from kvale.core.symmetry import (
 MAX_SEQUENCE_LENGTH = 24
 
 Edge = Literal["top", "bottom", "left", "right"]
-# What a UI is editing: the recurring unit or one of the end pieces.
-Target = Literal["unit", "top", "bottom", "left", "right"]
+Corner = Literal["top_left", "top_right", "bottom_left", "bottom_right"]
+# Any end piece: an edge or a corner.
+EndPiece = Literal[Edge, Corner]
+# What a UI is editing: the recurring unit or one of the edge end pieces.
+Target = Literal["unit", Edge]
+# Like Target, but corners may be edited too.
+EditTarget = Literal["unit", Edge, Corner]
 Axis = Literal["row", "column"]
 
 EDGES: tuple[Edge, ...] = ("top", "bottom", "left", "right")
+CORNERS: tuple[Corner, ...] = ("top_left", "top_right", "bottom_left", "bottom_right")
+END_PIECES: tuple[EndPiece, ...] = (*EDGES, *CORNERS)
 
 # How far from a backstitch (in cells) a click may be and still hit it.
 BACKSTITCH_HIT_DISTANCE = 0.35
@@ -165,22 +182,77 @@ def _distance_to_segment(point_x: float, point_y: float, backstitch: Backstitch)
     return hypot(point_x - nearest_x, point_y - nearest_y)
 
 
-def visible_backstitches(document: PatternDocument, target: Target = "unit") -> list[Backstitch]:
+def _corner_unit(document: PatternDocument, corner: Corner) -> tuple[int, int]:
+    row_edge, column_edge = CORNER_EDGES[corner]
+    unit_x = 0 if column_edge == "left" else document.repeats_x - 1
+    unit_y = 0 if row_edge == "top" else document.repeats_y - 1
+    return unit_x, unit_y
+
+
+def _base_overrides(document: PatternDocument, piece: EndPiece) -> list[RepeatOverride]:
+    """The edge end pieces applied before a corner (none for an edge end piece)."""
+    if piece in EDGES:
+        return []
+    unit_x, unit_y = _corner_unit(document, cast(Corner, piece))
+    return unit_overrides(document, unit_x, unit_y, corners=False)
+
+
+def base_marks(document: PatternDocument, piece: EndPiece) -> dict[tuple[int, int], Mark]:
+    """The marks an end piece starts from, by position.
+
+    For an edge end piece these are the unit marks and their symmetry copies.
+    For a corner, the edge end pieces of the corner unit are applied to them
+    first, as the renderer does.
+    """
+    marks = {
+        (mark.x, mark.y): mark
+        for mark in expand_marks(
+            document.motif, document.unit_width, document.unit_height, document.symmetry
+        )
+    }
+    for override in _base_overrides(document, piece):
+        for cell in override.removed_cells:
+            marks.pop((cell.x, cell.y), None)
+        for mark in override.added_marks:
+            marks[(mark.x, mark.y)] = mark
+    return marks
+
+
+def base_backstitches(
+    document: PatternDocument, target: EditTarget = "unit"
+) -> dict[BackstitchKey, Backstitch]:
+    """The backstitches an end piece starts from, by key; see ``base_marks``.
+
+    For the unit these are the stored backstitches and their symmetry copies.
+    """
+    stitches = {
+        item.key: item
+        for item in expand_backstitches(
+            document.backstitches,
+            document.unit_width,
+            document.unit_height,
+            document.symmetry,
+        )
+    }
+    if target != "unit":
+        for override in _base_overrides(document, target):
+            for key in override.removed_backstitches:
+                stitches.pop(key, None)
+            for item in override.added_backstitches:
+                stitches[item.key] = item
+    return stitches
+
+
+def visible_backstitches(document: PatternDocument, target: EditTarget = "unit") -> list[Backstitch]:
     """The backstitches shown when editing ``target``, in drawing order.
 
     For the unit these are the stored backstitches and their symmetry copies.
-    For an end piece, the end piece's hidden backstitches are left out and its
-    added ones are included.
+    For an end piece, the end piece's hidden backstitches are left out of its
+    base (see ``base_backstitches``) and its added ones are included.
     """
-    expanded = expand_backstitches(
-        document.backstitches,
-        document.unit_width,
-        document.unit_height,
-        document.symmetry,
-    )
+    stitches = base_backstitches(document, target)
     if target == "unit":
-        return expanded
-    stitches = {item.key: item for item in expanded}
+        return list(stitches.values())
     override = get_end_piece(document, target)
     if override is not None:
         for key in override.removed_backstitches:
@@ -190,20 +262,12 @@ def visible_backstitches(document: PatternDocument, target: Target = "unit") -> 
     return list(stitches.values())
 
 
-def hidden_backstitches(document: PatternDocument, edge: Edge) -> list[Backstitch]:
-    """The unit backstitches that the end piece on ``edge`` hides."""
+def hidden_backstitches(document: PatternDocument, edge: EndPiece) -> list[Backstitch]:
+    """The base backstitches that the end piece ``edge`` hides."""
     override = get_end_piece(document, edge)
     if override is None:
         return []
-    base = {
-        item.key: item
-        for item in expand_backstitches(
-            document.backstitches,
-            document.unit_width,
-            document.unit_height,
-            document.symmetry,
-        )
-    }
+    base = base_backstitches(document, edge)
     return [base[key] for key in override.removed_backstitches if key in base]
 
 
@@ -211,7 +275,7 @@ def find_backstitch_near(
     document: PatternDocument,
     x: float,
     y: float,
-    target: Target = "unit",
+    target: EditTarget = "unit",
     max_distance: float = BACKSTITCH_HIT_DISTANCE,
 ) -> Backstitch | None:
     """The visible backstitch closest to point (x, y), if within ``max_distance`` cells."""
@@ -228,12 +292,12 @@ def erase_backstitch_near(
     document: PatternDocument,
     x: float,
     y: float,
-    target: Target = "unit",
+    target: EditTarget = "unit",
 ) -> bool:
     """Erase the visible backstitch nearest to point (x, y) when editing ``target``.
 
     In the unit this removes the stored backstitch behind it (and so all its
-    copies). In an end piece a unit backstitch is hidden and an added one is
+    copies). In an end piece a base backstitch is hidden and an added one is
     removed. Returns False when no backstitch is close enough.
     """
     nearest = find_backstitch_near(document, x, y, target)
@@ -245,15 +309,7 @@ def erase_backstitch_near(
             return False
         document.erase_backstitch(source.key)
         return True
-    base_keys = {
-        item.key
-        for item in expand_backstitches(
-            document.backstitches,
-            document.unit_width,
-            document.unit_height,
-            document.symmetry,
-        )
-    }
+    base_keys = set(base_backstitches(document, target))
     override = ensure_end_piece(document, target)
     if nearest.key in base_keys:
         override.hide_backstitch(nearest.key)
@@ -267,13 +323,13 @@ def erase_backstitch_near(
 # End pieces ---------------------------------------------------------------
 
 
-def get_end_piece(document: PatternDocument, edge: Edge) -> RepeatOverride | None:
-    """The end piece (repeat override) on ``edge``, or None if it has none."""
+def get_end_piece(document: PatternDocument, edge: EndPiece) -> RepeatOverride | None:
+    """The end piece (repeat override) on ``edge`` or corner, or None if it has none."""
     return cast(RepeatOverride | None, getattr(document, f"{edge}_repeat_override"))
 
 
-def ensure_end_piece(document: PatternDocument, edge: Edge) -> RepeatOverride:
-    """The end piece on ``edge``, created empty if needed."""
+def ensure_end_piece(document: PatternDocument, edge: EndPiece) -> RepeatOverride:
+    """The end piece on ``edge`` or corner, created empty if needed."""
     override = get_end_piece(document, edge)
     if override is None:
         override = RepeatOverride()
@@ -281,52 +337,51 @@ def ensure_end_piece(document: PatternDocument, edge: Edge) -> RepeatOverride:
     return override
 
 
-def editor_bounds(document: PatternDocument, target: Target) -> tuple[int, int, int, int]:
+def editor_bounds(document: PatternDocument, target: EditTarget) -> tuple[int, int, int, int]:
     """Cell range ``(min_x, max_x, min_y, max_y)`` (inclusive) shown when editing ``target``.
 
-    An end piece covers the unit plus its extension on its own side.
+    An edge end piece covers the unit plus its extension on its own side. A
+    corner covers the unit plus the extensions of both its edges and the
+    square where they cross.
     """
     if target == "unit":
         return 0, document.unit_width - 1, 0, document.unit_height - 1
-    override = get_end_piece(document, target)
-    extension = override.extension if override else 0
-    return _end_piece_bounds(document.unit_width, document.unit_height, target, extension)
+    if target in CORNER_EDGES:
+        return document.corner_bounds(target)
+    return edge_cell_bounds(
+        document.unit_width, document.unit_height, target, document.extension_of(target)
+    )
 
 
-def _end_piece_bounds(
-    width: int, height: int, edge: Edge, extension: int
-) -> tuple[int, int, int, int]:
-    minimum_x = -extension if edge == "left" else 0
-    maximum_x = width + extension - 1 if edge == "right" else width - 1
-    minimum_y = -extension if edge == "top" else 0
-    maximum_y = height + extension - 1 if edge == "bottom" else height - 1
-    return minimum_x, maximum_x, minimum_y, maximum_y
-
-
-def _intersection_in(document: PatternDocument, target: Target, point: tuple[int, int]) -> bool:
+def _intersection_in(
+    document: PatternDocument, target: EditTarget, point: tuple[int, int]
+) -> bool:
     minimum_x, maximum_x, minimum_y, maximum_y = editor_bounds(document, target)
     return minimum_x <= point[0] <= maximum_x + 1 and minimum_y <= point[1] <= maximum_y + 1
 
 
-def intersection_in_editor(document: PatternDocument, target: Target, x: int, y: int) -> bool:
+def intersection_in_editor(
+    document: PatternDocument, target: EditTarget, x: int, y: int
+) -> bool:
     """True when intersection (x, y) can be a backstitch end point when editing ``target``."""
     return _intersection_in(document, target, (x, y))
 
 
 def paint_end_piece_cell(
-    document: PatternDocument, edge: Edge, x: int, y: int, colour_slot: int
+    document: PatternDocument, edge: EndPiece, x: int, y: int, colour_slot: int
 ) -> bool:
-    """Paint a cell of the end piece on ``edge``.
+    """Paint a cell of the end piece ``edge`` (an edge or a corner).
 
-    Painting a unit cell in its own colour clears any change the end piece
-    made there; any other colour is stored as an added mark. Returns False
-    when the cell is outside the end piece or already shows that colour.
+    Painting a base cell (see ``base_marks``) in its own colour clears any
+    change the end piece made there; any other colour is stored as an added
+    mark. Returns False when the cell is outside the end piece or already
+    shows that colour.
     """
     minimum_x, maximum_x, minimum_y, maximum_y = editor_bounds(document, edge)
     if not (minimum_x <= x <= maximum_x and minimum_y <= y <= maximum_y):
         return False
-    expanded = expand_marks(document.motif, document.unit_width, document.unit_height, document.symmetry)
-    base_colour = next((mark.colour_slot for mark in expanded if mark.x == x and mark.y == y), None)
+    base = base_marks(document, edge).get((x, y))
+    base_colour = base.colour_slot if base is not None else None
     override = get_end_piece(document, edge)
     existing = (
         next((mark for mark in override.added_marks if mark.x == x and mark.y == y), None)
@@ -350,17 +405,17 @@ def paint_end_piece_cell(
     return True
 
 
-def erase_end_piece_cell(document: PatternDocument, edge: Edge, x: int, y: int) -> bool:
-    """Erase a cell of the end piece on ``edge``.
+def erase_end_piece_cell(document: PatternDocument, edge: EndPiece, x: int, y: int) -> bool:
+    """Erase a cell of the end piece ``edge`` (an edge or a corner).
 
-    A unit cell is hidden in the end piece; an added mark is removed. Returns
-    False when the cell is outside the end piece or already empty.
+    A base cell (see ``base_marks``) is hidden in the end piece; an added mark
+    is removed. Returns False when the cell is outside the end piece or
+    already empty.
     """
     minimum_x, maximum_x, minimum_y, maximum_y = editor_bounds(document, edge)
     if not (minimum_x <= x <= maximum_x and minimum_y <= y <= maximum_y):
         return False
-    expanded = expand_marks(document.motif, document.unit_width, document.unit_height, document.symmetry)
-    has_base = any(mark.x == x and mark.y == y for mark in expanded)
+    has_base = (x, y) in base_marks(document, edge)
     override = get_end_piece(document, edge)
     has_added = bool(override and any(mark.x == x and mark.y == y for mark in override.added_marks))
     is_removed = bool(override and Cell(x, y) in override.removed_cells)
@@ -368,7 +423,7 @@ def erase_end_piece_cell(document: PatternDocument, edge: Edge, x: int, y: int) 
         return False
 
     override = ensure_end_piece(document, edge)
-    if _in_unit(document, x, y) and has_base:
+    if has_base:
         override.hide_cell(x, y)
     else:
         override.remove_added_mark(x, y)
@@ -377,28 +432,21 @@ def erase_end_piece_cell(document: PatternDocument, edge: Edge, x: int, y: int) 
 
 def add_end_piece_backstitch(
     document: PatternDocument,
-    edge: Edge,
+    edge: EndPiece,
     start: tuple[int, int],
     end: tuple[int, int],
     colour_slot: int,
 ) -> bool:
-    """Add a backstitch to the end piece on ``edge``.
+    """Add a backstitch to the end piece ``edge`` (an edge or a corner).
 
-    Drawing over a unit backstitch in its own colour clears any change the
-    end piece made to it. Returns False when nothing changes.
+    Drawing over a base backstitch (see ``base_backstitches``) in its own
+    colour clears any change the end piece made to it. Returns False when
+    nothing changes.
     """
     if start == end or not all(_intersection_in(document, edge, point) for point in (start, end)):
         return False
     candidate = Backstitch(start[0], start[1], end[0], end[1], colour_slot)
-    expanded = {
-        item.key: item
-        for item in expand_backstitches(
-            document.backstitches,
-            document.unit_width,
-            document.unit_height,
-            document.symmetry,
-        )
-    }
+    expanded = base_backstitches(document, edge)
     override = get_end_piece(document, edge)
     base = expanded.get(candidate.key)
     existing = (
@@ -429,7 +477,9 @@ def set_end_piece_extension(document: PatternDocument, edge: Edge, extension: in
     """Set how many rows/columns the end piece on ``edge`` adds beyond the unit.
 
     Negative values are raised to 0. Added marks and backstitches that fall
-    outside the new extension are removed. Returns False when nothing changes.
+    outside the new extension are removed, from this end piece and from the
+    two corners next to it (where hidden cells and backstitches outside the
+    corner are removed too). Returns False when nothing changes.
     """
     extension = max(0, extension)
     override = get_end_piece(document, edge)
@@ -446,7 +496,7 @@ def set_end_piece_extension(document: PatternDocument, edge: Edge, extension: in
         override.added_marks = [mark for mark in override.added_marks if mark.x >= -extension]
     else:
         override.added_marks = [mark for mark in override.added_marks if mark.x < width + extension]
-    minimum_x, maximum_x, minimum_y, maximum_y = _end_piece_bounds(width, height, edge, extension)
+    minimum_x, maximum_x, minimum_y, maximum_y = edge_cell_bounds(width, height, edge, extension)
     override.added_backstitches = [
         backstitch
         for backstitch in override.added_backstitches
@@ -458,14 +508,52 @@ def set_end_piece_extension(document: PatternDocument, edge: Edge, extension: in
             )
         )
     ]
+    _trim_corners(document, edge)
     return True
 
 
-def reset_end_piece(document: PatternDocument, edge: Edge) -> bool:
-    """Remove the end piece on ``edge``. Returns False when there was none."""
+def _trim_corners(document: PatternDocument, edge: str) -> None:
+    """Drop content of the corners next to ``edge`` that its new extension leaves outside."""
+    for corner in CORNERS:
+        override = get_end_piece(document, corner)
+        if edge in CORNER_EDGES[corner] and override is not None:
+            _trim_to_bounds(override, document.corner_bounds(corner))
+
+
+def _trim_to_bounds(override: RepeatOverride, bounds: tuple[int, int, int, int]) -> None:
+    """Drop cells and backstitches of ``override`` outside the cell range ``bounds``."""
+    minimum_x, maximum_x, minimum_y, maximum_y = bounds
+
+    def cell_inside(item: Cell | Mark) -> bool:
+        return minimum_x <= item.x <= maximum_x and minimum_y <= item.y <= maximum_y
+
+    def stitch_inside(item: Backstitch | BackstitchKey) -> bool:
+        return all(
+            minimum_x <= x <= maximum_x + 1 and minimum_y <= y <= maximum_y + 1
+            for x, y in ((item.start_x, item.start_y), (item.end_x, item.end_y))
+        )
+
+    override.removed_cells = [item for item in override.removed_cells if cell_inside(item)]
+    override.added_marks = [item for item in override.added_marks if cell_inside(item)]
+    override.removed_backstitches = [
+        item for item in override.removed_backstitches if stitch_inside(item)
+    ]
+    override.added_backstitches = [
+        item for item in override.added_backstitches if stitch_inside(item)
+    ]
+
+
+def reset_end_piece(document: PatternDocument, edge: EndPiece) -> bool:
+    """Remove the end piece ``edge`` (an edge or a corner). Returns False when there was none.
+
+    Removing an edge end piece also removes its extension, so corner content
+    in that extension is dropped as in ``set_end_piece_extension``.
+    """
     if get_end_piece(document, edge) is None:
         return False
     setattr(document, f"{edge}_repeat_override", None)
+    if edge in EDGES:
+        _trim_corners(document, edge)
     return True
 
 
@@ -616,8 +704,8 @@ def _move_for_grid_change(
     document.backstitches = [
         moved for backstitch in document.backstitches if (moved := move_backstitch(backstitch))
     ]
-    for edge in EDGES:
-        override = get_end_piece(document, edge)
+    for piece in END_PIECES:
+        override = get_end_piece(document, piece)
         if override is None:
             continue
         override.removed_cells = [
@@ -692,7 +780,8 @@ def resize_unit(document: PatternDocument, width: int, height: int) -> list[str]
     """Resize the unit from its top-left corner, dropping what falls outside.
 
     Sizes below 1 are raised to 1. Added marks and backstitches in the
-    extension of the bottom and right end pieces move with the unit's edge.
+    extension of the bottom and right end pieces move with the unit's edge;
+    so does everything in a corner beyond the unit's right or bottom edge.
     """
     old_width, old_height = document.unit_width, document.unit_height
     new_width, new_height = max(1, width), max(1, height)
@@ -741,7 +830,7 @@ def _resize_end_pieces(
                 y += new_height - old_height
             return x, y
 
-        cell_bounds = _end_piece_bounds(new_width, new_height, edge, override.extension)
+        cell_bounds = edge_cell_bounds(new_width, new_height, edge, override.extension)
         minimum_x, maximum_x, minimum_y, maximum_y = cell_bounds
         intersection_bounds = (minimum_x, maximum_x + 1, minimum_y, maximum_y + 1)
         adjusted: list[Mark] = []
@@ -756,6 +845,55 @@ def _resize_end_pieces(
             if inside(points, intersection_bounds) and points[0] != points[1]:
                 adjusted_backstitches.append(Backstitch(*points[0], *points[1], backstitch.colour_slot))
         override.added_backstitches = adjusted_backstitches
+
+    for corner in CORNERS:
+        corner_override = get_end_piece(document, corner)
+        if corner_override is None:
+            continue
+        row_edge, column_edge = CORNER_EDGES[corner]
+
+        def move_corner(
+            x: int, y: int, row_edge: str = row_edge, column_edge: str = column_edge
+        ) -> tuple[int, int]:
+            if column_edge == "right" and x >= old_width:
+                x += new_width - old_width
+            if row_edge == "bottom" and y >= old_height:
+                y += new_height - old_height
+            return x, y
+
+        corner_cells = corner_cell_bounds(
+            new_width,
+            new_height,
+            corner,
+            document.extension_of(row_edge),
+            document.extension_of(column_edge),
+        )
+        minimum_x, maximum_x, minimum_y, maximum_y = corner_cells
+        corner_intersections = (minimum_x, maximum_x + 1, minimum_y, maximum_y + 1)
+        kept_cells: list[Cell] = []
+        for cell in corner_override.removed_cells:
+            point = move_corner(cell.x, cell.y)
+            if inside([point], corner_cells):
+                kept_cells.append(Cell(*point))
+        corner_override.removed_cells = kept_cells
+        kept_marks: list[Mark] = []
+        for mark in corner_override.added_marks:
+            point = move_corner(mark.x, mark.y)
+            if inside([point], corner_cells):
+                kept_marks.append(Mark(*point, mark.colour_slot))
+        corner_override.added_marks = kept_marks
+        kept_keys: list[BackstitchKey] = []
+        for key in corner_override.removed_backstitches:
+            points = [move_corner(x, y) for x, y in endpoints(key)]
+            if inside(points, corner_intersections) and points[0] != points[1]:
+                kept_keys.append(BackstitchKey.between(*points[0], *points[1]))
+        corner_override.removed_backstitches = kept_keys
+        kept_stitches: list[Backstitch] = []
+        for backstitch in corner_override.added_backstitches:
+            points = [move_corner(x, y) for x, y in endpoints(backstitch)]
+            if inside(points, corner_intersections) and points[0] != points[1]:
+                kept_stitches.append(Backstitch(*points[0], *points[1], backstitch.colour_slot))
+        corner_override.added_backstitches = kept_stitches
 
 
 def set_repeats(document: PatternDocument, repeats_x: int, repeats_y: int) -> None:

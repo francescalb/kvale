@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 
 from kvale.core import editing
-from kvale.core.editing import Axis, Edge, Target
+from kvale.core.editing import Axis, Edge, EditTarget, EndPiece
 from kvale.core.model import PatternDocument
 
 
@@ -127,8 +127,8 @@ class Editor:
 
     # Marks -------------------------------------------------------------
 
-    def paint(self, x: int, y: int, colour_slot: int, target: Target = "unit") -> EditResult:
-        """Paint a cell of the unit or of an end piece.
+    def paint(self, x: int, y: int, colour_slot: int, target: EditTarget = "unit") -> EditResult:
+        """Paint a cell of the unit or of an end piece (edge or corner).
 
         In the unit, painting a generated copy recolours its source mark. See
         ``editing.paint_cell`` and ``editing.paint_end_piece_cell``.
@@ -142,7 +142,7 @@ class Editor:
 
         return self._apply(edit)
 
-    def erase(self, x: int, y: int, target: Target = "unit") -> EditResult:
+    def erase(self, x: int, y: int, target: EditTarget = "unit") -> EditResult:
         """Erase a cell of the unit (with all its copies) or hide/remove one in an end piece."""
 
         def edit(document: PatternDocument) -> None:
@@ -160,7 +160,7 @@ class Editor:
         start: tuple[int, int],
         end: tuple[int, int],
         colour_slot: int,
-        target: Target = "unit",
+        target: EditTarget = "unit",
     ) -> EditResult:
         """Add a backstitch between two grid intersections of the unit or an end piece."""
 
@@ -172,7 +172,7 @@ class Editor:
 
         return self._apply(edit)
 
-    def erase_backstitch_near(self, x: float, y: float, target: Target = "unit") -> EditResult:
+    def erase_backstitch_near(self, x: float, y: float, target: EditTarget = "unit") -> EditResult:
         """Erase the backstitch nearest to grid point (x, y); see ``editing.erase_backstitch_near``."""
 
         def edit(document: PatternDocument) -> None:
@@ -190,8 +190,8 @@ class Editor:
 
         return self._apply(edit)
 
-    def reset_end_piece(self, edge: Edge) -> EditResult:
-        """Remove every change an end piece makes."""
+    def reset_end_piece(self, edge: EndPiece) -> EditResult:
+        """Remove every change an end piece (edge or corner) makes."""
 
         def edit(document: PatternDocument) -> None:
             editing.reset_end_piece(document, edge)

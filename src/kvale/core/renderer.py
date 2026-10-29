@@ -43,6 +43,35 @@ def _included_row_indices(document: PatternDocument, unit_y: int) -> list[int]:
     ]
 
 
+def unit_overrides(
+    document: PatternDocument, unit_x: int, unit_y: int, *, corners: bool = True
+) -> list[RepeatOverride]:
+    """The end pieces that apply to repeat unit (unit_x, unit_y), in the order they apply.
+
+    Edge end pieces come first (top, bottom, left, right), then the corner
+    end pieces (top_left, top_right, bottom_left, bottom_right). With
+    ``corners=False`` only the edge end pieces are returned.
+    """
+    first_row = unit_y == 0
+    last_row = unit_y == document.repeats_y - 1
+    first_column = unit_x == 0
+    last_column = unit_x == document.repeats_x - 1
+    candidates: list[tuple[bool, RepeatOverride | None]] = [
+        (first_row, document.top_repeat_override),
+        (last_row, document.bottom_repeat_override),
+        (first_column, document.left_repeat_override),
+        (last_column, document.right_repeat_override),
+    ]
+    if corners:
+        candidates += [
+            (first_row and first_column, document.top_left_repeat_override),
+            (first_row and last_column, document.top_right_repeat_override),
+            (last_row and first_column, document.bottom_left_repeat_override),
+            (last_row and last_column, document.bottom_right_repeat_override),
+        ]
+    return [override for applies, override in candidates if applies and override is not None]
+
+
 def build_colour_grid(document: PatternDocument) -> list[list[str]]:
     document.validate()
     unit_columns = [_included_column_indices(document, unit_x) for unit_x in range(document.repeats_x)]
@@ -81,10 +110,8 @@ def build_colour_grid(document: PatternDocument) -> list[list[str]]:
 
     def apply_override(
         marks: dict[tuple[int, int], Mark],
-        override: RepeatOverride | None,
+        override: RepeatOverride,
     ) -> None:
-        if override is None:
-            return
         for cell in override.removed_cells:
             marks.pop((cell.x, cell.y), None)
         for mark in override.added_marks:
@@ -105,15 +132,11 @@ def build_colour_grid(document: PatternDocument) -> list[list[str]]:
             }
             repeat_index = unit_y * document.repeats_x + unit_x
             unit_marks = {(mark.x, mark.y): mark for mark in expanded}
-            if unit_y == 0:
-                apply_override(unit_marks, document.top_repeat_override)
-            if unit_y == document.repeats_y - 1:
-                apply_override(unit_marks, document.bottom_repeat_override)
-            if unit_x == 0:
-                apply_override(unit_marks, document.left_repeat_override)
-            if unit_x == document.repeats_x - 1:
-                apply_override(unit_marks, document.right_repeat_override)
+            for override in unit_overrides(document, unit_x, unit_y):
+                apply_override(unit_marks, override)
 
+            # x and y are mapped separately, so a corner mark beyond the unit
+            # on both axes lands in the square where the two extensions cross.
             for mark in unit_marks.values():
                 if mark.x in column_map:
                     cell_x = column_map[mark.x]
@@ -174,10 +197,8 @@ def build_backstitch_segments(document: PatternDocument) -> list[RenderedBacksti
 
     def apply_override(
         stitches: dict[BackstitchKey, Backstitch],
-        override: RepeatOverride | None,
+        override: RepeatOverride,
     ) -> None:
-        if override is None:
-            return
         for key in override.removed_backstitches:
             stitches.pop(key, None)
         for backstitch in override.added_backstitches:
@@ -186,14 +207,8 @@ def build_backstitch_segments(document: PatternDocument) -> list[RenderedBacksti
     for unit_y, rows in enumerate(unit_rows):
         for unit_x, columns in enumerate(unit_columns):
             stitches = {backstitch.key: backstitch for backstitch in expanded}
-            if unit_y == 0:
-                apply_override(stitches, document.top_repeat_override)
-            if unit_y == document.repeats_y - 1:
-                apply_override(stitches, document.bottom_repeat_override)
-            if unit_x == 0:
-                apply_override(stitches, document.left_repeat_override)
-            if unit_x == document.repeats_x - 1:
-                apply_override(stitches, document.right_repeat_override)
+            for override in unit_overrides(document, unit_x, unit_y):
+                apply_override(stitches, override)
 
             def map_x(local_x: int, unit_x: int = unit_x, columns: list[int] = columns) -> int | None:
                 if 0 <= local_x <= document.unit_width:
