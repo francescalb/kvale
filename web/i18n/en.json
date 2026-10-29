@@ -254,5 +254,14 @@
   "file.error.notPattern": "This file is not a Kvale pattern.",
   "file.error.tooNew": "This pattern was made with a newer version of Kvale. Reload the page and try again.",
   "file.error.fetch": "Could not find the pattern in the link.",
-  "file.error.export": "Could not make the image. Please try again."
+  "file.error.export": "Could not make the image. Please try again.",
+  "help.open": "Help",
+  "help.open.hint": "Read how to use Kvale",
+  "help.title": "How to use Kvale",
+  "help.newTab": "Open in its own tab",
+  "help.close": "Close",
+  "pwa.install": "Install app",
+  "pwa.install.hint": "Add Kvale to your device so it also works offline.",
+  "pwa.update": "A new version of Kvale is ready.",
+  "pwa.reload": "Reload"
 }

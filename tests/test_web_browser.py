@@ -1064,3 +1064,159 @@ def test_data_link_and_missing_example(file_page: Any, site_url: str) -> None:
     assert page.text_content("#toast-message") == "Fant ikke mønsteret i lenken."
     # The failed fetch is the one console error expected.
     assert all("404" in error or "no-such-example" in error for error in app.errors)
+
+
+# Installable and offline (chunk 7): manifest, service worker, guide ---------
+
+
+def _serve(root: Path) -> tuple[http.server.ThreadingHTTPServer, str]:
+    handler = functools.partial(_QuietHandler, directory=str(root))
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server, f"http://127.0.0.1:{server.server_address[1]}/kvale/"
+
+
+@pytest.fixture
+def own_context(browser: Any) -> Iterator[Any]:
+    """A context of its own: its own service worker and caches, and it can go offline."""
+    ctx = browser.new_context(viewport={"width": 1200, "height": 820}, locale="nb-NO")
+    yield ctx
+    ctx.close()
+
+
+WORKER_VERSION = """() => new Promise((resolve) => {
+    const channel = new MessageChannel();
+    channel.port1.onmessage = (event) => resolve(event.data.version);
+    navigator.serviceWorker.controller.postMessage({type: 'version'}, [channel.port2]);
+})"""
+
+
+def wait_offline_ready(page: Any) -> None:
+    """The service worker controls the page and has cached the CDN files."""
+    page.wait_for_function("window.kvaleOffline === 'ready'", timeout=BOOT_TIMEOUT_MS)
+    page.wait_for_function("navigator.serviceWorker.controller !== null")
+
+
+def test_manifest_is_linked_and_valid(app: App, site_url: str) -> None:
+    page = app.page
+    manifest = page.evaluate(
+        """async () => {
+            const link = document.querySelector('link[rel=manifest]');
+            const manifest = await (await fetch(link.href)).json();
+            manifest.start = new URL(manifest.start_url, link.href).href;
+            manifest.scopeUrl = new URL(manifest.scope, link.href).href;
+            manifest.iconStatus = await Promise.all(manifest.icons.map(
+                async (icon) => (await fetch(new URL(icon.src, link.href))).status));
+            return manifest;
+        }"""
+    )
+    assert manifest["name"] == "Kvale"
+    assert manifest["start"] == manifest["scopeUrl"] == site_url
+    assert set(manifest["iconStatus"]) == {200}
+    assert any(icon["purpose"] == "maskable" for icon in manifest["icons"])
+    assert page.get_attribute("link[rel=icon]", "href") == "icons/icon.svg"
+    assert page.get_attribute("link[rel=apple-touch-icon]", "href") == "icons/apple-touch-icon.png"
+    # The install button waits for the browser to offer installing.
+    assert page.is_hidden("#install-app")
+
+
+def test_service_worker_registers_and_the_app_works_offline(
+    own_context: Any, site_url: str
+) -> None:
+    page = own_context.new_page()
+    page.on("dialog", lambda dialog: dialog.accept())
+    app = App(page, site_url).load()
+    wait_offline_ready(page)
+    scope = page.evaluate("navigator.serviceWorker.ready.then((r) => r.scope)")
+    assert scope == site_url
+
+    own_context.set_offline(True)
+    try:
+        page.reload()
+        page.wait_for_function("window.kvaleReady === true", timeout=BOOT_TIMEOUT_MS)
+        assert page.is_hidden("#boot")
+        assert page.text_content("#mode-edit") == "Tegn"
+        app.click_cell(0, 0)
+        assert close(app.colour(0, 0), RED)
+        # Pillow was fetched ahead of time, so the image can be saved offline.
+        with page.expect_download(timeout=BOOT_TIMEOUT_MS) as info:
+            page.click("#file-export")
+        assert Path(info.value.path()).read_bytes().startswith(b"\x89PNG")
+        # The guide and its pictures are cached too.
+        page.click("#help-open")
+        frame = page.frame_locator("#help-frame")
+        expect(frame.locator("h1")).to_have_text("Slik bruker du Kvale")
+        page.wait_for_function(
+            """() => [...document.getElementById('help-frame').contentDocument.images]
+                .every((img) => img.complete && img.naturalWidth > 0)"""
+        )
+    finally:
+        own_context.set_offline(False)
+    assert app.errors == []
+
+
+def test_guide_opens_in_the_current_language(app: App) -> None:
+    page = app.page
+    for code, title in [
+        ("nb", "Slik bruker du Kvale"),
+        ("en", "How to use Kvale"),
+        ("it", "Come si usa Kvale"),
+    ]:
+        page.click(f"#lang-seg [data-lang={code}]")
+        page.wait_for_function(f"document.documentElement.lang === '{code}'")
+        page.click("#help-open")
+        expect(page.locator("#help-dialog")).to_be_visible()
+        assert page.get_attribute("#help-frame", "src") == f"guide/{code}.html"
+        assert page.get_attribute("#help-newtab", "href") == f"guide/{code}.html"
+        expect(page.locator("#help-title")).to_have_text(title)
+        frame = page.frame_locator("#help-frame")
+        expect(frame.locator("h1")).to_have_text(title)
+        expect(frame.locator("html")).to_have_attribute("lang", code)
+        page.click("#help-close")
+        expect(page.locator("#help-dialog")).to_be_hidden()
+
+
+def test_new_version_shows_a_toast_and_reloads(
+    own_context: Any, tmp_path_factory: pytest.TempPathFactory
+) -> None:
+    import importlib.util
+    import re
+
+    spec = importlib.util.spec_from_file_location("build_site", ROOT / "tools" / "build_site.py")
+    assert spec and spec.loader
+    build_site = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(build_site)
+    root = tmp_path_factory.mktemp("update")
+    out = build_site.build(root / "kvale")
+    server, url = _serve(root)
+    try:
+        page = own_context.new_page()
+        page.on("dialog", lambda dialog: dialog.accept())
+        app = App(page, url).load()
+        wait_offline_ready(page)
+        old_version = page.evaluate(WORKER_VERSION)
+        assert page.is_hidden("#update-toast")
+
+        # Deploy a new version, then let the page look for it.
+        worker = out / "sw.js"
+        text = worker.read_text("utf-8")
+        text = re.sub(r'const VERSION = "[^"]*"', 'const VERSION = "next"', text)
+        worker.write_text(text, encoding="utf-8")
+        page.evaluate("window.kvaleServiceWorker.update()")
+        expect(page.locator("#update-toast")).to_be_visible(timeout=30_000)
+        expect(page.locator("#update-toast span")).to_have_text("En ny versjon av Kvale er klar.")
+        expect(page.locator("#update-reload")).to_have_text("Last inn på nytt")
+        assert page.evaluate(WORKER_VERSION) == old_version  # nothing changes until asked
+
+        with page.expect_navigation():
+            page.click("#update-reload")
+        page.wait_for_function("window.kvaleReady === true", timeout=BOOT_TIMEOUT_MS)
+        assert page.evaluate(WORKER_VERSION) == "next"
+        assert page.is_hidden("#update-toast")
+        cache_names = page.evaluate("caches.keys()")
+        assert "kvale-site-next" in cache_names
+        assert f"kvale-site-{old_version}" not in cache_names
+        assert app.errors == []
+    finally:
+        server.shutdown()
+        server.server_close()

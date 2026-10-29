@@ -254,5 +254,14 @@
   "file.error.notPattern": "Denne filen er ikke et Kvale-mønster.",
   "file.error.tooNew": "Mønsteret er laget med en nyere versjon av Kvale. Last inn siden på nytt og prøv igjen.",
   "file.error.fetch": "Fant ikke mønsteret i lenken.",
-  "file.error.export": "Klarte ikke å lage bildet. Prøv igjen."
+  "file.error.export": "Klarte ikke å lage bildet. Prøv igjen.",
+  "help.open": "Hjelp",
+  "help.open.hint": "Les hvordan du bruker Kvale",
+  "help.title": "Slik bruker du Kvale",
+  "help.newTab": "Åpne i egen fane",
+  "help.close": "Lukk",
+  "pwa.install": "Installer appen",
+  "pwa.install.hint": "Legg Kvale på enheten din, så virker den også uten nett.",
+  "pwa.update": "En ny versjon av Kvale er klar.",
+  "pwa.reload": "Last inn på nytt"
 }

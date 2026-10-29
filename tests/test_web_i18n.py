@@ -32,6 +32,16 @@ APP_ONLY_KEYS = {
     "file.error.tooNew",
     "file.error.fetch",
     "file.error.export",
+    # Install, offline and the guide (chunk 7)
+    "help.open",
+    "help.open.hint",
+    "help.title",
+    "help.newTab",
+    "help.close",
+    "pwa.install",
+    "pwa.install.hint",
+    "pwa.update",
+    "pwa.reload",
 }
 
 

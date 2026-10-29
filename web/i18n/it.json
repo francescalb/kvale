@@ -254,5 +254,14 @@
   "file.error.notPattern": "Questo file non è uno schema di Kvale.",
   "file.error.tooNew": "Questo schema è stato fatto con una versione più recente di Kvale. Ricarica la pagina e riprova.",
   "file.error.fetch": "Non trovo lo schema nel link.",
-  "file.error.export": "Non sono riuscito a creare l’immagine. Riprova."
+  "file.error.export": "Non sono riuscito a creare l’immagine. Riprova.",
+  "help.open": "Aiuto",
+  "help.open.hint": "Leggi come si usa Kvale",
+  "help.title": "Come si usa Kvale",
+  "help.newTab": "Apri in una scheda a parte",
+  "help.close": "Chiudi",
+  "pwa.install": "Installa l’app",
+  "pwa.install.hint": "Aggiungi Kvale al tuo dispositivo: funziona anche senza rete.",
+  "pwa.update": "È pronta una nuova versione di Kvale.",
+  "pwa.reload": "Ricarica"
 }
