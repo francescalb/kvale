@@ -21,6 +21,8 @@ CLI, SVG exporter or embroidery-format plugin.
 - End pieces (`Endestykker`): the top, bottom, left and right repeats can each
   hide cells and backstitches of the unit, add their own, and extend beyond the
   unit with extra rows or columns
+- Corner end pieces (core only so far): each of the four corner units can be
+  changed on its own, including the square where two extensions cross
 - Dialog for adding or removing a row or column (`Rutenett` menu); the active
   symmetry adds or removes the matching rows/columns too
 - Per-slot palette sequences edited from the colour dialog
@@ -62,10 +64,13 @@ A UI holds one `Editor`, calls its methods for every change and draws
 `editor.document`:
 
 - cells: `paint(x, y, slot, target)`, `erase(x, y, target)`, where `target` is
-  `"unit"` or one of the end pieces `"top"`, `"bottom"`, `"left"`, `"right"`;
+  `"unit"`, one of the edge end pieces `"top"`, `"bottom"`, `"left"`, `"right"`
+  or one of the corners `"top_left"`, `"top_right"`, `"bottom_left"`,
+  `"bottom_right"`;
 - backstitches: `add_backstitch(start, end, slot, target)`,
   `erase_backstitch_near(x, y, target)`;
-- end pieces: `set_end_piece_extension(edge, n)`, `reset_end_piece(edge)`;
+- end pieces: `set_end_piece_extension(edge, n)` (edges only),
+  `reset_end_piece(edge_or_corner)`;
 - grid: `change_grid_line(axis, index, insertion=...)` (and `insert_column`,
   `remove_row`, ...), `set_grid(...)`, `set_symmetry(...)`;
 - colours: `add_colour`, `set_colour_sequence`, `set_use_palette_sequence`,
@@ -134,8 +139,9 @@ The legend rectangle for each `#n` slot is subdivided to visualize its current s
 
 ## JSON format
 
-Files are written with `"format_version": 4`. Older files without
-`format_version`, backstitches or end pieces still open.
+Files are written with `"format_version": 4`, or 5 when they have a corner
+end piece. Versions up to 5 open, including older files without
+`format_version`, backstitches or end pieces.
 
 Pattern files use `palette_sequences` as canonical colour storage.
 
@@ -159,6 +165,13 @@ Pattern files use `palette_sequences` as canonical colour storage.
   `removed_cells`, `added_marks`, `removed_backstitches`, `added_backstitches`
   and `extension`. Added marks and backstitches may lie in the extension:
   negative coordinates for top/left, at or beyond the unit size for bottom/right.
+- `top_left_repeat_override`, `top_right_repeat_override`,
+  `bottom_left_repeat_override` and `bottom_right_repeat_override` are the
+  corner end pieces, written only when set (format_version 5). They have the
+  same fields, but `extension` is always 0: a corner covers the unit, the
+  extensions of its two edges and the square where they cross, and is applied
+  to the corner unit after the edge end pieces. When an edge's extension
+  shrinks (or the edge is reset), corner content outside the new area is dropped.
 
 ## Tests
 
