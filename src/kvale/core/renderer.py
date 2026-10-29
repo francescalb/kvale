@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import io
+from collections.abc import Sequence
 from dataclasses import dataclass
+from importlib import resources
 from typing import TYPE_CHECKING
 
 from kvale.core.model import Backstitch, BackstitchKey, Mark, PatternDocument, RepeatOverride
@@ -9,7 +12,24 @@ from kvale.core.symmetry import expand_backstitches, expand_marks
 if TYPE_CHECKING:
     # Pillow is imported inside render_image so that importing kvale.core
     # does not need it (for example in a browser).
-    from PIL import Image
+    from PIL import Image, ImageDraw, ImageFont
+
+# The thread key under the band in ``render_image_with_key``, in pixels.
+KEY_PADDING = 16
+KEY_CHIP = 18
+KEY_CHIP_GAP = 8  # between a chip and its text
+KEY_COLUMN_GAP = 28
+KEY_ROW_GAP = 8
+KEY_FONT_SIZE = 14
+KEY_TITLE_SIZE = 16
+KEY_TEXT_COLOUR = "#1b1712"
+KEY_CHIP_BORDER = "#8c8279"
+KEY_BACKGROUND = "#ffffff"
+# The app's interface font (SIL Open Font License, see fonts/OFL.txt): Pillow's
+# own font has no æ, ø, å or accented letters.
+KEY_FONT = "fonts/AtkinsonHyperlegible-Regular.ttf"
+# Characters the plain bitmap font lacks, used when no scalable font is available.
+_PLAIN_TEXT = str.maketrans({"–": "-", "—": "-", "…": "...", "“": '"', "”": '"', "’": "'"})
 
 
 @dataclass(frozen=True)
@@ -296,3 +316,144 @@ def render_image(
         )
 
     return image
+
+
+@dataclass(frozen=True)
+class KeyLayout:
+    """Where the thread key goes under a band image (all in pixels).
+
+    ``rows`` are placed row by row in ``columns`` columns; ``positions`` holds
+    the top-left corner of each row's colour chip, in the order of the rows.
+    """
+
+    width: int
+    height: int
+    columns: int
+    title_top: int
+    positions: tuple[tuple[int, int], ...]
+    line_height: int
+
+
+def key_layout(
+    band_width: int,
+    band_height: int,
+    text_widths: Sequence[int],
+    *,
+    title_width: int = 0,
+    title_height: int = 0,
+    text_height: int = KEY_FONT_SIZE,
+) -> KeyLayout:
+    """Lay out a thread key with texts of ``text_widths`` under a band image.
+
+    The image keeps the band's width when the key fits in it, and is widened
+    to fit one column of the key (and the title) otherwise. Columns are as many
+    as fit in that width.
+    """
+    count = len(text_widths)
+    line_height = max(KEY_CHIP, text_height)
+    column_width = KEY_CHIP + KEY_CHIP_GAP + max(text_widths, default=0)
+    width = max(band_width, column_width + 2 * KEY_PADDING, title_width + 2 * KEY_PADDING)
+    room = width - 2 * KEY_PADDING + KEY_COLUMN_GAP
+    columns = max(1, min(count, room // (column_width + KEY_COLUMN_GAP)))
+    lines = -(-count // columns)  # rounded up
+    title_top = band_height + KEY_PADDING
+    first_row = title_top + (title_height + KEY_ROW_GAP if title_height else 0)
+    positions = tuple(
+        (
+            KEY_PADDING + (index % columns) * (column_width + KEY_COLUMN_GAP),
+            first_row + (index // columns) * (line_height + KEY_ROW_GAP),
+        )
+        for index in range(count)
+    )
+    height = first_row + lines * line_height + max(0, lines - 1) * KEY_ROW_GAP + KEY_PADDING
+    return KeyLayout(width, height, columns, title_top, positions, line_height)
+
+
+def _key_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    """The key's font at ``size`` pixels, or Pillow's own font if it cannot be read."""
+    from PIL import ImageFont
+
+    try:
+        data = resources.files("kvale.core").joinpath(KEY_FONT).read_bytes()
+        return ImageFont.truetype(io.BytesIO(data), size)
+    except (ImportError, OSError):  # no FreeType, or the font file is missing
+        pass
+    try:
+        return ImageFont.load_default(size=size)
+    except (ImportError, OSError, TypeError):  # an old Pillow
+        return ImageFont.load_default()
+
+
+def _key_text(text: str, font: ImageFont.FreeTypeFont | ImageFont.ImageFont) -> str:
+    """``text`` as ``font`` can draw it: the bitmap font has Latin-1 characters only."""
+    from PIL import ImageFont
+
+    if isinstance(font, ImageFont.FreeTypeFont):
+        return text
+    return text.translate(_PLAIN_TEXT).encode("latin-1", "replace").decode("latin-1")
+
+
+def render_image_with_key(
+    document: PatternDocument,
+    rows: Sequence[tuple[str, str]],
+    *,
+    title: str = "",
+    cell_size: int = 16,
+    draw_grid: bool = True,
+) -> Image.Image:
+    """The band (``render_image``) with a key of the threads it uses underneath.
+
+    ``rows`` are ``(screen colour, text)`` pairs, such as
+    ``("#c72b3b", "DMC 321 – Red")`` or ``("#123456", "Own colour #123456")``;
+    the caller makes the text, in the language it wants. ``title`` is drawn
+    above the rows when given. Without rows this is just ``render_image``.
+    """
+    from PIL import Image, ImageDraw
+
+    band = render_image(document, cell_size=cell_size, draw_grid=draw_grid)
+    if not rows:
+        return band
+    font = _key_font(KEY_FONT_SIZE)
+    title_font = _key_font(KEY_TITLE_SIZE)
+    texts = [_key_text(text, font) for _colour, text in rows]
+    title = _key_text(title, title_font)
+    draw = ImageDraw.Draw(band)
+    widths = [round(draw.textlength(text, font=font)) for text in texts]
+    title_width = round(draw.textlength(title, font=title_font)) if title else 0
+    title_height = _text_height(draw, title, title_font) if title else 0
+    layout = key_layout(
+        band.width,
+        band.height,
+        widths,
+        title_width=title_width,
+        title_height=title_height,
+        text_height=_text_height(draw, "Ag", font),
+    )
+
+    sheet = Image.new("RGB", (layout.width, layout.height), KEY_BACKGROUND)
+    sheet.paste(band, (0, 0))
+    draw = ImageDraw.Draw(sheet)
+    if title:
+        draw.text((KEY_PADDING, layout.title_top), title, fill=KEY_TEXT_COLOUR, font=title_font)
+    # Centre every text on its chip by the same box, so the rows share a baseline
+    # (the bitmap font has no anchors).
+    _left, top, _right, bottom = draw.textbbox((0, 0), "Ag", font=font)
+    text_offset = (layout.line_height - (bottom - top)) / 2 - top
+    for (colour, _text), text, (x, y) in zip(rows, texts, layout.positions, strict=True):
+        chip_top = y + (layout.line_height - KEY_CHIP) // 2
+        draw.rectangle(
+            (x, chip_top, x + KEY_CHIP - 1, chip_top + KEY_CHIP - 1),
+            fill=colour,
+            outline=KEY_CHIP_BORDER,
+        )
+        draw.text(
+            (x + KEY_CHIP + KEY_CHIP_GAP, y + text_offset), text, fill=KEY_TEXT_COLOUR, font=font
+        )
+    return sheet
+
+
+def _text_height(
+    draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont | ImageFont.ImageFont
+) -> int:
+    _left, top, _right, bottom = draw.textbbox((0, 0), text, font=font)
+    return int(bottom - top)

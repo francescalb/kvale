@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 from PIL import Image
@@ -253,3 +254,14 @@ def test_render_png_includes_ends_corners_and_backstitch() -> None:
     for x, y in [(0, 0), (5, 3), (len(grid[0]) - 1, len(grid) - 1)]:
         expected = tuple(bytes.fromhex(grid[y][x].lstrip("#")))
         assert image.getpixel((x * 16 + 8, y * 16 + 8)) == expected
+
+
+def test_render_png_lists_the_threads_under_the_band() -> None:
+    document = load_document(EXAMPLE)
+    plain = Image.open(io.BytesIO(render_png(document)))
+    keyed = Image.open(io.BytesIO(render_png(document, [("#c72b3b", "DMC 321 – Red")], "Threads")))
+    assert keyed.width == plain.width
+    assert keyed.height > plain.height
+    band = keyed.convert("RGB").crop((0, plain.height, keyed.width, keyed.height))
+    colours: list[tuple[int, Any]] = band.getcolors(1 << 20) or []
+    assert (0xC7, 0x2B, 0x3B) in {colour for _count, colour in colours}

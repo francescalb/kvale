@@ -249,6 +249,7 @@
   "canvas.hint.minimal": "You only stitch in the outlined part – the rest is mirrored automatically.",
   "file.untitled": "New pattern",
   "file.unsaved": "Changes not saved to a file",
+  "file.saveAs.hint": "Ctrl+Shift+S: save a copy under a new name",
   "file.confirmDiscard": "Changes that are not saved to a file will be lost. Continue?",
   "file.export.preparing": "Preparing the image …",
   "file.error.notPattern": "This file is not a Kvale pattern.",
