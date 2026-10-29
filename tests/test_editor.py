@@ -132,18 +132,19 @@ def test_load_replaces_document_and_clears_history() -> None:
     assert not editor.can_undo
 
 
-def test_insert_column_reports_removed_symmetry_and_undo_restores_it() -> None:
+def test_insert_column_with_symmetry_and_undo() -> None:
     editor = _editor()
     editor.set_symmetry(["identity", "rotate_90"])
 
     result = editor.insert_column(1)
 
     assert result.changed
-    assert result.removed_symmetry == ("rotate_90",)
-    assert editor.document.symmetry == ["identity"]
-    editor.undo()
+    assert result.removed_symmetry == ()
+    # A quarter turn ties gap 1 to gap 3 and to the same rows.
+    assert (editor.document.unit_width, editor.document.unit_height) == (6, 6)
     assert editor.document.symmetry == ["identity", "rotate_90"]
-    assert editor.document.unit_width == 4
+    editor.undo()
+    assert (editor.document.unit_width, editor.document.unit_height) == (4, 4)
 
 
 def test_set_symmetry_on_non_square_unit() -> None:
@@ -197,3 +198,13 @@ def test_colour_settings() -> None:
     assert editor.document.background == "#000000"
     editor.undo()
     assert editor.document.background == "#ffffff"
+
+
+def test_set_grid_with_same_values_leaves_document_alone() -> None:
+    # Like the branch GUI's "Bruk" button: nothing changed, nothing touched.
+    editor = Editor(PatternDocument(symmetry=["mirror_x", "identity"]))
+
+    assert not editor.set_grid(unit_width=12, repeats_x=6).changed
+    assert editor.document.symmetry == ["mirror_x", "identity"]
+    assert editor.set_grid(repeats_x=3).changed
+    assert editor.document.symmetry == ["identity", "mirror_x"]

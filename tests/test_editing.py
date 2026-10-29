@@ -92,15 +92,18 @@ def test_remove_row_keeps_last_row() -> None:
     assert _positions(document) == {(1, 0, 0)}
 
 
-def test_column_change_removes_square_only_symmetry() -> None:
+def test_column_change_keeps_square_unit_with_quarter_turn_symmetry() -> None:
+    # The symmetry ties column 0 to the last column and, through the quarter
+    # turn, to the first and last rows, so all four are inserted.
     document = PatternDocument(
         unit_width=4, unit_height=4, symmetry=["identity", "mirror_x", "rotate_90", "diag_main"]
     )
 
     removed = insert_column(document, 0)
 
-    assert removed == ["rotate_90", "diag_main"]
-    assert document.symmetry == ["identity", "mirror_x"]
+    assert removed == []
+    assert (document.unit_width, document.unit_height) == (6, 6)
+    assert document.symmetry == ["identity", "mirror_x", "rotate_90", "diag_main"]
 
 
 def test_resize_unit_crops_marks_and_clamps_size() -> None:

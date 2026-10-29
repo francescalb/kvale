@@ -21,6 +21,9 @@ kvale = "kvale.__main__:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"kvale.core" = ["dmc_palette.json"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

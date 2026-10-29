@@ -1,12 +1,30 @@
 """Smoke tests for the Tkinter GUI. Skipped when no display is available."""
 
+import json
+import sys
 import tkinter as tk
 from collections.abc import Iterator
-from tkinter import colorchooser, messagebox
+from pathlib import Path
+from tkinter import filedialog, messagebox
 
 import pytest
+from gui_scenarios import (
+    backstitch,
+    click_cell,
+    click_point,
+    run_resize_dialog,
+    set_extension,
+    set_symmetry,
+    set_target,
+    set_tool,
+)
+from PIL import Image
 
-from kvale.core.model import Mark
+from kvale.__main__ import main
+from kvale.core.model import Backstitch, Cell, Mark
+from kvale.core.renderer import build_colour_grid, render_image
+from kvale.core.serialization import load_document
+from kvale.gui import app as app_module
 from kvale.gui.app import KvaleApp
 
 
@@ -55,15 +73,22 @@ def test_paint_copy_edits_source_and_undo_redo(app: KvaleApp) -> None:
 
 
 def test_insert_column_updates_controls_and_undo(app: KvaleApp) -> None:
+    app._insert_column_at(0)
+    assert app.unit_width.get() == 13
+    assert app.unit_height.get() == 12
+
+    # A quarter turn maps the new column onto rows, so the unit stays square
+    # and keeps its symmetry.
+    app.unit_width.set(12)
+    app._apply_controls()
     app.symmetry_vars["rotate_90"].set(True)
     app._apply_symmetry()
-
     app._insert_column_at(0)
 
-    assert app.unit_width.get() == 13
-    assert not app.symmetry_vars["rotate_90"].get()
+    assert (app.unit_width.get(), app.unit_height.get()) == (14, 14)
+    assert app.symmetry_vars["rotate_90"].get()
     app.undo()
-    assert app.unit_width.get() == 12
+    assert (app.unit_width.get(), app.unit_height.get()) == (12, 12)
     assert app.symmetry_vars["rotate_90"].get()
 
 
@@ -84,7 +109,7 @@ def test_square_only_symmetry_shows_message(app: KvaleApp, monkeypatch: pytest.M
 
 
 def test_add_colour_and_undo_keeps_valid_selection(app: KvaleApp, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(colorchooser, "askcolor", lambda **_kwargs: ((0, 0, 0), "#010203"))
+    monkeypatch.setattr(app_module, "ask_rgb_colour", lambda *_args, **_kwargs: "#010203")
 
     app._add_palette_colour()
     app.active_colour.set(4)
@@ -93,3 +118,89 @@ def test_add_colour_and_undo_keeps_valid_selection(app: KvaleApp, monkeypatch: p
     app.undo()
     assert len(app.document.palette_sequences) == 4
     assert app.active_colour.get() == 0
+
+
+def test_end_piece_editing_with_extension(app: KvaleApp, monkeypatch: pytest.MonkeyPatch) -> None:
+    app.active_colour.set(1)
+    _click_cell(app, 2, 2)
+    set_target(app, "bottom")
+    set_extension(app, 2)
+    assert app.canvas.editor_min_y == 0
+
+    click_cell(app, 2, 2, button=3)  # hide the unit cell in the end piece
+    click_cell(app, 4, 13)  # paint in the extension
+    override = app.document.bottom_repeat_override
+    assert override is not None
+    assert override.extension == 2
+    assert override.removed_cells == [Cell(2, 2)]
+    assert override.added_marks == [Mark(4, 13, 1)]
+    assert len(build_colour_grid(app.document)) == 24 + 2
+
+    monkeypatch.setattr(messagebox, "askyesno", lambda *_args, **_kwargs: True)
+    app._reset_selected_override()
+    assert app.document.bottom_repeat_override is None
+    app.undo()
+    assert app.document.bottom_repeat_override == override
+
+
+def test_backstitch_tool(app: KvaleApp) -> None:
+    set_tool(app, "backstitch")
+    app.active_colour.set(2)
+    backstitch(app, (1, 1), (3, 2))
+    assert app.document.backstitches == [Backstitch(1, 1, 3, 2, 2)]
+
+    click_point(app, 2.0, 1.5, button=3)
+    assert app.document.backstitches == []
+    app.undo()
+    assert app.document.backstitches == [Backstitch(1, 1, 3, 2, 2)]
+
+
+def test_resize_dialog(app: KvaleApp) -> None:
+    set_symmetry(app, "identity", "mirror_x")
+    run_resize_dialog(app, "Legg til", "Kolonne med nummer", 2)
+    assert (app.document.unit_width, app.unit_width.get()) == (14, 14)
+
+    run_resize_dialog(app, "Fjern", "Nederste rad")
+    assert app.document.unit_height == 11
+    assert app.status.get() == "Endret"
+
+
+def test_open_save_and_export_png(
+    app: KvaleApp, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    example = Path(__file__).resolve().parent.parent / "examples" / "flower-band.json"
+    monkeypatch.setattr(filedialog, "askopenfilename", lambda **_kwargs: str(example))
+    app.open_document()
+    assert app.status.get() == "Åpnet flower-band.json"
+    assert not app.editor.can_undo
+
+    saved = tmp_path / "copy.json"
+    monkeypatch.setattr(filedialog, "asksaveasfilename", lambda **_kwargs: str(saved))
+    app.save_document_as()
+    assert load_document(saved) == app.document
+    assert json.loads(saved.read_text())["format_version"] == 4
+
+    png = tmp_path / "pattern.png"
+    monkeypatch.setattr(filedialog, "asksaveasfilename", lambda **_kwargs: str(png))
+    app.export_png()
+    with Image.open(png) as exported:
+        expected = render_image(app.document, cell_size=18, draw_grid=True)
+        assert exported.size == expected.size
+        assert exported.convert("RGB").tobytes() == expected.tobytes()
+
+
+def test_command_line_path_opens_file(monkeypatch: pytest.MonkeyPatch) -> None:
+    example = Path(__file__).resolve().parent.parent / "examples" / "flower-band.json"
+    opened: list[KvaleApp] = []
+    monkeypatch.setattr(KvaleApp, "run", lambda self: opened.append(self))
+    monkeypatch.setattr(sys, "argv", ["kvale", str(example)])
+    try:
+        main()
+    except tk.TclError as error:
+        pytest.skip(f"Tkinter cannot open a display: {error}")
+    (kvale_app,) = opened
+    try:
+        assert kvale_app.current_path == example
+        assert kvale_app.document == load_document(example)
+    finally:
+        kvale_app.root.destroy()

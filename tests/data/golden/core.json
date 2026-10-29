@@ -1,0 +1,7043 @@
+{
+ "symmetry-all": {
+  "input": {
+   "unit_width": 8,
+   "unit_height": 8,
+   "repeats_x": 3,
+   "repeats_y": 2,
+   "background": "#ffffff",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x",
+    "mirror_y",
+    "rotate_180",
+    "rotate_90",
+    "rotate_270",
+    "diag_main",
+    "diag_anti"
+   ],
+   "motif": [
+    {
+     "x": 1,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 2,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 3,
+     "colour_slot": 2
+    },
+    {
+     "x": 0,
+     "y": 2,
+     "colour_slot": 3
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 1,
+     "start_y": 1,
+     "end_x": 2,
+     "end_y": 2,
+     "colour_slot": 3
+    },
+    {
+     "start_x": 0,
+     "start_y": 4,
+     "end_x": 1,
+     "end_y": 4,
+     "colour_slot": 0
+    }
+   ]
+  },
+  "to_dict": {
+   "format_version": 4,
+   "unit_width": 8,
+   "unit_height": 8,
+   "repeats_x": 3,
+   "repeats_y": 2,
+   "repeat_left_column": true,
+   "repeat_right_column": true,
+   "repeat_top_row": true,
+   "repeat_bottom_row": true,
+   "use_palette_sequence": false,
+   "background": "#ffffff",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x",
+    "mirror_y",
+    "rotate_180",
+    "rotate_90",
+    "rotate_270",
+    "diag_main",
+    "diag_anti"
+   ],
+   "motif": [
+    {
+     "x": 1,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 2,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 3,
+     "colour_slot": 2
+    },
+    {
+     "x": 0,
+     "y": 2,
+     "colour_slot": 3
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 1,
+     "start_y": 1,
+     "end_x": 2,
+     "end_y": 2,
+     "colour_slot": 3
+    },
+    {
+     "start_x": 0,
+     "start_y": 4,
+     "end_x": 1,
+     "end_y": 4,
+     "colour_slot": 0
+    }
+   ],
+   "top_repeat_override": null,
+   "bottom_repeat_override": null,
+   "left_repeat_override": null,
+   "right_repeat_override": null
+  },
+  "grid": [
+   [
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff"
+   ],
+   [
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b"
+   ],
+   [
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b"
+   ],
+   [
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b"
+   ],
+   [
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff"
+   ],
+   [
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b"
+   ],
+   [
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#1b1b1b"
+   ],
+   [
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b",
+    "#b1172b",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#b1172b"
+   ],
+   [
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#b1172b",
+    "#ffffff"
+   ]
+  ],
+  "backstitches": [
+   [
+    1,
+    1,
+    2,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    0,
+    4,
+    1,
+    4,
+    "#b1172b"
+   ],
+   [
+    7,
+    1,
+    6,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    1,
+    7,
+    2,
+    6,
+    "#1b1b1b"
+   ],
+   [
+    7,
+    7,
+    6,
+    6,
+    "#1b1b1b"
+   ],
+   [
+    8,
+    4,
+    7,
+    4,
+    "#b1172b"
+   ],
+   [
+    4,
+    0,
+    4,
+    1,
+    "#b1172b"
+   ],
+   [
+    4,
+    8,
+    4,
+    7,
+    "#b1172b"
+   ],
+   [
+    9,
+    1,
+    10,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    8,
+    4,
+    9,
+    4,
+    "#b1172b"
+   ],
+   [
+    15,
+    1,
+    14,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    9,
+    7,
+    10,
+    6,
+    "#1b1b1b"
+   ],
+   [
+    15,
+    7,
+    14,
+    6,
+    "#1b1b1b"
+   ],
+   [
+    16,
+    4,
+    15,
+    4,
+    "#b1172b"
+   ],
+   [
+    12,
+    0,
+    12,
+    1,
+    "#b1172b"
+   ],
+   [
+    12,
+    8,
+    12,
+    7,
+    "#b1172b"
+   ],
+   [
+    17,
+    1,
+    18,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    16,
+    4,
+    17,
+    4,
+    "#b1172b"
+   ],
+   [
+    23,
+    1,
+    22,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    17,
+    7,
+    18,
+    6,
+    "#1b1b1b"
+   ],
+   [
+    23,
+    7,
+    22,
+    6,
+    "#1b1b1b"
+   ],
+   [
+    24,
+    4,
+    23,
+    4,
+    "#b1172b"
+   ],
+   [
+    20,
+    0,
+    20,
+    1,
+    "#b1172b"
+   ],
+   [
+    20,
+    8,
+    20,
+    7,
+    "#b1172b"
+   ],
+   [
+    1,
+    9,
+    2,
+    10,
+    "#1b1b1b"
+   ],
+   [
+    0,
+    12,
+    1,
+    12,
+    "#b1172b"
+   ],
+   [
+    7,
+    9,
+    6,
+    10,
+    "#1b1b1b"
+   ],
+   [
+    1,
+    15,
+    2,
+    14,
+    "#1b1b1b"
+   ],
+   [
+    7,
+    15,
+    6,
+    14,
+    "#1b1b1b"
+   ],
+   [
+    8,
+    12,
+    7,
+    12,
+    "#b1172b"
+   ],
+   [
+    4,
+    8,
+    4,
+    9,
+    "#b1172b"
+   ],
+   [
+    4,
+    16,
+    4,
+    15,
+    "#b1172b"
+   ],
+   [
+    9,
+    9,
+    10,
+    10,
+    "#1b1b1b"
+   ],
+   [
+    8,
+    12,
+    9,
+    12,
+    "#b1172b"
+   ],
+   [
+    15,
+    9,
+    14,
+    10,
+    "#1b1b1b"
+   ],
+   [
+    9,
+    15,
+    10,
+    14,
+    "#1b1b1b"
+   ],
+   [
+    15,
+    15,
+    14,
+    14,
+    "#1b1b1b"
+   ],
+   [
+    16,
+    12,
+    15,
+    12,
+    "#b1172b"
+   ],
+   [
+    12,
+    8,
+    12,
+    9,
+    "#b1172b"
+   ],
+   [
+    12,
+    16,
+    12,
+    15,
+    "#b1172b"
+   ],
+   [
+    17,
+    9,
+    18,
+    10,
+    "#1b1b1b"
+   ],
+   [
+    16,
+    12,
+    17,
+    12,
+    "#b1172b"
+   ],
+   [
+    23,
+    9,
+    22,
+    10,
+    "#1b1b1b"
+   ],
+   [
+    17,
+    15,
+    18,
+    14,
+    "#1b1b1b"
+   ],
+   [
+    23,
+    15,
+    22,
+    14,
+    "#1b1b1b"
+   ],
+   [
+    24,
+    12,
+    23,
+    12,
+    "#b1172b"
+   ],
+   [
+    20,
+    8,
+    20,
+    9,
+    "#b1172b"
+   ],
+   [
+    20,
+    16,
+    20,
+    15,
+    "#b1172b"
+   ]
+  ],
+  "render_18_grid": {
+   "size": [
+    432,
+    288
+   ],
+   "mode": "RGB",
+   "sha256": "5e429817f9687572c4c9124a881c57f4bfdf774ac764f86e3122883864597695"
+  },
+  "render_7_plain": {
+   "size": [
+    168,
+    112
+   ],
+   "mode": "RGB",
+   "sha256": "92b0025a532b75ce13ceb6e5d33090d2f29696df8ff03f5e809c47a850a9f4fc"
+  }
+ },
+ "edges-mirror": {
+  "input": {
+   "unit_width": 7,
+   "unit_height": 5,
+   "repeats_x": 4,
+   "repeats_y": 3,
+   "repeat_left_column": false,
+   "repeat_right_column": true,
+   "repeat_top_row": true,
+   "repeat_bottom_row": false,
+   "background": "#f5f1e8",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x",
+    "mirror_y"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 2,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 6,
+     "y": 1,
+     "colour_slot": 3
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 1,
+     "end_y": 1,
+     "colour_slot": 1
+    },
+    {
+     "start_x": 3,
+     "start_y": 0,
+     "end_x": 3,
+     "end_y": 5,
+     "colour_slot": 0
+    }
+   ]
+  },
+  "to_dict": {
+   "format_version": 4,
+   "unit_width": 7,
+   "unit_height": 5,
+   "repeats_x": 4,
+   "repeats_y": 3,
+   "repeat_left_column": false,
+   "repeat_right_column": true,
+   "repeat_top_row": true,
+   "repeat_bottom_row": false,
+   "use_palette_sequence": false,
+   "background": "#f5f1e8",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x",
+    "mirror_y"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 2,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 6,
+     "y": 1,
+     "colour_slot": 3
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 1,
+     "end_y": 1,
+     "colour_slot": 1
+    },
+    {
+     "start_x": 3,
+     "start_y": 0,
+     "end_x": 3,
+     "end_y": 5,
+     "colour_slot": 0
+    }
+   ],
+   "top_repeat_override": null,
+   "bottom_repeat_override": null,
+   "left_repeat_override": null,
+   "right_repeat_override": null
+  },
+  "grid": [
+   [
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b"
+   ],
+   [
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b"
+   ],
+   [
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8"
+   ],
+   [
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b"
+   ],
+   [
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b"
+   ],
+   [
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b"
+   ],
+   [
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8"
+   ],
+   [
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b"
+   ],
+   [
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b"
+   ],
+   [
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b"
+   ],
+   [
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#f5f1e8"
+   ],
+   [
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b"
+   ],
+   [
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b"
+   ]
+  ],
+  "backstitches": [
+   [
+    0,
+    0,
+    1,
+    1,
+    "#2d7d32"
+   ],
+   [
+    3,
+    0,
+    3,
+    4,
+    "#b1172b"
+   ],
+   [
+    7,
+    0,
+    6,
+    1,
+    "#2d7d32"
+   ],
+   [
+    0,
+    4,
+    1,
+    4,
+    "#2d7d32"
+   ],
+   [
+    4,
+    0,
+    4,
+    4,
+    "#b1172b"
+   ],
+   [
+    7,
+    4,
+    6,
+    4,
+    "#2d7d32"
+   ],
+   [
+    7,
+    0,
+    7,
+    1,
+    "#2d7d32"
+   ],
+   [
+    9,
+    0,
+    9,
+    4,
+    "#b1172b"
+   ],
+   [
+    13,
+    0,
+    12,
+    1,
+    "#2d7d32"
+   ],
+   [
+    10,
+    0,
+    10,
+    4,
+    "#b1172b"
+   ],
+   [
+    13,
+    4,
+    12,
+    4,
+    "#2d7d32"
+   ],
+   [
+    13,
+    0,
+    13,
+    1,
+    "#2d7d32"
+   ],
+   [
+    15,
+    0,
+    15,
+    4,
+    "#b1172b"
+   ],
+   [
+    19,
+    0,
+    18,
+    1,
+    "#2d7d32"
+   ],
+   [
+    16,
+    0,
+    16,
+    4,
+    "#b1172b"
+   ],
+   [
+    19,
+    4,
+    18,
+    4,
+    "#2d7d32"
+   ],
+   [
+    19,
+    0,
+    19,
+    1,
+    "#2d7d32"
+   ],
+   [
+    21,
+    0,
+    21,
+    4,
+    "#b1172b"
+   ],
+   [
+    25,
+    0,
+    24,
+    1,
+    "#2d7d32"
+   ],
+   [
+    22,
+    0,
+    22,
+    4,
+    "#b1172b"
+   ],
+   [
+    25,
+    4,
+    24,
+    4,
+    "#2d7d32"
+   ],
+   [
+    0,
+    4,
+    1,
+    5,
+    "#2d7d32"
+   ],
+   [
+    3,
+    4,
+    3,
+    8,
+    "#b1172b"
+   ],
+   [
+    7,
+    4,
+    6,
+    5,
+    "#2d7d32"
+   ],
+   [
+    0,
+    8,
+    1,
+    8,
+    "#2d7d32"
+   ],
+   [
+    4,
+    4,
+    4,
+    8,
+    "#b1172b"
+   ],
+   [
+    7,
+    8,
+    6,
+    8,
+    "#2d7d32"
+   ],
+   [
+    7,
+    4,
+    7,
+    5,
+    "#2d7d32"
+   ],
+   [
+    9,
+    4,
+    9,
+    8,
+    "#b1172b"
+   ],
+   [
+    13,
+    4,
+    12,
+    5,
+    "#2d7d32"
+   ],
+   [
+    10,
+    4,
+    10,
+    8,
+    "#b1172b"
+   ],
+   [
+    13,
+    8,
+    12,
+    8,
+    "#2d7d32"
+   ],
+   [
+    13,
+    4,
+    13,
+    5,
+    "#2d7d32"
+   ],
+   [
+    15,
+    4,
+    15,
+    8,
+    "#b1172b"
+   ],
+   [
+    19,
+    4,
+    18,
+    5,
+    "#2d7d32"
+   ],
+   [
+    16,
+    4,
+    16,
+    8,
+    "#b1172b"
+   ],
+   [
+    19,
+    8,
+    18,
+    8,
+    "#2d7d32"
+   ],
+   [
+    19,
+    4,
+    19,
+    5,
+    "#2d7d32"
+   ],
+   [
+    21,
+    4,
+    21,
+    8,
+    "#b1172b"
+   ],
+   [
+    25,
+    4,
+    24,
+    5,
+    "#2d7d32"
+   ],
+   [
+    22,
+    4,
+    22,
+    8,
+    "#b1172b"
+   ],
+   [
+    25,
+    8,
+    24,
+    8,
+    "#2d7d32"
+   ],
+   [
+    0,
+    8,
+    1,
+    9,
+    "#2d7d32"
+   ],
+   [
+    3,
+    8,
+    3,
+    13,
+    "#b1172b"
+   ],
+   [
+    7,
+    8,
+    6,
+    9,
+    "#2d7d32"
+   ],
+   [
+    0,
+    13,
+    1,
+    12,
+    "#2d7d32"
+   ],
+   [
+    4,
+    8,
+    4,
+    13,
+    "#b1172b"
+   ],
+   [
+    7,
+    13,
+    6,
+    12,
+    "#2d7d32"
+   ],
+   [
+    7,
+    8,
+    7,
+    9,
+    "#2d7d32"
+   ],
+   [
+    9,
+    8,
+    9,
+    13,
+    "#b1172b"
+   ],
+   [
+    13,
+    8,
+    12,
+    9,
+    "#2d7d32"
+   ],
+   [
+    7,
+    13,
+    7,
+    12,
+    "#2d7d32"
+   ],
+   [
+    10,
+    8,
+    10,
+    13,
+    "#b1172b"
+   ],
+   [
+    13,
+    13,
+    12,
+    12,
+    "#2d7d32"
+   ],
+   [
+    13,
+    8,
+    13,
+    9,
+    "#2d7d32"
+   ],
+   [
+    15,
+    8,
+    15,
+    13,
+    "#b1172b"
+   ],
+   [
+    19,
+    8,
+    18,
+    9,
+    "#2d7d32"
+   ],
+   [
+    13,
+    13,
+    13,
+    12,
+    "#2d7d32"
+   ],
+   [
+    16,
+    8,
+    16,
+    13,
+    "#b1172b"
+   ],
+   [
+    19,
+    13,
+    18,
+    12,
+    "#2d7d32"
+   ],
+   [
+    19,
+    8,
+    19,
+    9,
+    "#2d7d32"
+   ],
+   [
+    21,
+    8,
+    21,
+    13,
+    "#b1172b"
+   ],
+   [
+    25,
+    8,
+    24,
+    9,
+    "#2d7d32"
+   ],
+   [
+    19,
+    13,
+    19,
+    12,
+    "#2d7d32"
+   ],
+   [
+    22,
+    8,
+    22,
+    13,
+    "#b1172b"
+   ],
+   [
+    25,
+    13,
+    24,
+    12,
+    "#2d7d32"
+   ]
+  ],
+  "render_18_grid": {
+   "size": [
+    450,
+    234
+   ],
+   "mode": "RGB",
+   "sha256": "cc1ac68958b7d71dc258878b49c8dcd3c2b00d3bef8275f848396e38ec06a2f6"
+  },
+  "render_7_plain": {
+   "size": [
+    175,
+    91
+   ],
+   "mode": "RGB",
+   "sha256": "fd4eb46f899627e3c913fc6ef5a7588e6eee23aae4bafff95f23661510601c04"
+  }
+ },
+ "palette-sequences": {
+  "input": {
+   "unit_width": 4,
+   "unit_height": 4,
+   "repeats_x": 5,
+   "repeats_y": 2,
+   "repeat_left_column": false,
+   "repeat_right_column": false,
+   "repeat_top_row": false,
+   "repeat_bottom_row": false,
+   "use_palette_sequence": true,
+   "background": "#ffffff",
+   "palette_sequences": [
+    [
+     "#ff0000",
+     "#00ff00",
+     "#0000ff"
+    ],
+    [
+     "#111111"
+    ],
+    [
+     "#aaaaaa",
+     "#bbbbbb"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "rotate_180"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 2,
+     "y": 1,
+     "colour_slot": 2
+    },
+    {
+     "x": 0,
+     "y": 3,
+     "colour_slot": 5
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 4,
+     "end_y": 4,
+     "colour_slot": 0
+    },
+    {
+     "start_x": 1,
+     "start_y": 2,
+     "end_x": 2,
+     "end_y": 2,
+     "colour_slot": 2
+    }
+   ]
+  },
+  "to_dict": {
+   "format_version": 4,
+   "unit_width": 4,
+   "unit_height": 4,
+   "repeats_x": 5,
+   "repeats_y": 2,
+   "repeat_left_column": false,
+   "repeat_right_column": false,
+   "repeat_top_row": false,
+   "repeat_bottom_row": false,
+   "use_palette_sequence": true,
+   "background": "#ffffff",
+   "palette_sequences": [
+    [
+     "#ff0000",
+     "#00ff00",
+     "#0000ff"
+    ],
+    [
+     "#111111"
+    ],
+    [
+     "#aaaaaa",
+     "#bbbbbb"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "rotate_180"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 2,
+     "y": 1,
+     "colour_slot": 2
+    },
+    {
+     "x": 0,
+     "y": 3,
+     "colour_slot": 5
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 4,
+     "end_y": 4,
+     "colour_slot": 0
+    },
+    {
+     "start_x": 1,
+     "start_y": 2,
+     "end_x": 2,
+     "end_y": 2,
+     "colour_slot": 2
+    }
+   ],
+   "top_repeat_override": null,
+   "bottom_repeat_override": null,
+   "left_repeat_override": null,
+   "right_repeat_override": null
+  },
+  "grid": [
+   [
+    "#ff0000",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#aaaaaa"
+   ],
+   [
+    "#ffffff",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#aaaaaa",
+    "#111111",
+    "#bbbbbb",
+    "#111111",
+    "#ffffff"
+   ],
+   [
+    "#bbbbbb",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ff0000"
+   ]
+  ],
+  "backstitches": [
+   [
+    0,
+    0,
+    3,
+    3,
+    "#ff0000"
+   ],
+   [
+    1,
+    2,
+    2,
+    2,
+    "#aaaaaa"
+   ],
+   [
+    3,
+    2,
+    2,
+    2,
+    "#aaaaaa"
+   ],
+   [
+    3,
+    0,
+    5,
+    3,
+    "#00ff00"
+   ],
+   [
+    3,
+    2,
+    4,
+    2,
+    "#bbbbbb"
+   ],
+   [
+    5,
+    2,
+    4,
+    2,
+    "#bbbbbb"
+   ],
+   [
+    5,
+    0,
+    7,
+    3,
+    "#0000ff"
+   ],
+   [
+    5,
+    2,
+    6,
+    2,
+    "#aaaaaa"
+   ],
+   [
+    7,
+    2,
+    6,
+    2,
+    "#aaaaaa"
+   ],
+   [
+    7,
+    0,
+    9,
+    3,
+    "#ff0000"
+   ],
+   [
+    7,
+    2,
+    8,
+    2,
+    "#bbbbbb"
+   ],
+   [
+    9,
+    2,
+    8,
+    2,
+    "#bbbbbb"
+   ],
+   [
+    9,
+    0,
+    12,
+    3,
+    "#00ff00"
+   ],
+   [
+    9,
+    2,
+    10,
+    2,
+    "#aaaaaa"
+   ],
+   [
+    11,
+    2,
+    10,
+    2,
+    "#aaaaaa"
+   ],
+   [
+    0,
+    3,
+    3,
+    6,
+    "#0000ff"
+   ],
+   [
+    1,
+    4,
+    2,
+    4,
+    "#bbbbbb"
+   ],
+   [
+    3,
+    4,
+    2,
+    4,
+    "#bbbbbb"
+   ],
+   [
+    3,
+    3,
+    5,
+    6,
+    "#ff0000"
+   ],
+   [
+    3,
+    4,
+    4,
+    4,
+    "#aaaaaa"
+   ],
+   [
+    5,
+    4,
+    4,
+    4,
+    "#aaaaaa"
+   ],
+   [
+    5,
+    3,
+    7,
+    6,
+    "#00ff00"
+   ],
+   [
+    5,
+    4,
+    6,
+    4,
+    "#bbbbbb"
+   ],
+   [
+    7,
+    4,
+    6,
+    4,
+    "#bbbbbb"
+   ],
+   [
+    7,
+    3,
+    9,
+    6,
+    "#0000ff"
+   ],
+   [
+    7,
+    4,
+    8,
+    4,
+    "#aaaaaa"
+   ],
+   [
+    9,
+    4,
+    8,
+    4,
+    "#aaaaaa"
+   ],
+   [
+    9,
+    3,
+    12,
+    6,
+    "#ff0000"
+   ],
+   [
+    9,
+    4,
+    10,
+    4,
+    "#bbbbbb"
+   ],
+   [
+    11,
+    4,
+    10,
+    4,
+    "#bbbbbb"
+   ]
+  ],
+  "render_18_grid": {
+   "size": [
+    216,
+    108
+   ],
+   "mode": "RGB",
+   "sha256": "55f7a410d2586df5df9ad130fa206932f21afb19985d78f497c6849be50d1952"
+  },
+  "render_7_plain": {
+   "size": [
+    84,
+    42
+   ],
+   "mode": "RGB",
+   "sha256": "b3a599746b1c04d2d95edd51db4c4c28a0fa38848b12d2fde5bffd70e5549e9d"
+  }
+ },
+ "end-pieces": {
+  "input": {
+   "unit_width": 6,
+   "unit_height": 6,
+   "repeats_x": 3,
+   "repeats_y": 3,
+   "background": "#ffffff",
+   "use_palette_sequence": true,
+   "palette_sequences": [
+    [
+     "#b1172b",
+     "#123456"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 2,
+     "y": 2,
+     "colour_slot": 2
+    },
+    {
+     "x": 1,
+     "y": 5,
+     "colour_slot": 3
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 3,
+     "end_x": 2,
+     "end_y": 3,
+     "colour_slot": 3
+    },
+    {
+     "start_x": 1,
+     "start_y": 0,
+     "end_x": 1,
+     "end_y": 1,
+     "colour_slot": 0
+    }
+   ],
+   "top_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 0,
+      "y": 0
+     },
+     {
+      "x": 4,
+      "y": 1
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 2,
+      "y": -1,
+      "colour_slot": 1
+     },
+     {
+      "x": 5,
+      "y": -2,
+      "colour_slot": 0
+     },
+     {
+      "x": 3,
+      "y": 3,
+      "colour_slot": 2
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 3,
+      "end_x": 2,
+      "end_y": 3
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": -2,
+      "end_x": 3,
+      "end_y": -1,
+      "colour_slot": 3
+     },
+     {
+      "start_x": 2,
+      "start_y": 0,
+      "end_x": 2,
+      "end_y": 2,
+      "colour_slot": 1
+     }
+    ],
+    "extension": 2
+   },
+   "bottom_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 1,
+      "y": 5
+     },
+     {
+      "x": 4,
+      "y": 5
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 0,
+      "y": 6,
+      "colour_slot": 2
+     },
+     {
+      "x": 5,
+      "y": 7,
+      "colour_slot": 3
+     },
+     {
+      "x": 2,
+      "y": 4,
+      "colour_slot": 0
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 1,
+      "start_y": 0,
+      "end_x": 1,
+      "end_y": 1
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 6,
+      "end_x": 6,
+      "end_y": 8,
+      "colour_slot": 2
+     }
+    ],
+    "extension": 3
+   },
+   "left_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 0,
+      "y": 0
+     },
+     {
+      "x": 1,
+      "y": 1
+     }
+    ],
+    "added_marks": [
+     {
+      "x": -1,
+      "y": 0,
+      "colour_slot": 1
+     },
+     {
+      "x": -1,
+      "y": 5,
+      "colour_slot": 2
+     },
+     {
+      "x": 3,
+      "y": 0,
+      "colour_slot": 3
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 4,
+      "start_y": 3,
+      "end_x": 6,
+      "end_y": 3
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": -1,
+      "start_y": 0,
+      "end_x": 0,
+      "end_y": 6,
+      "colour_slot": 1
+     }
+    ],
+    "extension": 1
+   },
+   "right_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 5,
+      "y": 0
+     },
+     {
+      "x": 2,
+      "y": 2
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 6,
+      "y": 0,
+      "colour_slot": 0
+     },
+     {
+      "x": 7,
+      "y": 3,
+      "colour_slot": 1
+     },
+     {
+      "x": 2,
+      "y": 2,
+      "colour_slot": 3
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 4,
+      "start_y": 0,
+      "end_x": 4,
+      "end_y": 1
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": 6,
+      "start_y": 0,
+      "end_x": 8,
+      "end_y": 6,
+      "colour_slot": 0
+     }
+    ],
+    "extension": 2
+   }
+  },
+  "to_dict": {
+   "format_version": 4,
+   "unit_width": 6,
+   "unit_height": 6,
+   "repeats_x": 3,
+   "repeats_y": 3,
+   "repeat_left_column": true,
+   "repeat_right_column": true,
+   "repeat_top_row": true,
+   "repeat_bottom_row": true,
+   "use_palette_sequence": true,
+   "background": "#ffffff",
+   "palette_sequences": [
+    [
+     "#b1172b",
+     "#123456"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 2,
+     "y": 2,
+     "colour_slot": 2
+    },
+    {
+     "x": 1,
+     "y": 5,
+     "colour_slot": 3
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 3,
+     "end_x": 2,
+     "end_y": 3,
+     "colour_slot": 3
+    },
+    {
+     "start_x": 1,
+     "start_y": 0,
+     "end_x": 1,
+     "end_y": 1,
+     "colour_slot": 0
+    }
+   ],
+   "top_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 0,
+      "y": 0
+     },
+     {
+      "x": 4,
+      "y": 1
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 2,
+      "y": -1,
+      "colour_slot": 1
+     },
+     {
+      "x": 5,
+      "y": -2,
+      "colour_slot": 0
+     },
+     {
+      "x": 3,
+      "y": 3,
+      "colour_slot": 2
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 3,
+      "end_x": 2,
+      "end_y": 3
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": -2,
+      "end_x": 3,
+      "end_y": -1,
+      "colour_slot": 3
+     },
+     {
+      "start_x": 2,
+      "start_y": 0,
+      "end_x": 2,
+      "end_y": 2,
+      "colour_slot": 1
+     }
+    ],
+    "extension": 2
+   },
+   "bottom_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 1,
+      "y": 5
+     },
+     {
+      "x": 4,
+      "y": 5
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 0,
+      "y": 6,
+      "colour_slot": 2
+     },
+     {
+      "x": 5,
+      "y": 7,
+      "colour_slot": 3
+     },
+     {
+      "x": 2,
+      "y": 4,
+      "colour_slot": 0
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 1,
+      "start_y": 0,
+      "end_x": 1,
+      "end_y": 1
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 6,
+      "end_x": 6,
+      "end_y": 8,
+      "colour_slot": 2
+     }
+    ],
+    "extension": 3
+   },
+   "left_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 0,
+      "y": 0
+     },
+     {
+      "x": 1,
+      "y": 1
+     }
+    ],
+    "added_marks": [
+     {
+      "x": -1,
+      "y": 0,
+      "colour_slot": 1
+     },
+     {
+      "x": -1,
+      "y": 5,
+      "colour_slot": 2
+     },
+     {
+      "x": 3,
+      "y": 0,
+      "colour_slot": 3
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 4,
+      "start_y": 3,
+      "end_x": 6,
+      "end_y": 3
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": -1,
+      "start_y": 0,
+      "end_x": 0,
+      "end_y": 6,
+      "colour_slot": 1
+     }
+    ],
+    "extension": 1
+   },
+   "right_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 5,
+      "y": 0
+     },
+     {
+      "x": 2,
+      "y": 2
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 6,
+      "y": 0,
+      "colour_slot": 0
+     },
+     {
+      "x": 7,
+      "y": 3,
+      "colour_slot": 1
+     },
+     {
+      "x": 2,
+      "y": 2,
+      "colour_slot": 3
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 4,
+      "start_y": 0,
+      "end_x": 4,
+      "end_y": 1
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": 6,
+      "start_y": 0,
+      "end_x": 8,
+      "end_y": 6,
+      "colour_slot": 0
+     }
+    ],
+    "extension": 2
+   }
+  },
+  "grid": [
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#123456",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#123456",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#f2c84b",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#123456",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#123456",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#123456",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#f2c84b",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#b1172b",
+    "#123456",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#123456",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#123456",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ]
+  ],
+  "backstitches": [
+   [
+    2,
+    2,
+    2,
+    3,
+    "#b1172b"
+   ],
+   [
+    6,
+    2,
+    6,
+    3,
+    "#b1172b"
+   ],
+   [
+    1,
+    0,
+    4,
+    1,
+    "#1b1b1b"
+   ],
+   [
+    3,
+    2,
+    3,
+    4,
+    "#2d7d32"
+   ],
+   [
+    0,
+    2,
+    1,
+    8,
+    "#2d7d32"
+   ],
+   [
+    8,
+    2,
+    8,
+    3,
+    "#123456"
+   ],
+   [
+    13,
+    5,
+    11,
+    5,
+    "#1b1b1b"
+   ],
+   [
+    12,
+    2,
+    12,
+    3,
+    "#123456"
+   ],
+   [
+    7,
+    0,
+    10,
+    1,
+    "#1b1b1b"
+   ],
+   [
+    9,
+    2,
+    9,
+    4,
+    "#2d7d32"
+   ],
+   [
+    14,
+    2,
+    14,
+    3,
+    "#b1172b"
+   ],
+   [
+    19,
+    5,
+    17,
+    5,
+    "#1b1b1b"
+   ],
+   [
+    18,
+    2,
+    18,
+    3,
+    "#b1172b"
+   ],
+   [
+    13,
+    0,
+    16,
+    1,
+    "#1b1b1b"
+   ],
+   [
+    15,
+    2,
+    15,
+    4,
+    "#2d7d32"
+   ],
+   [
+    19,
+    2,
+    21,
+    8,
+    "#b1172b"
+   ],
+   [
+    1,
+    11,
+    3,
+    11,
+    "#1b1b1b"
+   ],
+   [
+    2,
+    8,
+    2,
+    9,
+    "#123456"
+   ],
+   [
+    6,
+    8,
+    6,
+    9,
+    "#123456"
+   ],
+   [
+    0,
+    8,
+    1,
+    14,
+    "#2d7d32"
+   ],
+   [
+    7,
+    11,
+    9,
+    11,
+    "#1b1b1b"
+   ],
+   [
+    8,
+    8,
+    8,
+    9,
+    "#b1172b"
+   ],
+   [
+    13,
+    11,
+    11,
+    11,
+    "#1b1b1b"
+   ],
+   [
+    12,
+    8,
+    12,
+    9,
+    "#b1172b"
+   ],
+   [
+    13,
+    11,
+    15,
+    11,
+    "#1b1b1b"
+   ],
+   [
+    14,
+    8,
+    14,
+    9,
+    "#123456"
+   ],
+   [
+    19,
+    11,
+    17,
+    11,
+    "#1b1b1b"
+   ],
+   [
+    18,
+    8,
+    18,
+    9,
+    "#123456"
+   ],
+   [
+    19,
+    8,
+    21,
+    14,
+    "#123456"
+   ],
+   [
+    1,
+    17,
+    3,
+    17,
+    "#1b1b1b"
+   ],
+   [
+    6,
+    14,
+    6,
+    15,
+    "#b1172b"
+   ],
+   [
+    1,
+    20,
+    7,
+    22,
+    "#f2c84b"
+   ],
+   [
+    0,
+    14,
+    1,
+    20,
+    "#2d7d32"
+   ],
+   [
+    7,
+    17,
+    9,
+    17,
+    "#1b1b1b"
+   ],
+   [
+    13,
+    17,
+    11,
+    17,
+    "#1b1b1b"
+   ],
+   [
+    12,
+    14,
+    12,
+    15,
+    "#123456"
+   ],
+   [
+    7,
+    20,
+    13,
+    22,
+    "#f2c84b"
+   ],
+   [
+    13,
+    17,
+    15,
+    17,
+    "#1b1b1b"
+   ],
+   [
+    19,
+    17,
+    17,
+    17,
+    "#1b1b1b"
+   ],
+   [
+    18,
+    14,
+    18,
+    15,
+    "#b1172b"
+   ],
+   [
+    13,
+    20,
+    19,
+    22,
+    "#f2c84b"
+   ],
+   [
+    19,
+    14,
+    21,
+    20,
+    "#b1172b"
+   ]
+  ],
+  "render_18_grid": {
+   "size": [
+    378,
+    414
+   ],
+   "mode": "RGB",
+   "sha256": "9d55672fb7c4d072a7d367d61642f2431a90351ec8d6fe447587548d1aae6ddb"
+  },
+  "render_7_plain": {
+   "size": [
+    147,
+    161
+   ],
+   "mode": "RGB",
+   "sha256": "4a9daa3649c7973a0651b6593b945276032a9549743e349450c74b62452f82cf"
+  }
+ },
+ "end-pieces-single-repeat": {
+  "input": {
+   "unit_width": 5,
+   "unit_height": 4,
+   "repeats_x": 1,
+   "repeats_y": 1,
+   "repeat_left_column": false,
+   "repeat_right_column": false,
+   "repeat_top_row": false,
+   "repeat_bottom_row": false,
+   "background": "#eeeeee",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_y"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 2,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 4,
+     "y": 0,
+     "colour_slot": 2
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 5,
+     "end_y": 0,
+     "colour_slot": 3
+    }
+   ],
+   "top_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 2,
+      "y": 1
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 1,
+      "y": -1,
+      "colour_slot": 3
+     }
+    ],
+    "extension": 1
+   },
+   "bottom_repeat_override": {
+    "added_marks": [
+     {
+      "x": 3,
+      "y": 4,
+      "colour_slot": 1
+     },
+     {
+      "x": 3,
+      "y": 3,
+      "colour_slot": 0
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 4,
+      "end_x": 5,
+      "end_y": 4
+     }
+    ],
+    "extension": 1
+   },
+   "left_repeat_override": {
+    "added_marks": [
+     {
+      "x": -2,
+      "y": 1,
+      "colour_slot": 2
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": -2,
+      "start_y": 0,
+      "end_x": -2,
+      "end_y": 4,
+      "colour_slot": 0
+     }
+    ],
+    "extension": 2
+   },
+   "right_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 4,
+      "y": 0
+     },
+     {
+      "x": 4,
+      "y": 3
+     }
+    ],
+    "extension": 0
+   }
+  },
+  "to_dict": {
+   "format_version": 4,
+   "unit_width": 5,
+   "unit_height": 4,
+   "repeats_x": 1,
+   "repeats_y": 1,
+   "repeat_left_column": false,
+   "repeat_right_column": false,
+   "repeat_top_row": false,
+   "repeat_bottom_row": false,
+   "use_palette_sequence": false,
+   "background": "#eeeeee",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_y"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 2,
+     "y": 1,
+     "colour_slot": 1
+    },
+    {
+     "x": 4,
+     "y": 0,
+     "colour_slot": 2
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 5,
+     "end_y": 0,
+     "colour_slot": 3
+    }
+   ],
+   "top_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 2,
+      "y": 1
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 1,
+      "y": -1,
+      "colour_slot": 3
+     }
+    ],
+    "removed_backstitches": [],
+    "added_backstitches": [],
+    "extension": 1
+   },
+   "bottom_repeat_override": {
+    "removed_cells": [],
+    "added_marks": [
+     {
+      "x": 3,
+      "y": 4,
+      "colour_slot": 1
+     },
+     {
+      "x": 3,
+      "y": 3,
+      "colour_slot": 0
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 4,
+      "end_x": 5,
+      "end_y": 4
+     }
+    ],
+    "added_backstitches": [],
+    "extension": 1
+   },
+   "left_repeat_override": {
+    "removed_cells": [],
+    "added_marks": [
+     {
+      "x": -2,
+      "y": 1,
+      "colour_slot": 2
+     }
+    ],
+    "removed_backstitches": [],
+    "added_backstitches": [
+     {
+      "start_x": -2,
+      "start_y": 0,
+      "end_x": -2,
+      "end_y": 4,
+      "colour_slot": 0
+     }
+    ],
+    "extension": 2
+   },
+   "right_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 4,
+      "y": 0
+     },
+     {
+      "x": 4,
+      "y": 3
+     }
+    ],
+    "added_marks": [],
+    "removed_backstitches": [],
+    "added_backstitches": [],
+    "extension": 0
+   }
+  },
+  "grid": [
+   [
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#1b1b1b",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee"
+   ],
+   [
+    "#eeeeee",
+    "#eeeeee",
+    "#b1172b",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee"
+   ],
+   [
+    "#f2c84b",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee"
+   ],
+   [
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#2d7d32",
+    "#eeeeee",
+    "#eeeeee"
+   ],
+   [
+    "#eeeeee",
+    "#eeeeee",
+    "#b1172b",
+    "#eeeeee",
+    "#eeeeee",
+    "#b1172b",
+    "#eeeeee"
+   ],
+   [
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#eeeeee",
+    "#2d7d32",
+    "#eeeeee"
+   ]
+  ],
+  "backstitches": [
+   [
+    2,
+    1,
+    7,
+    1,
+    "#1b1b1b"
+   ],
+   [
+    0,
+    1,
+    0,
+    5,
+    "#b1172b"
+   ]
+  ],
+  "render_18_grid": {
+   "size": [
+    126,
+    108
+   ],
+   "mode": "RGB",
+   "sha256": "14f86eacb7e4ffea1eac77da63d615289a7a235c2542502e0e06c6ccf5e7074f"
+  },
+  "render_7_plain": {
+   "size": [
+    49,
+    42
+   ],
+   "mode": "RGB",
+   "sha256": "68cebdb9955e13452abcd244e7b0ac8964bae476ee961fa0c5a249b4ab505f47"
+  }
+ },
+ "end-pieces-edges": {
+  "input": {
+   "unit_width": 4,
+   "unit_height": 4,
+   "repeats_x": 4,
+   "repeats_y": 2,
+   "repeat_left_column": false,
+   "repeat_right_column": true,
+   "repeat_top_row": false,
+   "repeat_bottom_row": true,
+   "background": "#ffffff",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "rotate_90"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 0,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 2,
+     "colour_slot": 2
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 1,
+     "end_y": 0,
+     "colour_slot": 3
+    },
+    {
+     "start_x": 0,
+     "start_y": 4,
+     "end_x": 4,
+     "end_y": 0,
+     "colour_slot": 1
+    }
+   ],
+   "left_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 0,
+      "y": 0
+     }
+    ],
+    "added_marks": [
+     {
+      "x": -1,
+      "y": 1,
+      "colour_slot": 3
+     },
+     {
+      "x": -3,
+      "y": 3,
+      "colour_slot": 2
+     }
+    ],
+    "added_backstitches": [
+     {
+      "start_x": -3,
+      "start_y": 0,
+      "end_x": 0,
+      "end_y": 0,
+      "colour_slot": 2
+     }
+    ],
+    "extension": 3
+   },
+   "top_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 1,
+      "y": 0
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 0,
+      "y": -1,
+      "colour_slot": 1
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 0,
+      "end_x": 1,
+      "end_y": 0
+     }
+    ],
+    "extension": 1
+   }
+  },
+  "to_dict": {
+   "format_version": 4,
+   "unit_width": 4,
+   "unit_height": 4,
+   "repeats_x": 4,
+   "repeats_y": 2,
+   "repeat_left_column": false,
+   "repeat_right_column": true,
+   "repeat_top_row": false,
+   "repeat_bottom_row": true,
+   "use_palette_sequence": false,
+   "background": "#ffffff",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "rotate_90"
+   ],
+   "motif": [
+    {
+     "x": 0,
+     "y": 0,
+     "colour_slot": 0
+    },
+    {
+     "x": 1,
+     "y": 0,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 2,
+     "colour_slot": 2
+    }
+   ],
+   "backstitches": [
+    {
+     "start_x": 0,
+     "start_y": 0,
+     "end_x": 1,
+     "end_y": 0,
+     "colour_slot": 3
+    },
+    {
+     "start_x": 0,
+     "start_y": 4,
+     "end_x": 4,
+     "end_y": 0,
+     "colour_slot": 1
+    }
+   ],
+   "top_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 1,
+      "y": 0
+     }
+    ],
+    "added_marks": [
+     {
+      "x": 0,
+      "y": -1,
+      "colour_slot": 1
+     }
+    ],
+    "removed_backstitches": [
+     {
+      "start_x": 0,
+      "start_y": 0,
+      "end_x": 1,
+      "end_y": 0
+     }
+    ],
+    "added_backstitches": [],
+    "extension": 1
+   },
+   "bottom_repeat_override": null,
+   "left_repeat_override": {
+    "removed_cells": [
+     {
+      "x": 0,
+      "y": 0
+     }
+    ],
+    "added_marks": [
+     {
+      "x": -1,
+      "y": 1,
+      "colour_slot": 3
+     },
+     {
+      "x": -3,
+      "y": 3,
+      "colour_slot": 2
+     }
+    ],
+    "removed_backstitches": [],
+    "added_backstitches": [
+     {
+      "start_x": -3,
+      "start_y": 0,
+      "end_x": 0,
+      "end_y": 0,
+      "colour_slot": 2
+     }
+    ],
+    "extension": 3
+   },
+   "right_repeat_override": null
+  },
+  "grid": [
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#b1172b",
+    "#ffffff",
+    "#f2c84b",
+    "#b1172b",
+    "#ffffff",
+    "#f2c84b",
+    "#b1172b",
+    "#ffffff",
+    "#f2c84b",
+    "#b1172b"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b"
+   ],
+   [
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#1b1b1b",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32"
+   ],
+   [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#2d7d32",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#f2c84b"
+   ],
+   [
+    "#f2c84b",
+    "#ffffff",
+    "#ffffff",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b",
+    "#f2c84b",
+    "#2d7d32",
+    "#b1172b"
+   ]
+  ],
+  "backstitches": [
+   [
+    3,
+    5,
+    7,
+    1,
+    "#2d7d32"
+   ],
+   [
+    7,
+    1,
+    7,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    3,
+    1,
+    7,
+    5,
+    "#2d7d32"
+   ],
+   [
+    7,
+    5,
+    6,
+    5,
+    "#1b1b1b"
+   ],
+   [
+    3,
+    5,
+    3,
+    4,
+    "#1b1b1b"
+   ],
+   [
+    0,
+    1,
+    3,
+    1,
+    "#f2c84b"
+   ],
+   [
+    7,
+    5,
+    10,
+    1,
+    "#2d7d32"
+   ],
+   [
+    10,
+    1,
+    10,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    7,
+    1,
+    10,
+    5,
+    "#2d7d32"
+   ],
+   [
+    10,
+    5,
+    9,
+    5,
+    "#1b1b1b"
+   ],
+   [
+    7,
+    5,
+    7,
+    4,
+    "#1b1b1b"
+   ],
+   [
+    10,
+    5,
+    13,
+    1,
+    "#2d7d32"
+   ],
+   [
+    13,
+    1,
+    13,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    10,
+    1,
+    13,
+    5,
+    "#2d7d32"
+   ],
+   [
+    13,
+    5,
+    12,
+    5,
+    "#1b1b1b"
+   ],
+   [
+    10,
+    5,
+    10,
+    4,
+    "#1b1b1b"
+   ],
+   [
+    13,
+    5,
+    16,
+    1,
+    "#2d7d32"
+   ],
+   [
+    16,
+    1,
+    16,
+    2,
+    "#1b1b1b"
+   ],
+   [
+    13,
+    1,
+    16,
+    5,
+    "#2d7d32"
+   ],
+   [
+    16,
+    5,
+    15,
+    5,
+    "#1b1b1b"
+   ],
+   [
+    13,
+    5,
+    13,
+    4,
+    "#1b1b1b"
+   ],
+   [
+    3,
+    5,
+    4,
+    5,
+    "#1b1b1b"
+   ],
+   [
+    3,
+    8,
+    7,
+    5,
+    "#2d7d32"
+   ],
+   [
+    3,
+    5,
+    7,
+    8,
+    "#2d7d32"
+   ],
+   [
+    7,
+    8,
+    6,
+    8,
+    "#1b1b1b"
+   ],
+   [
+    3,
+    8,
+    3,
+    7,
+    "#1b1b1b"
+   ],
+   [
+    0,
+    5,
+    3,
+    5,
+    "#f2c84b"
+   ],
+   [
+    7,
+    8,
+    10,
+    5,
+    "#2d7d32"
+   ],
+   [
+    7,
+    5,
+    10,
+    8,
+    "#2d7d32"
+   ],
+   [
+    10,
+    8,
+    9,
+    8,
+    "#1b1b1b"
+   ],
+   [
+    7,
+    8,
+    7,
+    7,
+    "#1b1b1b"
+   ],
+   [
+    10,
+    8,
+    13,
+    5,
+    "#2d7d32"
+   ],
+   [
+    10,
+    5,
+    13,
+    8,
+    "#2d7d32"
+   ],
+   [
+    13,
+    8,
+    12,
+    8,
+    "#1b1b1b"
+   ],
+   [
+    10,
+    8,
+    10,
+    7,
+    "#1b1b1b"
+   ],
+   [
+    13,
+    8,
+    16,
+    5,
+    "#2d7d32"
+   ],
+   [
+    13,
+    5,
+    16,
+    8,
+    "#2d7d32"
+   ],
+   [
+    16,
+    8,
+    15,
+    8,
+    "#1b1b1b"
+   ],
+   [
+    13,
+    8,
+    13,
+    7,
+    "#1b1b1b"
+   ]
+  ],
+  "render_18_grid": {
+   "size": [
+    288,
+    144
+   ],
+   "mode": "RGB",
+   "sha256": "1c7b709c49678dd63a3ec98cfa4fb0af1d8500864ff4b5430c4ade117a406bdb"
+  },
+  "render_7_plain": {
+   "size": [
+    112,
+    56
+   ],
+   "mode": "RGB",
+   "sha256": "a2dc48013ca33977d21a28bda7a3336becd9f8fc37c7327580e2196aae447e58"
+  }
+ },
+ "flower-band": {
+  "input": {
+   "unit_width": 12,
+   "unit_height": 12,
+   "repeats_x": 7,
+   "repeats_y": 2,
+   "use_palette_sequence": false,
+   "background": "#f5f1e8",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x",
+    "mirror_y",
+    "rotate_180"
+   ],
+   "motif": [
+    {
+     "x": 5,
+     "y": 1,
+     "colour_slot": 0
+    },
+    {
+     "x": 5,
+     "y": 2,
+     "colour_slot": 0
+    },
+    {
+     "x": 4,
+     "y": 2,
+     "colour_slot": 0
+    },
+    {
+     "x": 5,
+     "y": 3,
+     "colour_slot": 1
+    },
+    {
+     "x": 4,
+     "y": 3,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 3,
+     "colour_slot": 1
+    },
+    {
+     "x": 5,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 4,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 3,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 2,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 1,
+     "y": 5,
+     "colour_slot": 3
+    },
+    {
+     "x": 2,
+     "y": 5,
+     "colour_slot": 3
+    },
+    {
+     "x": 3,
+     "y": 5,
+     "colour_slot": 3
+    }
+   ]
+  },
+  "to_dict": {
+   "format_version": 4,
+   "unit_width": 12,
+   "unit_height": 12,
+   "repeats_x": 7,
+   "repeats_y": 2,
+   "repeat_left_column": true,
+   "repeat_right_column": true,
+   "repeat_top_row": true,
+   "repeat_bottom_row": true,
+   "use_palette_sequence": false,
+   "background": "#f5f1e8",
+   "palette_sequences": [
+    [
+     "#b1172b"
+    ],
+    [
+     "#2d7d32"
+    ],
+    [
+     "#f2c84b"
+    ],
+    [
+     "#1b1b1b"
+    ]
+   ],
+   "symmetry": [
+    "identity",
+    "mirror_x",
+    "mirror_y",
+    "rotate_180"
+   ],
+   "motif": [
+    {
+     "x": 5,
+     "y": 1,
+     "colour_slot": 0
+    },
+    {
+     "x": 5,
+     "y": 2,
+     "colour_slot": 0
+    },
+    {
+     "x": 4,
+     "y": 2,
+     "colour_slot": 0
+    },
+    {
+     "x": 5,
+     "y": 3,
+     "colour_slot": 1
+    },
+    {
+     "x": 4,
+     "y": 3,
+     "colour_slot": 1
+    },
+    {
+     "x": 3,
+     "y": 3,
+     "colour_slot": 1
+    },
+    {
+     "x": 5,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 4,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 3,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 2,
+     "y": 4,
+     "colour_slot": 2
+    },
+    {
+     "x": 1,
+     "y": 5,
+     "colour_slot": 3
+    },
+    {
+     "x": 2,
+     "y": 5,
+     "colour_slot": 3
+    },
+    {
+     "x": 3,
+     "y": 5,
+     "colour_slot": 3
+    }
+   ],
+   "backstitches": [],
+   "top_repeat_override": null,
+   "bottom_repeat_override": null,
+   "left_repeat_override": null,
+   "right_repeat_override": null
+  },
+  "grid": [
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#1b1b1b",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f2c84b",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#2d7d32",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#b1172b",
+    "#b1172b",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ],
+   [
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8",
+    "#f5f1e8"
+   ]
+  ],
+  "backstitches": [],
+  "render_18_grid": {
+   "size": [
+    1512,
+    432
+   ],
+   "mode": "RGB",
+   "sha256": "c44783b9e4443653f3baa5032df03c398c773d2fccc669349871f2fa42c86e22"
+  },
+  "render_7_plain": {
+   "size": [
+    588,
+    168
+   ],
+   "mode": "RGB",
+   "sha256": "0e6d3e052d524613f4c597cb0e8b557b4ad1954e7f0cf0db54598fbd99df3f16"
+  }
+ }
+}

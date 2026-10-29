@@ -16,11 +16,19 @@ CLI, SVG exporter or embroidery-format plugin.
 - Click-to-paint editor for a recurring grid unit
 - Live expansion by mirror planes and rotations
 - Repeated-band preview
+- Backstitch (`Attersting`): a second tool that draws lines between grid
+  intersections, expanded by the same symmetry as the cross stitches
+- End pieces (`Endestykker`): the top, bottom, left and right repeats can each
+  hide cells and backstitches of the unit, add their own, and extend beyond the
+  unit with extra rows or columns
+- Dialog for adding or removing a row or column (`Rutenett` menu); the active
+  symmetry adds or removes the matching rows/columns too
 - Per-slot palette sequences edited from the colour dialog
 - Toggle to apply sequence over repeats (`Bruk fargeskvens`)
+- Colours from an RGB/hex dialog or a searchable DMC floss colour picker
 - Undo/redo (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z)
-- JSON save/load
-- PNG export
+- JSON save/load; `kvale path/to/pattern.json` opens a file at start
+- PNG export (including backstitches and end pieces)
 - Unit tests and GitHub Actions
 - `src/` package layout suitable for publishing
 
@@ -28,26 +36,47 @@ CLI, SVG exporter or embroidery-format plugin.
 
 ```text
 src/kvale/
+├── __main__.py           # `kvale [path]` entry point
 ├── core/
-│   ├── model.py          # document data model
+│   ├── model.py          # document data model (marks, backstitches, end pieces)
 │   ├── symmetry.py       # symmetry operations and rules
-│   ├── editing.py        # edit operations (paint, rows/columns, resize, colours)
+│   ├── editing.py        # edit operations (paint, backstitch, end pieces,
+│   │                     #   rows/columns, resize, colours)
 │   ├── editor.py         # Editor: command layer with undo/redo
-│   ├── renderer.py       # repeat-aware colour grid and raster export
-│   └── serialization.py  # JSON persistence
+│   ├── renderer.py       # repeat-aware colour grid, backstitch segments, PNG export
+│   ├── serialization.py  # JSON persistence
+│   ├── dmc.py            # DMC floss colours (data in dmc_palette.json)
+│   └── dmc_palette.json
 └── gui/
-    ├── app.py            # menus, controls and document lifecycle
-    └── canvas.py         # interactive editor and preview canvas
+    ├── app.py            # menus, controls, dialogs and document lifecycle
+    ├── canvas.py         # interactive editor and preview canvas
+    ├── palette_button.py # colour slot buttons and the RGB/hex colour dialog
+    └── dmc_palette.py    # DMC colour picker dialog
 ```
 
 The GUI depends on interfaces from `core`, but `core` does not depend on the GUI.
-That boundary is the main extension point.
+That boundary is the main extension point. `core` is pure Python; Pillow is only
+imported when `render_image` is called, so `import kvale.core` works without it.
 
-A UI holds one `Editor`, calls its methods for every change (`paint`, `erase`,
-`insert_column`, `set_grid`, `set_symmetry`, `set_colour_sequence`, ...) and draws
-`editor.document`. The editor keeps undo/redo history; wrap a drag-paint stroke in
-`with editor.batch():` to make it one undo step. Edits that switch off square-only
-symmetry return the removed operations in `EditResult.removed_symmetry`.
+A UI holds one `Editor`, calls its methods for every change and draws
+`editor.document`:
+
+- cells: `paint(x, y, slot, target)`, `erase(x, y, target)`, where `target` is
+  `"unit"` or one of the end pieces `"top"`, `"bottom"`, `"left"`, `"right"`;
+- backstitches: `add_backstitch(start, end, slot, target)`,
+  `erase_backstitch_near(x, y, target)`;
+- end pieces: `set_end_piece_extension(edge, n)`, `reset_end_piece(edge)`;
+- grid: `change_grid_line(axis, index, insertion=...)` (and `insert_column`,
+  `remove_row`, ...), `set_grid(...)`, `set_symmetry(...)`;
+- colours: `add_colour`, `set_colour_sequence`, `set_use_palette_sequence`,
+  `set_background`.
+
+`kvale.core.editing` has the helpers a UI needs to draw and validate input, such
+as `editor_bounds`, `visible_backstitches`, `hidden_backstitches`,
+`can_remove_grid_line`, `grid_line_for_place` and `max_line_number`. The editor
+keeps undo/redo history; wrap a drag-paint stroke in `with editor.batch():` to
+make it one undo step. Edits that switch off square-only symmetry return the
+removed operations in `EditResult.removed_symmetry`.
 
 ## Run locally
 
@@ -58,7 +87,7 @@ python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 python -m pip install --upgrade pip
 pip install -e .[dev]
-kvale
+kvale                            # or: kvale examples/flower-band.json
 ```
 
 On Linux, Tkinter may need to be installed through the operating system package
@@ -80,7 +109,20 @@ You might need to specify python version when installing Tkinter: `sudo apt inst
 8. In **Farger**, toggle `Bruk fargeskvens`:
     - `Av`: only the first colour in each sequence is used for all repeats
     - `På`: sequence advances along repeats and wraps when it reaches the end
-9. Save the editable pattern as JSON or export a PNG.
+9. Choose **Attersting** in the toolbar to draw backstitches: click two grid
+   intersections to make a line (Esc cancels); right-click a line to remove it.
+   Choose **Korssting** to go back to cross stitches.
+10. Under **Endestykker**, pick the top, bottom, left or right repeat to edit how
+    that edge of the band differs from the unit: right-click hides a cell or
+    backstitch, left-click adds or recolours one. `Ekstra rader/kolonner utover`
+    adds rows or columns beyond the unit on that side. `Nullstill valgt
+    endestykke` removes all changes for that edge.
+11. Use **Rutenett → Legg til/fjern rad eller kolonne...** (or the button under
+    **Rutenett**) to add or remove the top/bottom row, the first/last column or a
+    numbered row/column. With symmetry on, the matching rows/columns change too.
+12. `Legg til farge` picks any colour; `Legg til DMC-farge…` searches DMC floss
+    colours by number or name.
+13. Save the editable pattern as JSON or export a PNG.
 
 The legend rectangle for each `#n` slot is subdivided to visualize its current sequence.
 
@@ -92,7 +134,10 @@ The legend rectangle for each `#n` slot is subdivided to visualize its current s
 
 ## JSON format
 
-Pattern files now use `palette_sequences` as canonical colour storage.
+Files are written with `"format_version": 4`. Older files without
+`format_version`, backstitches or end pieces still open.
+
+Pattern files use `palette_sequences` as canonical colour storage.
 
 ```json
 {
@@ -107,6 +152,13 @@ Pattern files now use `palette_sequences` as canonical colour storage.
 
 - The first colour in each inner list is used as the base colour for that slot.
 - `palette` is not written to JSON.
+- `backstitches` lists lines between grid intersections:
+  `{"start_x": 0, "start_y": 1, "end_x": 2, "end_y": 1, "colour_slot": 0}`.
+- `top_repeat_override`, `bottom_repeat_override`, `left_repeat_override` and
+  `right_repeat_override` are the end pieces (`null` when unused), each with
+  `removed_cells`, `added_marks`, `removed_backstitches`, `added_backstitches`
+  and `extension`. Added marks and backstitches may lie in the extension:
+  negative coordinates for top/left, at or beyond the unit size for bottom/right.
 
 ## Tests
 
