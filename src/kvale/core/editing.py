@@ -46,6 +46,7 @@ from kvale.core.symmetry import (
     normalise_symmetry,
     transform_grid_line,
 )
+from kvale.core.threads import slot_threads, threads_for
 
 # Longest colour sequence a UI should offer for one slot.
 MAX_SEQUENCE_LENGTH = 24
@@ -905,19 +906,50 @@ def set_repeats(document: PatternDocument, repeats_x: int, repeats_y: int) -> No
 # Colours ------------------------------------------------------------------
 
 
-def add_palette_colour(document: PatternDocument, colour: str) -> int:
-    """Add a colour slot with a one-colour sequence and return its index."""
+def add_palette_colour(
+    document: PatternDocument, colour: str, threads: Sequence[str | None] | None = None
+) -> int:
+    """Add a colour slot with a one-colour sequence and return its index.
+
+    ``threads`` holds the colour's thread reference (``[None]`` for an own
+    colour); see ``set_palette_sequence``.
+    """
     document.palette_sequences.append([colour])
+    _store_threads(document, len(document.palette_sequences) - 1, threads)
     return len(document.palette_sequences) - 1
 
 
-def set_palette_sequence(document: PatternDocument, index: int, sequence: Sequence[str]) -> None:
-    """Replace the colour sequence of slot ``index``. The first colour is the base colour."""
+def set_palette_sequence(
+    document: PatternDocument,
+    index: int,
+    sequence: Sequence[str],
+    threads: Sequence[str | None] | None = None,
+) -> None:
+    """Replace the colour sequence of slot ``index``. The first colour is the base colour.
+
+    ``threads`` gives the thread reference of each colour ("dmc:321", or None
+    for an own colour; see ``kvale.core.threads``). When it is left out, a
+    colour that matches a DMC screen colour counts as that thread, so a
+    document without references keeps none.
+    """
     if not 0 <= index < len(document.palette_sequences):
         raise IndexError(f"No colour slot {index}")
     if not sequence:
         raise ValueError("A palette sequence must contain at least one colour")
     document.palette_sequences[index] = list(sequence)
+    _store_threads(document, index, threads)
+
+
+def _store_threads(
+    document: PatternDocument, index: int, threads: Sequence[str | None] | None
+) -> None:
+    sequence = document.palette_sequences[index]
+    if threads is None and document.palette_threads is None:
+        return  # an older document: references are worked out from the colours
+    refs = threads_for(sequence, threads)
+    if document.palette_threads is None:
+        document.palette_threads = slot_threads(document)
+    document.palette_threads[index] = refs
 
 
 def resize_sequence(sequence: Sequence[str], length: int) -> list[str]:
