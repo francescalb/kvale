@@ -21,7 +21,18 @@ ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 LANGUAGES = ("nb", "en", "it")
 # Keys the app needs that the mockup does not show (listed in strings.md too).
-APP_ONLY_KEYS = {"canvas.hint.minimal"}
+APP_ONLY_KEYS = {
+    "canvas.hint.minimal",
+    # Files (chunk 6)
+    "file.untitled",
+    "file.unsaved",
+    "file.confirmDiscard",
+    "file.export.preparing",
+    "file.error.notPattern",
+    "file.error.tooNew",
+    "file.error.fetch",
+    "file.error.export",
+}
 
 
 def load(code: str) -> dict[str, str]:
