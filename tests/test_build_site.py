@@ -30,3 +30,11 @@ def test_files_table_lists_core_modules_and_package_data(tmp_path: Path) -> None
     # Every listed file exists in the build, and nothing from the Tkinter GUI is shipped.
     assert all((out / path).is_file() for path in files)
     assert not any(path.startswith("kvale/gui") for path in files)
+
+
+def test_example_patterns_are_shipped(tmp_path: Path) -> None:
+    out = _build_site().build(tmp_path / "site")
+    assert (out / "examples" / "flower-band.json").read_bytes() == (
+        ROOT / "examples" / "flower-band.json"
+    ).read_bytes()
+    assert not list((out / "examples").glob("*.png"))
