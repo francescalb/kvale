@@ -110,13 +110,35 @@ class App:
         self.page.wait_for_function("window.kvaleReady === true", timeout=BOOT_TIMEOUT_MS)
         return self
 
-    def cell_centre(self, x: int, y: int) -> tuple[float, float]:
+    def cell_centre(self, x: float, y: float) -> tuple[float, float]:
         canvas = self.page.locator("#grid")
         box = canvas.bounding_box()
         size = float(canvas.get_attribute("data-cell-size"))
         origin_x = float(canvas.get_attribute("data-origin-x"))
         origin_y = float(canvas.get_attribute("data-origin-y"))
         return box["x"] + origin_x + (x + 0.5) * size, box["y"] + origin_y + (y + 0.5) * size
+
+    def point(self, x: float, y: float) -> tuple[float, float]:
+        """Page position of grid intersection (x, y) of the unit."""
+        return self.cell_centre(x - 0.5, y - 0.5)
+
+    def click_point(self, x: float, y: float, button: str = "left") -> None:
+        self.page.mouse.click(*self.point(x, y), button=button)
+
+    def pixel(self, x: float, y: float) -> tuple[int, int, int]:
+        """Colour drawn at a position given in cells (cell (x, y) spans x..x+1)."""
+        self.page.mouse.move(0, 0)  # remove the hover marks
+        rgba = self.page.evaluate(
+            """([x, y]) => {
+                const canvas = document.getElementById('grid');
+                const d = canvas.dataset, r = window.devicePixelRatio || 1;
+                const px = (+d.originX + x * +d.cellSize) * r;
+                const py = (+d.originY + y * +d.cellSize) * r;
+                return Array.from(canvas.getContext('2d').getImageData(px, py, 1, 1).data);
+            }""",
+            [x, y],
+        )
+        return rgba[0], rgba[1], rgba[2]
 
     def click_cell(self, x: int, y: int, button: str = "left") -> None:
         self.page.mouse.click(*self.cell_centre(x, y), button=button)
@@ -343,10 +365,10 @@ def test_theme_switch_and_memory(app: App) -> None:
     assert page.evaluate("getComputedStyle(document.body).backgroundColor") == light_bg
 
 
-def test_tool_hint_and_backstitch_placeholder(app: App) -> None:
+def test_tool_hint(app: App) -> None:
     page = app.page
     assert page.text_content("#canvas-hint").startswith("Trykk eller dra")
-    assert page.is_disabled("#tool-back")  # switched on by chunk 4
+    assert page.is_enabled("#tool-back")
     page.click("#tool-unpick")
     assert page.text_content("#canvas-hint").startswith("Trykk på et sting")
 
@@ -411,3 +433,187 @@ def test_layout_regions_and_no_sideways_scroll(context: Any, site_url: str, widt
         assert app.errors == []
     finally:
         page.close()
+
+
+# Chunk 4: backstitch, end pieces, corners, rulers, preview -----------------------
+
+
+def test_backstitch_chains_and_stops(app: App) -> None:
+    page = app.page
+    page.click("#tool-back")
+    assert page.get_attribute("#tool-back", "aria-pressed") == "true"
+    app.click_point(1, 1)
+    assert page.get_attribute("#grid", "data-pending") == "1,1"
+    app.click_point(3, 1)
+    app.click_point(3, 3)  # carries on from (3, 1)
+    assert page.get_attribute("#grid", "data-pending") == "3,3"
+    assert close(app.pixel(2, 1), RED)  # on the first line
+    assert close(app.pixel(3, 2), RED)  # on the second
+    assert app.pixel(2.5, 2.5) == WHITE  # no line straight from (1, 1) to (3, 3)
+
+    page.keyboard.press("Escape")  # Esc stops the chain
+    assert page.get_attribute("#grid", "data-pending") == ""
+    app.click_point(5, 5)
+    app.click_point(5, 5)  # the last point again stops it too
+    assert page.get_attribute("#grid", "data-pending") == ""
+    app.click_point(6, 6)
+    page.click("#tool-cross")  # so does another tool
+    page.click("#tool-back")
+    assert page.get_attribute("#grid", "data-pending") == ""
+
+    app.click_point(2, 1, button="right")  # right-click removes the line under it
+    assert not close(app.pixel(2, 1), RED)
+    assert close(app.pixel(3, 2), RED)
+    page.keyboard.press("Control+z")
+    assert close(app.pixel(2, 1), RED)
+    page.click("#tool-unpick")  # unpick on a line removes it as well
+    app.page.mouse.click(*app.point(3, 2))
+    assert not close(app.pixel(3, 2), RED)
+    page.keyboard.press("Control+z")
+    page.keyboard.press("Control+z")
+    page.keyboard.press("Control+z")
+    assert not close(app.pixel(2, 1), RED)
+    assert page.is_disabled("#undo")
+
+
+def test_backstitch_only_in_the_minimal_cell(app: App) -> None:
+    page = app.page
+    page.check("input.sym[value=mirror_x]")
+    page.click("#tool-back")
+    app.click_point(1, 1)
+    app.click_point(2, 2)
+    assert page.get_attribute("#grid", "data-pending") == "2,2"
+    app.click_point(11, 3)  # a line mostly outside the minimal cell: ignored
+    assert page.get_attribute("#grid", "data-pending") == "2,2"
+    # The line in the minimal cell is mirrored: (11, 1)-(10, 2) is its copy.
+    assert close(app.pixel(10.5, 1.5), RED)
+    page.click("#tool-unpick")
+    page.mouse.click(*app.point(10.5, 1.5))  # a copy cannot be unpicked
+    assert close(app.pixel(10.5, 1.5), RED)
+    page.mouse.click(*app.point(1.5, 1.5))  # its source can, and the copy goes too
+    assert not close(app.pixel(10.5, 1.5), RED)
+
+
+def test_end_piece_edit_extend_reset_and_undo(app: App) -> None:
+    page = app.page
+    assert page.is_hidden("#end-panel")
+    page.click("#target-seg [data-target=right]")
+    assert page.get_attribute("#stage", "data-target") == "right"
+    assert page.is_visible("#end-panel")
+    assert page.text_content("#end-title") == "Høyre endestykke"
+    assert page.locator("#target-seg [data-target=right] .changed").count() == 0
+    assert page.locator("#legend .k-nb").count() == 1
+
+    app.click_cell(0, 0)
+    assert app.colour(0, 0) == RED
+    assert page.locator("#target-seg [data-target=right] .changed").count() == 1
+    page.click("#end-ext-more")
+    page.click("#end-ext-more")
+    assert page.input_value("#end-ext") == "2"
+    assert page.text_content("#ruler-top button.extra") == "+1"
+    app.click_cell(13, 0)  # in the second extra column
+    assert app.colour(13, 0) == RED
+    app.click_cell(-2, 0)  # the faded neighbour: nothing happens
+    assert page.text_content("#end-summary").startswith("Lagt til: 2")
+
+    page.click("#end-reset")
+    assert page.is_visible("#reset-dialog")
+    assert "Høyre endestykke" in page.text_content("#reset-what")
+    assert page.locator("#reset-loss li").count() == 2  # stitch changes, extra columns
+    page.click("#reset-cancel")
+    assert page.is_hidden("#reset-dialog")
+    assert page.input_value("#end-ext") == "2"
+
+    page.click("#end-reset")
+    page.click("#reset-ok")
+    assert page.is_hidden("#reset-dialog")
+    assert page.input_value("#end-ext") == "0"
+    assert page.locator("#target-seg [data-target=right] .changed").count() == 0
+    assert page.text_content("#toast-message") == "Høyre endestykke er tilbakestilt."
+    assert page.is_disabled("#end-reset")
+
+    page.click("#undo")  # undo brings the end back
+    assert page.input_value("#end-ext") == "2"
+    assert app.colour(13, 0) == RED
+    assert page.locator("#target-seg [data-target=right] .changed").count() == 1
+
+    page.click("#end-done")
+    assert page.get_attribute("#stage", "data-target") == "unit"
+    assert page.is_hidden("#end-panel")
+    assert app.colour(0, 0) == WHITE  # the unit itself was never changed
+
+
+def test_corner_edit_and_mini_band(app: App) -> None:
+    page = app.page
+    page.click("#corner-seg [data-target=top_left]")
+    assert page.get_attribute("#stage", "data-target") == "top_left"
+    assert page.text_content("#end-title") == "Hjørne oppe til venstre"
+    assert page.is_hidden("#end-ext-wrap")  # a corner has no size of its own
+    assert page.is_visible("#corner-size")
+    app.click_cell(2, 2)
+    assert app.colour(2, 2) == RED
+    assert page.locator("#corner-seg [data-target=top_left] .changed").count() == 1
+    assert page.locator("#target-seg .changed").count() == 0
+    app.click_cell(8, 8)  # the faded ends beside it are for reference only
+    assert page.locator("#corner-seg .changed").count() == 1
+
+    page.click("#end-done")
+    # The mini band: click its bottom-right corner to edit that corner.
+    mini = page.locator("#mini-canvas")
+    mini.scroll_into_view_if_needed()
+    box = mini.bounding_box()
+    mini.click(position={"x": box["width"] - 3, "y": box["height"] - 3})
+    assert page.get_attribute("#stage", "data-target") == "bottom_right"
+
+
+def test_ruler_popover_adds_and_removes_rows(app: App) -> None:
+    page = app.page
+    assert page.locator("#ruler-left button").count() == 12
+    page.check("input.sym[value=mirror_y]")
+    page.click("#ruler-left [data-index='2']")
+    assert page.is_visible("#edge-popover")
+    assert page.text_content("#edge-title") == "Rad 3"
+    assert page.text_content("#edge-note") == "Symmetrien tar også med rad 10."
+    page.click("#edge-after")  # a new row below row 3, and its mirror image
+    assert page.locator("#ruler-left button").count() == 14
+    assert page.is_visible("#edge-popover")
+    page.click("#edge-remove")
+    page.click("#edge-remove")
+    assert page.locator("#ruler-left button").count() == 10
+    page.keyboard.press("Escape")
+    assert page.is_hidden("#edge-popover")
+    page.click("#ruler-top [data-index='0']")
+    assert page.text_content("#edge-title") == "Kolonne 1"
+    page.click("#edge-close")
+    assert page.is_hidden("#edge-popover")
+    page.keyboard.press("Control+z")
+    assert page.locator("#ruler-left button").count() == 12
+    page.keyboard.press("Control+z")
+    assert page.locator("#ruler-left button").count() == 14
+
+
+def test_whole_band_preview_with_ends_and_backstitch(app: App) -> None:
+    page = app.page
+    page.click("#tool-back")
+    app.click_point(0, 0)
+    app.click_point(1, 0)
+    page.keyboard.press("Escape")
+    page.click("#tool-cross")
+    page.click("#target-seg [data-target=left]")
+    page.click("#end-ext-more")
+    app.click_cell(-1, 3)
+    page.click("#mode-preview")
+    assert page.is_hidden("#end-panel")
+    assert page.locator("#ruler-top button").count() == 0
+    assert page.text_content("#preview-caption") == "6 × 2 rapporter · 73 × 24 sting"
+    assert app.colour(0, 3) == RED  # the extra column of the left end
+    assert app.colour(1, 3) == WHITE
+    # The backstitch, in every repeat (shifted by the extra column).
+    assert close(app.pixel(1.5, 0.05), RED)
+    assert close(app.pixel(13.5, 0.05), RED)
+    page.click("#zoom-in")
+    assert page.text_content("#zoom-label") == "125 %"
+    page.click("#zoom-fit")
+    assert page.text_content("#zoom-label") == "100 %"
+    page.click("#mode-edit")  # back to drawing where you were
+    assert page.get_attribute("#stage", "data-target") == "left"
