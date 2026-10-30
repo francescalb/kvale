@@ -1,4 +1,4 @@
-"""``FileViews``: the New / Open / Save / Save image buttons (``#file-actions``),
+"""``FileViews``: the New / Open / Save / Save as / Save image buttons (``#file-actions``),
 the pattern name with its unsaved marker and the autosave note (``#doc-info``),
 autosave to localStorage, and opening a pattern at start (from the URL, or
 the autosave while ``#boot-restore`` shows on the loading screen).
@@ -48,6 +48,7 @@ _BUTTONS = (
     ("file-new", "i-new", "file.new", "file.new.hint"),
     ("file-open", "i-open", "file.open", "file.open.hint"),
     ("file-save", "i-save", "file.save", "file.save.hint"),
+    ("file-save-as", "i-save-as", "file.saveAs", "file.saveAs.hint"),
     ("file-export", "i-image", "file.export", "file.export.hint"),
 )
 
@@ -95,8 +96,6 @@ class FileViews:
             button.innerHTML = f'<svg class="icon" aria-hidden="true"><use href="#{icon}"/></svg>'
             create("span", text=t(label), attrs={"data-i18n": label}, parent=button)
             self.buttons[element_id] = button
-        # Save's tooltip also names "save as" (Ctrl+Shift+S); set in render().
-        self.buttons["file-save"].removeAttribute("data-i18n-title")
         self.input = create(
             "input",
             attrs={"type": "file", "id": "file-input", "accept": ".json,application/json", "hidden": ""},
@@ -105,6 +104,7 @@ class FileViews:
         self.bindings.on(self.buttons["file-new"], "click", lambda _event: self.new())
         self.bindings.on(self.buttons["file-open"], "click", lambda _event: self.open())
         self.bindings.on(self.buttons["file-save"], "click", self.save)
+        self.bindings.on(self.buttons["file-save-as"], "click", self.save_as)
         self.bindings.on(self.buttons["file-export"], "click", self.export_png)
         self.bindings.on(self.input, "change", self._on_input_change)
 
@@ -139,7 +139,6 @@ class FileViews:
         self.unsaved_mark.title = t("file.unsaved")
         self.unsaved_mark.setAttribute("aria-label", t("file.unsaved"))
         self.doc_info.dataset.dirty = "true" if dirty else "false"
-        self.buttons["file-save"].title = f"{t('file.save.hint')}\n{t('file.saveAs.hint')}"
         self.autosave_note.title = t("autosave.hint")
         if self.saved_at is not None:
             time = browser.clock_time(self.saved_at, i18n.current_language())

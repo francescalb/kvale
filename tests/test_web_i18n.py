@@ -26,7 +26,8 @@ APP_ONLY_KEYS = {
     # Files (chunk 6)
     "file.untitled",
     "file.unsaved",
-    "file.saveAs.hint",  # feature check (chunk 8): "Save as" of the Tkinter app
+    "file.saveAs",  # chunk 8: the "Save as" button (owner's decision)
+    "file.saveAs.hint",
     "file.confirmDiscard",
     "file.export.preparing",
     "file.error.notPattern",

@@ -15,9 +15,10 @@ features and leaving room for new ones.
 
 ## Feature checklist
 
-Every item must work in the new app before the Tkinter interface is removed.
+Every item had to work in the new app before the Tkinter interface was removed.
 `docs/FEATURE_CHECK.md` compares every behaviour of the Tkinter app with the
-web app, item by item (chunk 8).
+web app, item by item (chunk 8). All done; the Tkinter interface was removed on
+2026-10-29.
 
 - [x] Unit width/height and repeats across/down (1–100)
 - [x] Toggles for whether the outer left/right column and top/bottom row repeat
@@ -32,8 +33,8 @@ web app, item by item (chunk 8).
 - [x] Colour slots: select, edit, add; per-slot sequences (1–24 colours); "use sequence" toggle; split legend swatch
 - [x] Colour dialog with RGB/hex entry, and a searchable DMC floss colour picker
 - [x] Open/save JSON in the current format (format_version 4; older files still open); PNG export
-- [x] Open a pattern given at start (`kvale path.json` today; in the browser `?file=<url>`, `?example=<name>` or `#data=<compressed JSON>`)
-- [x] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app); Save as is Ctrl+Shift+S (chunk 8)
+- [x] Open a pattern given at start (was `kvale path.json`, removed with the Tkinter app; in the browser `?file=<url>`, `?example=<name>` or `#data=<compressed JSON>`)
+- [x] Ctrl+O / Ctrl+S, and a New button (browsers reserve Ctrl+N in a normal tab; it works in the installed app); Save as: a button and Ctrl+Shift+S (chunk 8)
 - [x] Undo/redo (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z, Cmd on a Mac), Edit menu entries disabled when there is nothing to undo/redo (web: the Undo/Redo buttons; "Undone."/"Redone." messages; shortcuts wait while a dialog is open)
 - [x] New: control for the background colour (already stored in the file)
 
@@ -62,7 +63,7 @@ Each chunk is one pull request.
 | 5 | ✅ Side panels: grid settings, symmetry, colour slots, sequence editor | 1, 3 |
 | 6 | ✅ Files: open/save JSON, PNG export, autosave in the browser | 1, 2 |
 | 7 | ✅ Installable/offline (PWA) and a short user guide in nb/en/it | 4–6 |
-| 8 | Feature check against the checklist (done: `docs/FEATURE_CHECK.md`); remove the Tkinter interface | 7 |
+| 8 | ✅ Feature check against the checklist (`docs/FEATURE_CHECK.md`) and the owner's decisions on it (Save as button, thread list in the image tooltip); remove the Tkinter interface and the `kvale` command | 7 |
 
 Rounds: 0+1, then 2+3, then 4+5+6, then 7+8. Pull requests are reviewed after
 each round before the next one starts.

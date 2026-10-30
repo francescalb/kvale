@@ -5,7 +5,7 @@
     python tools/build_site.py --serve 8765
 
 The site is ``web/`` plus the browser-safe part of ``src/kvale`` (the package
-``__init__`` and ``kvale.core``; not the Tkinter GUI) and the example patterns
+``__init__`` and ``kvale.core``) and the example patterns
 ``examples/*.json`` (opened with ``?example=<name>``). The ``[files]`` table of
 ``pyscript.toml`` is generated from the Python files found plus the package data
 of ``kvale`` (such as ``kvale/core/dmc_palette.json``), so it never needs editing

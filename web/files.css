@@ -13,12 +13,23 @@
   .file-actions .btn { padding: 0 var(--space-3); }
 }
 @media (max-width: 640px) {
-  .file-actions { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .file-actions { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); }
   .file-actions .btn { width: auto; flex-direction: column; gap: 0; min-height: 52px; font-size: var(--text-xs); white-space: normal; text-align: center; line-height: 1.15; }
 }
 
-/* Not in the mockup: the unsaved-changes marker after the name, and the
-   "Save image" button while Pillow loads. */
+/* Not in the mockup: the fifth button, "Save as" (hence five columns on a
+   phone above), the unsaved-changes marker after the name, and the
+   "Save image" button while Pillow loads. So that the top bar stays on one
+   line where it did with four buttons, the file buttons get narrower padding
+   below 1600px, and "Save as" shows only its icon (its name stays in the
+   tooltip and for screen readers) between the phone layout and 1380px. */
+@media (max-width: 1599px) {
+  .file-actions .btn { padding: 0 var(--space-3); }
+}
+@media (min-width: 641px) and (max-width: 1379px) {
+  #file-save-as { padding: 0; }
+  #file-save-as > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
 .docname .unsaved { margin-left: 6px; color: var(--accent); font-size: var(--text-xs); vertical-align: middle; }
 .docname .unsaved[hidden] { display: none; }
 .file-actions .btn[aria-busy="true"] { cursor: progress; opacity: .75; }

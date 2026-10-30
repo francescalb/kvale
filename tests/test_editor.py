@@ -201,7 +201,7 @@ def test_colour_settings() -> None:
 
 
 def test_set_grid_with_same_values_leaves_document_alone() -> None:
-    # Like the branch GUI's "Bruk" button: nothing changed, nothing touched.
+    # Like pressing "Apply" without a change: nothing changed, nothing touched.
     editor = Editor(PatternDocument(symmetry=["mirror_x", "identity"]))
 
     assert not editor.set_grid(unit_width=12, repeats_x=6).changed

@@ -922,7 +922,7 @@ def test_file_buttons_and_doc_info(file_page: Any, site_url: str) -> None:
     page = file_page
     app = start(page, site_url)
     labels = page.locator("#file-actions .btn").all_text_contents()
-    assert labels == ["Ny", "Åpne", "Lagre", "Lagre bilde"]
+    assert labels == ["Ny", "Åpne", "Lagre", "Lagre som\u00a0…", "Lagre bilde"]
     assert page.is_visible("#doc-info")
     assert page.text_content("#doc-name") == "Nytt mønster"
     assert page.is_hidden("#doc-unsaved")
@@ -1224,7 +1224,7 @@ def test_new_version_shows_a_toast_and_reloads(
         server.server_close()
 
 
-# Feature check against the Tkinter app (chunk 8, docs/FEATURE_CHECK.md) ----
+# Feature check against the old Tkinter app (chunk 8, docs/FEATURE_CHECK.md)
 
 
 def test_undo_redo_keys_buttons_and_messages(app: App) -> None:
@@ -1353,8 +1353,51 @@ def test_save_as_asks_for_a_new_file(file_page: Any, site_url: str) -> None:
         page.keyboard.press("Control+Shift+S")
     assert info.value.suggested_filename == "copy.json"
     wait_dirty(page, False)
-    tooltip = page.get_attribute("#file-save", "title")
+    tooltip = page.get_attribute("#file-save-as", "title")
     assert tooltip is not None and "Ctrl+Shift+S" in tooltip
+    assert app.errors == []
+
+
+def test_save_as_button(file_page: Any, site_url: str) -> None:
+    from kvale_web.files.logic import parse_document
+
+    page = file_page
+    app = start(page, site_url)
+    page.evaluate(
+        """() => {
+            window.saved = [];
+            window.showSaveFilePicker = async options => {
+                window.suggested = options.suggestedName;
+                return {
+                    name: 'button.json',
+                    queryPermission: async () => 'granted',
+                    requestPermission: async () => 'granted',
+                    createWritable: async () => ({
+                        write: async text => { window.saved.push(text); },
+                        close: async () => {},
+                    }),
+                };
+            };
+        }"""
+    )
+    app.click_cell(1, 1)
+    wait_dirty(page, True)
+    page.click("#file-save-as")
+    wait_name(page, "button.json")
+    wait_dirty(page, False)
+    assert page.evaluate("window.suggested") == "Nytt mønster.json"
+    saved = parse_document(page.evaluate("window.saved[0]"))
+    assert saved.to_dict() == app_document(app).to_dict()
+    # The label and tooltip follow the language.
+    page.click("#lang-seg [data-lang=en]")
+    page.wait_for_function("document.getElementById('file-save-as').textContent === 'Save as…'")
+    assert page.get_attribute("#file-save-as", "title") == (
+        "Save a copy under a new name – Ctrl+Shift+S"
+    )
+    page.click("#lang-seg [data-lang=it]")
+    page.wait_for_function(
+        "document.getElementById('file-save-as').textContent === 'Salva con nome…'"
+    )
     assert app.errors == []
 
 

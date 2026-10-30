@@ -33,9 +33,10 @@ def test_files_table_lists_core_modules_and_package_data(tmp_path: Path) -> None
     assert "kvale/core/fonts/AtkinsonHyperlegible-Regular.ttf" in files
     assert "kvale_web/state.py" in files
     assert "main.py" not in files
-    # Every listed file exists in the build, and nothing from the Tkinter GUI is shipped.
+    # Every listed file exists in the build, and only the browser-safe part of kvale.
     assert all((out / path).is_file() for path in files)
-    assert not any(path.startswith("kvale/gui") for path in files)
+    assert all(path.startswith(("kvale/core/", "kvale_web/")) or path == "kvale/__init__.py"
+               for path in files if path.startswith("kvale"))
 
 
 def test_example_patterns_are_shipped(tmp_path: Path) -> None:

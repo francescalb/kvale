@@ -1,7 +1,11 @@
 # Feature check: Tkinter app → web app
 
 Chunk 8, first half. Every behaviour of the Tkinter app (`src/kvale/gui`) and
-what the web app (`web/`) does instead. Checked by reading both and by running
+what the web app (`web/`) does instead.
+
+**The Tkinter app was removed on 2026-10-29** (chunk 8, second half), with its
+tests and the `kvale [path.json]` command. The tables below are kept as the
+record of what it did. Checked by reading both and by running
 the web app (`python tools/build_site.py --serve`) in Chromium with Playwright;
 the browser tests named are in `tests/test_web_browser.py` (`pytest -m browser`).
 
@@ -22,11 +26,11 @@ band" going back to drawing.
 | File → Open… (Ctrl+O), `*.json` filter | "Open" and Ctrl+O; the file picker (Chrome, Edge) or a file input, `.json` | ✅ same (`test_open_via_file_input_and_save_round_trip`) |
 | Open error: message box "Kunne ikke åpne mønster" | Toast "This file is not a Kvale pattern." or "…made with a newer version…" | ✅ same (`test_open_bad_file_shows_a_message`) |
 | File → Save (Ctrl+S); first save asks for a name | "Save" and Ctrl+S: writes back to the opened file (Chrome, Edge) or downloads `<name>.json` | ✅ same |
-| File → Save as… | Ctrl+Shift+S: asks where to save (Chrome, Edge), later saves go there; other browsers download. The Save tooltip names it | ✅ fixed in this check (`test_save_as_asks_for_a_new_file`). No button: the design has none; the owner may want one |
+| File → Save as… | "Save as…" button and Ctrl+Shift+S: asks where to save (Chrome, Edge), later saves go there; other browsers download | ✅ fixed in this check (`test_save_as_asks_for_a_new_file`, `test_save_as_button`). The button was added on the owner's decision |
 | Save error: message box | Writing to the file fails → the file is downloaded instead | ✅ changed on purpose: nothing is lost |
-| File → Export PNG… (cell 18 px, grid lines, backstitch, end pieces) | "Save image": the whole band with grid, backstitch, ends and corners, **and the thread list under it** ("DMC 321 – Red", "Own colour #123456") | ✅ changed on purpose: 16 px per square, smaller for very long bands so the image stays under 8000 px; the thread list is new (design). Fixed in this check (`test_png_lists_the_threads`, `test_render_image_with_key_*`) |
+| File → Export PNG… (cell 18 px, grid lines, backstitch, end pieces) | "Save image": the whole band with grid, backstitch, ends and corners, **and the thread list under it** ("DMC 321 – Red", "Own colour #123456"); its tooltip says so | ✅ changed on purpose: 16 px per square, smaller for very long bands so the image stays under 8000 px; the thread list is new (design). Fixed in this check (`test_png_lists_the_threads`, `test_render_image_with_key_*`) |
 | File → Quit | Close the tab; it warns when changes are not saved to a file | ✅ changed on purpose |
-| `kvale path.json` opens a file at start; error box if it fails | `?file=<url>`, `?example=<name>` or `#data=<compressed JSON>`; a toast if it fails | ✅ same (`test_example_from_url`, `test_data_link_and_missing_example`) |
+| `kvale path.json` opens a file at start; error box if it fails (the command was removed with the Tkinter app) | `?file=<url>`, `?example=<name>` or `#data=<compressed JSON>`; a toast if it fails | ✅ same (`test_example_from_url`, `test_data_link_and_missing_example`) |
 | — | Autosave in the browser, restored on the next visit; unsaved marker | ✅ new (`test_autosave_restores_after_reload`) |
 
 ## Status messages
@@ -103,7 +107,7 @@ band" going back to drawing.
 | Right click hides a cell/backstitch, left click adds or recolours | Same | ✅ same |
 | Hidden cells: red cross; added cells: inset border; hidden backstitches: red dashed; unit edge lines | Same | ✅ same |
 | Extension rows/columns labelled V1/H1/T1/B1 | Labelled +1, +2 … on the rulers | ✅ changed on purpose (design) |
-| "Ekstra rader/kolonner utover" 0–100, "Bruk" | Stepper 0–50, applied at once | ✅ changed on purpose: the design caps it at 50. Owner may want 100 again |
+| "Ekstra rader/kolonner utover" 0–100, "Bruk" | Stepper 0–50, applied at once | ✅ changed on purpose: the design caps it at 50, and the owner confirmed that 50 is enough. Files with more still open and draw |
 | Controls disabled while the unit is the target | The end panel shows only for an end piece | ✅ same |
 | "Nullstill valgt endestykke" asks first | "Reset" asks first and lists what will be lost; undo brings it back | ✅ same |
 
@@ -126,8 +130,17 @@ band" going back to drawing.
 
 ## Still missing
 
-Nothing from the Tkinter app. For the owner to decide:
+Nothing from the Tkinter app. The owner decided the three open questions:
 
-- Save as is a shortcut only (Ctrl+Shift+S, named in the Save tooltip); the design has no button for it.
-- The end-piece extension stepper stops at 50 (the design); Tkinter allowed 100. Files with more still open and draw.
-- The saved image's tooltip (`file.export.hint`, approved wording) does not mention the thread list yet.
+- Save as gets a button, "Lagre som …" / "Save as…" / "Salva con nome…", next to Save (it also stays on Ctrl+Shift+S).
+- The end-piece extension stepper stopping at 50 is a deliberate change (Tkinter allowed 100). Files with more still open and draw.
+- The saved image's tooltip (`file.export.hint`) now says the image includes a list of the threads used.
+
+## Tkinter removed (2026-10-29)
+
+With every behaviour above in the web app, the Tkinter interface was removed:
+`src/kvale/gui/`, the `kvale` console command (`src/kvale/__main__.py`, which only
+started that interface), and its tests (`test_gui.py`, `test_gui_golden.py`,
+`gui_scenarios.py`, `generate_gui_golden.py`, `tests/data/golden/gui.json`).
+Opening a file at start is now the Open button or a `?file=` link. `kvale.core`
+and its tests, including the golden data of `test_golden.py`, are unchanged.

@@ -3,13 +3,12 @@
 [![CI](https://github.com/francescalb/kvale/actions/workflows/ci.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/ci.yml)
 [![PR Validate](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/francescalb/kvale/actions/workflows/pr-validate.yml)
 
-`Kvale` is a modular Python application for designing repeating,
-grid-based textile and embroidery patterns. Geometry, symmetry and colouring are
-kept separate so that colour sequencing can evolve independently of the geometric repeat.
-
-The first version uses Tkinter for the GUI, Pillow for PNG export, JSON for editable
-project files, and a small dependency-free core that can later be reused by a web UI,
-CLI, SVG exporter or embroidery-format plugin.
+`Kvale` is an app for designing repeating, grid-based cross-stitch bands, such as
+those on Norwegian bunads. It runs in the browser: the pattern core is pure Python
+(`kvale.core`), run in the page by [PyScript](https://pyscript.net), with plain
+HTML and CSS for the interface. Geometry, symmetry and colouring are kept separate
+so that colour sequencing can evolve independently of the geometric repeat.
+Patterns are saved as JSON files and exported as PNG images.
 
 ## Use it
 
@@ -25,39 +24,43 @@ The **?** button in the app opens the user guide:
 [norsk](https://francescalb.github.io/kvale/guide/nb.html) ·
 [italiano](https://francescalb.github.io/kvale/guide/it.html).
 
-## Features
+Open a pattern file with **Open** (Ctrl+O), or with a link:
+`?file=<url of a .json file>`, `?example=<name>` for one of the patterns in
+`examples/` (for example `?example=flower-band`), or `#data=<compressed JSON>`.
 
-- Click-to-paint editor for a recurring grid unit
+Kvale used to be a Tkinter desktop program started with `kvale [path.json]`.
+That program and its `kvale` command were removed in October 2026; the web app
+does everything it did (see `docs/FEATURE_CHECK.md`).
+
+## Features
+- Click, drag or touch to stitch in a recurring grid unit; zoom
 - Live expansion by mirror planes and rotations
-- Minimal cell (web app): with symmetry on, you draw only in the smallest part
-  of the unit that the symmetry copies onto the rest (for example the top-left
-  quarter for two mirrors, a triangle for a diagonal). The rest is greyed out,
-  and the minimal cell is outlined. The Tkinter app still lets you paint anywhere.
-- Repeated-band preview
-- Backstitch (`Attersting`): a second tool that draws lines between grid
-  intersections, expanded by the same symmetry as the cross stitches
-- End pieces (`Endestykker`): the top, bottom, left and right repeats can each
-  hide cells and backstitches of the unit, add their own, and extend beyond the
-  unit with extra rows or columns
-- Corner end pieces (core only so far): each of the four corner units can be
-  changed on its own, including the square where two extensions cross
-- Dialog for adding or removing a row or column (`Rutenett` menu); the active
-  symmetry adds or removes the matching rows/columns too
-- Per-slot palette sequences edited from the colour dialog
-- Toggle to apply sequence over repeats (`Bruk fargeskvens`)
-- Colours from an RGB/hex dialog or a searchable DMC floss colour picker
+- Minimal cell: with symmetry on, you draw only in the smallest part of the unit
+  that the symmetry copies onto the rest (for example the top-left quarter for
+  two mirrors, a triangle for a diagonal). The rest is greyed out, and the
+  minimal cell is outlined.
+- "Draw" and "Whole band" views
+- Backstitch: a second tool that draws lines between grid intersections,
+  expanded by the same symmetry as the cross stitches
+- End pieces: the top, bottom, left and right repeats can each hide cells and
+  backstitches of the unit, add their own, and extend beyond the unit with extra
+  rows or columns (up to 50)
+- Corners: each of the four corner units can be changed on its own, including
+  the square where two extensions cross
+- Adding or removing rows and columns (the rulers or the "Rows and columns"
+  dialog); the active symmetry adds or removes the matching rows/columns too
+- Colours as threads («DMC 321») or own colours, with a searchable DMC picker;
+  a colour can change from repeat to repeat (a sequence of up to 24 colours)
+- Background (fabric) colour, and the list of threads under the band
 - Undo/redo (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z)
-- JSON save/load; `kvale path/to/pattern.json` opens a file at start
-- PNG export (including backstitches and end pieces; the web app lists the
-  threads under the band)
-- Unit tests and GitHub Actions
-- `src/` package layout suitable for publishing
+- Open, Save and Save as (JSON), Save image (PNG with the list of threads)
+- Autosave in the browser; works offline and can be installed as an app
+- Interface in Norwegian, English and Italian; light and dark look
 
 ## Project architecture
 
 ```text
 src/kvale/
-├── __main__.py           # `kvale [path]` entry point
 ├── core/
 │   ├── model.py          # document data model (marks, backstitches, end pieces)
 │   ├── symmetry.py       # symmetry operations and rules
@@ -68,11 +71,6 @@ src/kvale/
 │   ├── serialization.py  # JSON persistence
 │   ├── dmc.py            # DMC floss colours (data in dmc_palette.json)
 │   └── dmc_palette.json
-└── gui/                  # Tkinter interface (removed in chunk 8)
-    ├── app.py            # menus, controls, dialogs and document lifecycle
-    ├── canvas.py         # interactive editor and preview canvas
-    ├── palette_button.py # colour slot buttons and the RGB/hex colour dialog
-    └── dmc_palette.py    # DMC colour picker dialog
 
 web/                      # browser app (PyScript), published to GitHub Pages
 ├── index.html            # static markup and the loading screen
@@ -88,8 +86,8 @@ web/                      # browser app (PyScript), published to GitHub Pages
 tools/build_site.py       # builds _site/ from web/ and kvale.core
 ```
 
-The GUI depends on interfaces from `core`, but `core` does not depend on the GUI.
-That boundary is the main extension point. `core` is pure Python; Pillow is only
+The web app depends on interfaces from `core`, but `core` does not depend on the
+web app. That boundary is the main extension point. `core` is pure Python; Pillow is only
 imported when `render_image` is called, so `import kvale.core` works without it.
 
 A UI holds one `Editor`, calls its methods for every change and draws
@@ -121,34 +119,21 @@ make it one undo step. Edits that switch off square-only symmetry return the
 removed operations in `EditResult.removed_symmetry`.
 
 ## Run locally
-
-Python 3.11 or newer is recommended.
+The app needs no installation: use it at <https://francescalb.github.io/kvale/>.
+To work on it, use Python 3.11 or newer. No Node or npm is needed:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 python -m pip install --upgrade pip
 pip install -e .[dev]
-kvale                            # or: kvale examples/flower-band.json
-```
-
-On Linux, Tkinter may need to be installed through the operating system package
-manager, for example `sudo apt install python3-tk` on Ubuntu or Debian.
-You might need to specify python version when installing Tkinter: `sudo apt install python3.14-tk`
-
-## Run the web app locally
-
-The new browser version runs Python in the page with
-[PyScript](https://pyscript.net). No Node or npm is needed:
-
-```bash
 python tools/build_site.py --serve
 ```
 
-Then open <http://localhost:8000/>. The command copies `web/` and `src/kvale/core`
-into `_site/` and serves it (`--serve 8765` picks another port). Start-up takes a
-few seconds while Python loads. The Tkinter app above still works and stays until
-the web app has every feature (chunk 8 of the modernisation plan).
+Then open <http://localhost:8000/> (or <http://localhost:8000/?example=flower-band>).
+The command copies `web/` and `src/kvale/core` into `_site/` and serves it
+(`--serve 8765` picks another port). Start-up takes a few seconds while Python
+loads. `web/README.md` explains how the web app is organised.
 
 ### Publishing
 
@@ -158,36 +143,23 @@ Build and deployment → Source: GitHub Actions**. The site is then at
 `https://<owner>.github.io/kvale/`; all paths are relative, so the sub-path works.
 
 ## Using the editor
+The user guide (the **?** button) explains every step. In short:
 
-1. Set the recurring unit width and height.
-2. Select a palette colour.
-3. Left-click cells to paint seed marks; right-click to erase.
-4. Enable mirrors or rotations. Seed cells have a dark inset border; generated cells do not.
-5. Switch to **Preview repeats** to see the complete band.
-6. Double-click a colour swatch in **Farger** to open **Velg palettfarge**.
-7. In the dialog:
-    - Set `Antall farger` (default 1)
-    - Select which `Del i sekvens` to edit
-    - Use `Velg farge for del` to change that part
-8. In **Farger**, toggle `Bruk fargeskvens`:
-    - `Av`: only the first colour in each sequence is used for all repeats
-    - `På`: sequence advances along repeats and wraps when it reaches the end
-9. Choose **Attersting** in the toolbar to draw backstitches: click two grid
-   intersections to make a line (Esc cancels); right-click a line to remove it.
-   Choose **Korssting** to go back to cross stitches.
-10. Under **Endestykker**, pick the top, bottom, left or right repeat to edit how
-    that edge of the band differs from the unit: right-click hides a cell or
-    backstitch, left-click adds or recolours one. `Ekstra rader/kolonner utover`
-    adds rows or columns beyond the unit on that side. `Nullstill valgt
-    endestykke` removes all changes for that edge.
-11. Use **Rutenett → Legg til/fjern rad eller kolonne...** (or the button under
-    **Rutenett**) to add or remove the top/bottom row, the first/last column or a
-    numbered row/column. With symmetry on, the matching rows/columns change too.
-12. `Legg til farge` picks any colour; `Legg til DMC-farge…` searches DMC floss
-    colours by number or name.
-13. Save the editable pattern as JSON or export a PNG.
-
-The legend rectangle for each `#n` slot is subdivided to visualize its current sequence.
+1. Under **Repeat and size**, set the size of the repeat and how many repeats go across and down.
+2. Choose a colour on the left (or press 1–9).
+3. Click or drag on squares to stitch; right-click, or the unpick tool (E), removes them.
+4. Turn on mirrors or rotations under **Symmetry**: you draw in the outlined part and
+   the rest follows. Stitches you drew have a dark inset border; copies do not.
+5. **Whole band** (P) shows the finished band and the threads it uses.
+6. The pencil on a colour opens it: choose a thread or an own colour, or several
+   that take turns along the band (**Change colour from repeat to repeat**).
+7. **Backstitch** (B): tap two grid corners to stitch a line; the next line starts
+   where the last ended, until Esc.
+8. **Drawing in** picks the repeat, an end piece or a corner. An end piece can hide,
+   add or recolour stitches and have extra rows or columns; **Reset** asks first.
+9. Click a ruler number, or use **Rows and columns**, to add or remove a row or column.
+10. **Save** keeps the pattern as a JSON file, **Save as…** saves a copy under a new
+    name, and **Save image** makes a PNG of the whole band with the list of threads.
 
 ## Palette sequence behavior
 
@@ -237,6 +209,7 @@ Pattern files use `palette_sequences` as canonical colour storage.
 pytest
 ruff check .
 mypy src tests web/kvale_web tools
+python tools/build_site.py --serve   # then try the app in a browser
 ```
 
 Browser smoke tests drive the web app in headless Chromium. They need network
@@ -263,8 +236,7 @@ pre-commit run --all-files
 3. Visual draggable mirror planes
 4. SVG and printable chart export
 5. Plugin interface for exporters and symmetry groups
-6. Optional PySide6 or browser front end
-7. Raster-image tracing and palette reduction
+6. Raster-image tracing and palette reduction
 
 ## Extension strategy
 
@@ -275,7 +247,8 @@ New functionality should normally be added behind a small interface:
 - New symmetry: add a transform in `core/symmetry.py`.
 - New colour behaviour: extend sequence handling in `core/renderer.py` and document model fields in `core/model.py`.
 - New export format: consume `PatternDocument` or `build_colour_grid()` in a new exporter module.
-- New GUI: reuse the entire `core` package, driving it through `Editor`, without importing Tkinter.
+- New interface: reuse the entire `core` package, driving it through `Editor`, as
+  `web/kvale_web` does.
 
 ## Licence
 
